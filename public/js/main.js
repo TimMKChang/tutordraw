@@ -46,3 +46,9 @@ function getQuery() {
 
   return query;
 }
+
+function getNowTimeString() {
+  const now = new Date();
+  const nowTimeString = '' + now.getFullYear() + ('0' + (now.getMonth() + 1)).substr(-2) + ('0' + now.getDate()).substr(-2) + ('0' + now.getHours()).substr(-2) + ('0' + now.getMinutes()).substr(-2) + ('0' + now.getSeconds()).substr(-2);
+  return nowTimeString;
+}

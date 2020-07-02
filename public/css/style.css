@@ -97,11 +97,15 @@ footer .copyright {
   height: 800px;
 }
 
-.color-btn-container {
+.tool-box {
   position: absolute;
   top: 20px;
   left: 20px;
+}
+
+.color-btn-container {
   display: flex;
+  justify-content: start;
 }
 
 .color-btn {
@@ -120,12 +124,6 @@ footer .copyright {
   box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 1.0);
 }
 
-.width-btn-container {
-  position: absolute;
-  top: 80px;
-  left: 20px;
-}
-
 .width-btn-container input {
   width: 200px;
 }
@@ -136,4 +134,15 @@ footer .copyright {
   border-style: solid;
   border-width: 20px 200px 20px 0;
   border-color: transparent #5B5B5B transparent transparent;
+}
+
+.edit-container i {
+  font-size: 2rem;
+  border-radius: 50%;
+  border: 3px solid	#E0E0E0	;
+}
+
+.edit-container i:hover {
+  cursor: pointer;
+  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.8);
 }

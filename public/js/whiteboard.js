@@ -167,6 +167,23 @@ function initListener() {
   get('.width-btn-container input').addEventListener('change', (e) => {
     Model.whiteboard.width = e.target.value || Model.whiteboard.width;
   });
+
+  // create new
+  get('.edit-container .new').addEventListener('click', (e) => {
+    const isNew = confirm('Sure to create a new whiteboard?');
+    if (isNew) {
+      clear();
+      Model.whiteboard.records = [];
+    }
+  })
+
+  // download
+  get('.edit-container .download').addEventListener('click', (e) => {
+    const link = document.createElement('a');
+    link.download = `whiteboard-${getNowTimeString()}.png`;
+    link.href = canvas.toDataURL();
+    link.click();
+  })
 }
 
 function clear() {
