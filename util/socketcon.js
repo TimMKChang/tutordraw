@@ -12,8 +12,12 @@ const socketCon = (io) => {
       // room
       socket.join(room);
       // load message
-      const chatmsgs = await getChatmsg({ room });
-      socket.to(room).emit('load chat msg', JSON.stringify(chatmsgs));
+      const { error, chatmsgs } = await getChatmsg({ room });
+      if (error) {
+        console.log(error);
+      } else {
+        socket.to(room).emit('load chat msg', JSON.stringify(chatmsgs));
+      }
     });
 
     socket.on('new draw', function (drawStr) {

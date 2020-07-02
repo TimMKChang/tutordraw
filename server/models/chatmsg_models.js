@@ -20,6 +20,8 @@ const getChatmsg = async (requirement) => {
     condition.query = 'SELECT sender, msg, time FROM chatmsg ';
     condition.sql = 'WHERE room = ?';
     condition.binding = [requirement.room];
+  } else {
+    return { error: 'requirement is necessary' };
   }
 
   try {

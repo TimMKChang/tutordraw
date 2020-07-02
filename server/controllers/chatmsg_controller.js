@@ -18,12 +18,7 @@ const createChatmsg = async (chatmsgObj) => {
 };
 
 const getChatmsg = async (requirement) => {
-  const { error, chatmsgs } = await chatmsgModel.getChatmsg(requirement);
-  if (error) {
-    console.log(error);
-  } else {
-    return chatmsgs;
-  }
+  return await chatmsgModel.getChatmsg(requirement);
 };
 
 module.exports = {
