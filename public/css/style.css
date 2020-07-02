@@ -43,7 +43,6 @@ footer .copyright {
 .index-container {
   width: 100%;
   min-height: calc(100vh - 100px);
-  max-height: calc(100vh - 100px);
   background-color: #FFFFFF;
   border-radius: 0px 0px 100px 100px;
   display: flex;
@@ -55,6 +54,7 @@ footer .copyright {
 .index-container .form-container {
   width: 30%;
   min-width: 400px;
+  margin: 20px 0;
 }
 
 .index-container .form-container .title {
