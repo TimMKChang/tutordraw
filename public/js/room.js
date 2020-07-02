@@ -66,6 +66,31 @@ const View = {
       }
     },
   },
+  chatbox: {
+    displayNewMsg: function (sender, msg, time) {
+      if (sender === Model.user.name) {
+        get('.msg-container').innerHTML += `
+          <div class="msg-self">
+            You： ${msg}
+            <span class="time-self">${time}</span>
+          </div>
+        `;
+      } else {
+        get('.msg-container').innerHTML += `
+          <div class="msg-other">
+            ${sender}： ${msg}
+            <span class="time-other">${time}</span>
+          </div>
+        `;
+      }
+
+      View.chatbox.scrollToBottom();
+    },
+    scrollToBottom: function () {
+      const msgContainerHTML = get('.msg-container');
+      msgContainerHTML.scrollTop = msgContainerHTML.scrollHeight;
+    }
+  },
 };
 
 const Controller = {
@@ -190,4 +215,50 @@ const Controller = {
       })
     },
   },
+  chatbox: {
+    initListener: function () {
+      // send message
+      // for click send button
+      get('.chatbox .send-btn').addEventListener('click', Controller.chatbox.sendMsg);
+      // for press enter
+      get('.chatbox .send-msg textarea').addEventListener('keydown', (e) => {
+        if (e.keyCode === 13) {
+          e.preventDefault();
+          Controller.chatbox.sendMsg();
+        }
+      });
+    },
+    sendMsg: function () {
+      const msg = get('.chatbox .send-msg textarea').value;
+      if (msg.replace(/\s/g, '') === '') {
+        return;
+      }
+      const sender = Model.user.name;
+      const time = Controller.chatbox.getTime();
+      const msgObj = {
+        room: Model.room.name,
+        sender,
+        msg,
+        time,
+        created_at: Date.now()
+      }
+      View.chatbox.displayNewMsg(sender, msg, time);
+      socket.emit('new chat msg', JSON.stringify(msgObj));
+      get('.chatbox .send-msg textarea').value = '';
+    },
+    getTime: function () {
+      const nowTime = new Date();
+      const hour24 = nowTime.getHours();
+      const hour12 = hour24 > 12 ? `下午 ${('0' + hour24 % 12).substr(-2)}` : `上午 ${('0' + hour24).substr(-2)}`;
+      const minute = ('0' + nowTime.getMinutes()).substr(-2);
+      return `${hour12}:${minute}`;
+    },
+  },
 };
+
+// whiteboard
+View.whiteboard.initWhiteboard();
+Controller.whiteboard.initListener();
+
+// chatbox
+Controller.chatbox.initListener();

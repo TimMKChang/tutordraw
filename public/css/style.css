@@ -147,7 +147,7 @@ footer .copyright {
 }
 
 .room-container .chatbox .msg-container {
-  height: 90%;
+  height: 85%;
   overflow-y: auto;
 }
 
@@ -198,7 +198,7 @@ footer .copyright {
 }
 
 .room-container .chatbox .send-msg {
-  height: 10%;
+  height: 15%;
   min-height: 50px;
   display: flex;
   justify-content: start;
@@ -211,6 +211,7 @@ footer .copyright {
   resize: none;
   border-radius: 20px;
   padding: 0 20px;
+  overflow-x: hidden;
 }
 
 .room-container .chatbox .send-msg textarea:focus {

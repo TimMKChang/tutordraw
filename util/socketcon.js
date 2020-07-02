@@ -13,6 +13,11 @@ const socketCon = (io) => {
       socket.to(room).emit('new draw', JSON.stringify(record));
     });
 
+    socket.on('new chat msg', function (msgStr) {
+      const { room } = JSON.parse(msgStr);
+      socket.to(room).emit('new chat msg', msgStr);
+    });
+
   });
 }
 
