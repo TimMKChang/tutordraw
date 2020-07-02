@@ -8,5 +8,10 @@ socket.on('new draw', function (recordStr) {
 
 socket.on('new chat msg', function (msgStr) {
   const { sender, msg, time } = JSON.parse(msgStr);
-  View.chatbox.displayNewMsg(sender, msg, time);
+  View.chatbox.displayNewMsg([{ sender, msg, time }]);
+});
+
+socket.on('load chat msg', function (msgObjsStr) {
+  const msgObjs = JSON.parse(msgObjsStr);
+  View.chatbox.displayNewMsg(msgObjs);
 });

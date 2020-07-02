@@ -16,7 +16,8 @@ const socketCon = (io) => {
       if (error) {
         console.log(error);
       } else {
-        socket.to(room).emit('load chat msg', JSON.stringify(chatmsgs));
+        // send to self
+        socket.emit('load chat msg', JSON.stringify(chatmsgs));
       }
     });
 

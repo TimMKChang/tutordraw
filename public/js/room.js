@@ -6,7 +6,7 @@ const ctx = canvas.getContext('2d');
 const Model = {
   user: {
     id: socket.id,
-    name: getQuery().user,
+    name: decodeURI(getQuery().user),
   },
   room: {
     name: getQuery().room,
@@ -67,21 +67,24 @@ const View = {
     },
   },
   chatbox: {
-    displayNewMsg: function (sender, msg, time) {
-      if (sender === Model.user.name) {
-        get('.msg-container').innerHTML += `
+    displayNewMsg: function (msgObjs) {
+      for (let msgObjIndex = 0; msgObjIndex < msgObjs.length; msgObjIndex++) {
+        const { sender, msg, time } = msgObjs[msgObjIndex];
+        if (sender === Model.user.name) {
+          get('.msg-container').innerHTML += `
           <div class="msg-self">
             You： ${msg}
             <span class="time-self">${time}</span>
           </div>
         `;
-      } else {
-        get('.msg-container').innerHTML += `
+        } else {
+          get('.msg-container').innerHTML += `
           <div class="msg-other">
             ${sender}： ${msg}
             <span class="time-other">${time}</span>
           </div>
         `;
+        }
       }
 
       View.chatbox.scrollToBottom();
@@ -242,7 +245,7 @@ const Controller = {
         time,
         created_at: Date.now()
       }
-      View.chatbox.displayNewMsg(sender, msg, time);
+      View.chatbox.displayNewMsg([{ sender, msg, time }]);
       socket.emit('new chat msg', JSON.stringify(msgObj));
       get('.chatbox .send-msg textarea').value = '';
     },
