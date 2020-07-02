@@ -1,7 +1,8 @@
 body {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  
+  background-color: #272727;
 }
 
 header {
@@ -48,6 +49,7 @@ footer .copyright {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: auto;
 }
 
 .index-container .form-container {
@@ -87,28 +89,18 @@ footer .copyright {
   overflow: auto;
 }
 
-.room-container .chatbox {
-  width: 30%;
-  background-color: #dddddd;
-  overflow-y: auto;
-}
-
-.room-container .chatbox .msg-container {
-  height: 800px;
-}
-
-.tool-box {
+.whiteboard .tool-box {
   position: absolute;
   top: 20px;
   left: 20px;
 }
 
-.color-btn-container {
+.whiteboard .color-btn-container {
   display: flex;
   justify-content: start;
 }
 
-.color-btn {
+.whiteboard .color-btn {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -116,19 +108,19 @@ footer .copyright {
   margin: 0 5px;
 }
 
-.color-btn:hover {
+.whiteboard .color-btn:hover {
   box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.8);
 }
 
-.now-color {
+.whiteboard .now-color {
   box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 1.0);
 }
 
-.width-btn-container input {
+.whiteboard .width-btn-container input {
   width: 200px;
 }
 
-.value-range-display {
+.whiteboard .value-range-display {
   width: 0;
   height: 0;
   border-style: solid;
@@ -136,13 +128,103 @@ footer .copyright {
   border-color: transparent #5B5B5B transparent transparent;
 }
 
-.edit-container i {
+.whiteboard .edit-container i {
   font-size: 2rem;
   border-radius: 50%;
   border: 3px solid	#E0E0E0	;
 }
 
-.edit-container i:hover {
+.whiteboard .edit-container i:hover {
   cursor: pointer;
   box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.8);
+}
+
+.room-container .chatbox {
+  width: 30%;
+  background-color: #dddddd;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.room-container .chatbox .msg-container {
+  height: 90%;
+  overflow-y: auto;
+}
+
+.room-container .chatbox .msg-container .msg-self {
+  max-width: 45%;
+  margin-left: auto;
+  word-wrap: break-word;
+  margin-bottom: 5px;
+  padding: 5px 20px;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  background-color: #FFD1A4;
+}
+
+.room-container .chatbox .msg-container .msg-other{
+  max-width: 45%;
+  margin-right: auto;
+  word-wrap: break-word;
+  margin-bottom: 5px;
+  padding: 5px 20px;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  background-color: #FCFCFC
+}
+
+.room-container .chatbox .msg-container .msg-self, .msg-other {
+  position: relative;
+}
+
+.room-container .chatbox .msg-container .msg-container span {
+  font-size: 0.8rem;
+}
+
+.room-container .chatbox .msg-container .time-self {
+  width: 100px;
+  text-align: right;
+  position: absolute;
+  left: -110px;
+  bottom: 0px;
+}
+
+.room-container .chatbox .msg-container .time-other {
+  width: 100px;
+  text-align: left;
+  position: absolute;
+  right: -110px;
+  bottom: 0px;
+}
+
+.room-container .chatbox .send-msg {
+  height: 10%;
+  min-height: 50px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.room-container .chatbox .send-msg textarea {
+  width: 80%;
+  height: 80%;
+  resize: none;
+  border-radius: 20px;
+  padding: 0 20px;
+}
+
+.room-container .chatbox .send-msg textarea:focus {
+  outline: none;
+}
+
+.room-container .chatbox .send-msg .send-btn i {
+  font-size: 1.5rem;
+}
+
+/* RWD for canvas */
+@media (min-width: 1715px) {
+  .main-container {
+    max-width: 1715px;
+    margin: 0 calc((100% - 1715px) / 2);
+  }
 }
