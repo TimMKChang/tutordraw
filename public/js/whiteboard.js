@@ -1,3 +1,4 @@
+const roomContainerHTML = get('.room-container');
 const whiteboardHTML = get('.whiteboard');
 const canvas = get('.whiteboard canvas');
 const ctx = canvas.getContext('2d');
@@ -80,8 +81,8 @@ const Controller = {
         if (action === 'down') {
           this.prevX = this.currX;
           this.prevY = this.currY;
-          this.currX = e.clientX - canvas.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
-          this.currY = e.clientY - canvas.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
+          this.currX = e.clientX - roomContainerHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
+          this.currY = e.clientY - roomContainerHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
 
           this.record = {
             author: 'teacher',
@@ -104,8 +105,8 @@ const Controller = {
           if (this.isDrawing) {
             this.prevX = this.currX;
             this.prevY = this.currY;
-            this.currX = e.clientX - canvas.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
-            this.currY = e.clientY - canvas.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
+            this.currX = e.clientX - roomContainerHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
+            this.currY = e.clientY - roomContainerHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
 
             this.record.path.push([this.currX, this.currY]);
 
@@ -153,15 +154,19 @@ function initListener() {
     }
   });
 
-  // // color
-  // get('.color-btn').addEventListener('click', (e) => {
-  //   Model.whiteboard.color = e.target.dataset.color || Model.whiteboard.color;
-  // });
+  // color
+  get('.color-btn-container').addEventListener('click', (e) => {
+    if (e.target.classList.contains('color-btn')) {
+      Model.whiteboard.color = e.target.dataset.color || Model.whiteboard.color;
+      get('.now-color').classList.remove('now-color');
+      e.target.classList.add('now-color');
+    }
+  });
 
-  // // width
-  // get('.width-btn').addEventListener('click', (e) => {
-  //   Model.whiteboard.width = e.target.dataset.width || Model.whiteboard.width;
-  // });
+  // width
+  get('.width-btn-container input').addEventListener('change', (e) => {
+    Model.whiteboard.width = e.target.value || Model.whiteboard.width;
+  });
 }
 
 function clear() {

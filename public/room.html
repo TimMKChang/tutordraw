@@ -22,7 +22,22 @@
     <div class="room-container">
 
       <div class="whiteboard">
-        <canvas width="1200" height="800"></canvas>
+        <canvas width="1200" height="800"> </canvas>
+
+        <div class="color-btn-container">
+          <div class="color-btn color-btn-black now-color" style="background-color: #000000;" data-color="#000000">
+          </div>
+          <div class="color-btn color-btn-red" style="background-color: #CE0000;" data-color="#CE0000"></div>
+          <div class="color-btn color-btn-green" style="background-color:	#007500;" data-color="#007500"></div>
+          <div class="color-btn color-btn-blue" style="background-color:#000093;" data-color="#000093"></div>
+          <div class="color-btn color-btn-white" style="background-color: #FFFFFF;" data-color="#FFFFFF"></div>
+        </div>
+
+        <div class="width-btn-container">
+          <div class="value-range-display"></div>
+          <input type="range" min="1" max="30" step="1" value="3">
+        </div>
+
       </div>
 
       <div class="chatbox">
