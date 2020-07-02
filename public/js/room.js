@@ -6,10 +6,10 @@ const ctx = canvas.getContext('2d');
 const Model = {
   user: {
     id: socket.id,
-    name: getQuery().username,
+    name: getQuery().user,
   },
   room: {
-    name: getQuery().roomname,
+    name: getQuery().room,
   },
   whiteboard: {
     color: 'blue',
