@@ -92,6 +92,22 @@ const View = {
     scrollToBottom: function () {
       const msgContainerHTML = get('.msg-container');
       msgContainerHTML.scrollTop = msgContainerHTML.scrollHeight;
+    },
+    displayUserJoinLeaveMsg: function (user, condition) {
+      let msg;
+      if (condition === 'join') {
+        msg = `歡迎 ${user} 加入聊天室`;
+      } else if (condition === 'leave') {
+        msg = `${user} 已離開聊天室`;
+      }
+      get('.msg-container').innerHTML += `
+          <div class="msg-notification">
+            <div class="msg-notification-container">
+              <div>${Controller.chatbox.getTime()}</div>
+              <div>${msg}</div>
+            </div>
+          </div>
+        `;
     }
   },
 };

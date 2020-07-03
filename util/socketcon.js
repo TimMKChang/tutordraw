@@ -29,6 +29,8 @@ const socketCon = (io) => {
       const { room, user } = JSON.parse(data);
       // room
       socket.join(room);
+      // user join message
+      socket.to(room).emit('user join msg', JSON.stringify({ user }));
       // add user to rooms
       clientsRoom[socket.id] = room;
 
@@ -69,13 +71,17 @@ const socketCon = (io) => {
       // delete user, room
       const id = socket.id;
       const room = clientsRoom[id];
+      let user;
       if (rooms[room]) {
+        user = rooms[room]['users'][id];
         delete rooms[room]['users'][id];
         if (Object.keys(rooms[room].users).length === 0) {
           delete rooms[room];
         }
       }
       delete clientsRoom[id];
+      // user leave message
+      socket.to(room).emit('user leave msg', JSON.stringify({ user }));
     });
 
   });
