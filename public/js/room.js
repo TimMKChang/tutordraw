@@ -147,7 +147,7 @@ const Controller = {
           this.currY = e.clientY - roomContainerHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
 
           this.record = {
-            author: 'teacher',
+            author: Model.user.name,
             type: 'line',
             created_at: Date.now(),
             color,

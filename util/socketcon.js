@@ -55,11 +55,27 @@ const socketCon = (io) => {
         // send to self
         socket.emit('load chat msg', JSON.stringify(chatmsgs));
       }
+      // load whiteboard records
+      socket.emit('load whiteboard records', JSON.stringify(rooms[room].whiteboard.records));
     });
 
     socket.on('new draw', function (drawStr) {
       const { room, record } = JSON.parse(drawStr);
       socket.to(room).emit('new draw', JSON.stringify(record));
+      // save draw in room whiteboard (temporary in server)
+      if (room in rooms) {
+        const newDrawCreate_at = record.created_at;
+        const { records } = rooms[room].whiteboard;
+        if (records.length === 0) {
+          records.push(record);
+        } else {
+          for (let recordIndex = records.length - 1; recordIndex >= 0; recordIndex--) {
+            if (newDrawCreate_at > records[recordIndex].created_at) {
+              records.splice(recordIndex + 1, 0, record);
+            }
+          }
+        }
+      }
     });
 
     socket.on('new chat msg', async function (msgStr) {

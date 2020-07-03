@@ -36,3 +36,9 @@ socket.on('load chat msg', function (msgObjsStr) {
   const msgObjs = JSON.parse(msgObjsStr);
   View.chatbox.displayNewMsg(msgObjs);
 });
+
+socket.on('load whiteboard records', function (recordsStr) {
+  const records = JSON.parse(recordsStr);
+  Model.whiteboard.records = records;
+  View.whiteboard.redraw();
+});
