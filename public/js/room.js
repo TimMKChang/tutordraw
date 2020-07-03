@@ -108,6 +108,15 @@ const View = {
             </div>
           </div>
         `;
+
+      View.chatbox.scrollToBottom();
+    },
+    displayUserList: function (users) {
+      let htmlContent = '';
+      for (let userIndex = 0; userIndex < users.length; userIndex++) {
+        htmlContent += `<div>${users[userIndex]}</div>`;
+      }
+      get('.user-list .list-container').innerHTML = htmlContent;
     }
   },
 };

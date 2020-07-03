@@ -29,8 +29,6 @@ const socketCon = (io) => {
       const { room, user } = JSON.parse(data);
       // room
       socket.join(room);
-      // user join message
-      socket.to(room).emit('user join msg', JSON.stringify({ user }));
       // add user to rooms
       clientsRoom[socket.id] = room;
 
@@ -44,6 +42,11 @@ const socketCon = (io) => {
         };
         rooms[room]['users'][socket.id] = user;
       }
+      // user join message
+      socket.to(room).emit('user join msg', JSON.stringify({ user }));
+      // update user list
+      io.to(room).emit('update user list',
+        JSON.stringify({ users: Object.values(rooms[room].users) }));
       // load message
       const { error, chatmsgs } = await getChatmsg({ room });
       if (error) {
@@ -72,9 +75,11 @@ const socketCon = (io) => {
       const id = socket.id;
       const room = clientsRoom[id];
       let user;
+      let users = [];
       if (rooms[room]) {
         user = rooms[room]['users'][id];
         delete rooms[room]['users'][id];
+        users = Object.values(rooms[room].users);
         if (Object.keys(rooms[room].users).length === 0) {
           delete rooms[room];
         }
@@ -82,6 +87,8 @@ const socketCon = (io) => {
       delete clientsRoom[id];
       // user leave message
       socket.to(room).emit('user leave msg', JSON.stringify({ user }));
+      // update user list
+      io.to(room).emit('update user list', JSON.stringify({ users }));
     });
 
   });

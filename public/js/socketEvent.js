@@ -11,6 +11,11 @@ socket.on('user leave msg', function (dataStr) {
   View.chatbox.displayUserJoinLeaveMsg(user, 'leave');
 });
 
+socket.on('update user list', function (dataStr) {
+  const { users } = JSON.parse(dataStr);
+  View.chatbox.displayUserList(users);
+});
+
 socket.on('new draw', function (recordStr) {
   const record = JSON.parse(recordStr);
   Model.whiteboard.records.push(record);

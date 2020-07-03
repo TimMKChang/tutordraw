@@ -146,9 +146,72 @@ footer .copyright {
   padding: 10px;
 }
 
+.room-container .chatbox .room-info-container {
+  height: 10%;
+  min-height: 50px;
+  background-color: rgba(0, 0, 0, 0.1);
+  position: relative;
+  border-radius: 10px;
+}
+
+.room-container .chatbox .room-info-container .user-list-icon {
+  position: absolute;
+  font-size: 3rem;
+  top:50%;
+  transform: translateY(-50%);
+  left: 5%;
+}
+
+.user-list-icon:hover {
+  cursor: pointer;
+  color: #8E8E8E;
+}
+
+.user-list {
+  position: absolute;  
+  display: none;
+  width: 200px;
+  top: 100%;
+  z-index: 9999;
+  border-radius: 10px;
+  background-color: #ADADAD;
+  padding: 10px;
+  font-size: 1.2rem;
+  font-weight: bolder;
+}
+
+.user-list .title {
+  text-align: center;
+  border-bottom: 3px solid #8E8E8E;
+}
+
+.user-list:hover {
+  display: block;
+}
+
+.user-list-icon:hover + .user-list {
+  display: block;
+}
+
+.room-container .chatbox .room-info-container .room-info {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.room-container .chatbox .room-info-container .room-info .title {
+  font-size: 2rem;
+  line-height: 1.5rem;  
+  font-weight: bolder;
+}
+
 .room-container .chatbox .msg-container {
-  height: 85%;
+  height: 75%;
   overflow-y: auto;
+  padding-top: 10px;
 }
 
 .room-container .chatbox .msg-container .msg-self {
@@ -181,8 +244,8 @@ footer .copyright {
 }
 
 .room-container .chatbox .msg-container .msg-notification .msg-notification-container {  
+  min-width: 50%;
   text-align: center;
-  display:inline-block;
   margin: 0 auto;
   margin-bottom: 5px;
   padding: 5px;
