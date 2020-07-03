@@ -5,7 +5,7 @@ const ctx = canvas.getContext('2d');
 
 const Model = {
   user: {
-    id: socket.id,
+    id: '',
     name: decodeURI(getQuery().user),
   },
   room: {

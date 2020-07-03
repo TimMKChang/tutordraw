@@ -1,5 +1,10 @@
-socket.emit('join room',
-  JSON.stringify({ room: Model.room.name, user: Model.user.name }));
+const socket = io();
+
+socket.on('connect', () => {
+  Model.user.id = socket.id;
+  socket.emit('join room',
+    JSON.stringify({ room: Model.room.name, user: Model.user.name }));
+});
 
 socket.on('user join msg', function (dataStr) {
   const { user } = JSON.parse(dataStr);
