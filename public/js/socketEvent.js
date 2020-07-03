@@ -1,4 +1,5 @@
-socket.emit('join room', Model.room.name);
+socket.emit('join room',
+  JSON.stringify({ room: Model.room.name, user: Model.user.name }));
 
 socket.on('new draw', function (recordStr) {
   const record = JSON.parse(recordStr);
