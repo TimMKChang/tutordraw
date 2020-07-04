@@ -27,8 +27,19 @@ const socketCon = (io) => {
 
     socket.on('join room', async function (data) {
       const { room, user } = JSON.parse(data);
+
+      // avoid connect repeatedly
+      if (room in rooms) {
+        const users = rooms[room]['users'];
+        const socket_id = Object.keys(users).find(key => users[key] === user);
+        if (io.sockets.connected[socket_id]) {
+          io.sockets.connected[socket_id].disconnect();
+        }
+      }
+
       // room
       socket.join(room);
+
       // add user to rooms
       clientsRoom[socket.id] = room;
 
@@ -42,11 +53,14 @@ const socketCon = (io) => {
         };
         rooms[room]['users'][socket.id] = user;
       }
+
       // user join message
       socket.to(room).emit('user join msg', JSON.stringify({ user }));
+
       // update user list
       io.to(room).emit('update user list',
         JSON.stringify({ users: Object.values(rooms[room].users) }));
+
       // load message
       const { error, chatmsgs } = await getChatmsg({ room });
       if (error) {
@@ -55,6 +69,7 @@ const socketCon = (io) => {
         // send to self
         socket.emit('load chat msg', JSON.stringify(chatmsgs));
       }
+
       // load whiteboard records
       socket.emit('load whiteboard records', JSON.stringify(rooms[room].whiteboard.records));
     });
@@ -62,6 +77,7 @@ const socketCon = (io) => {
     socket.on('new draw', function (drawStr) {
       const { room, record } = JSON.parse(drawStr);
       socket.to(room).emit('new draw', JSON.stringify(record));
+
       // save draw in room whiteboard (temporary in server)
       if (room in rooms) {
         const newDrawCreate_at = record.created_at;
@@ -87,6 +103,7 @@ const socketCon = (io) => {
 
     socket.on('disconnect', function () {
       console.log(`user ${socket.id} has disconnected`);
+
       // delete user, room
       const id = socket.id;
       const room = clientsRoom[id];
@@ -101,8 +118,10 @@ const socketCon = (io) => {
         }
       }
       delete clientsRoom[id];
+
       // user leave message
       socket.to(room).emit('user leave msg', JSON.stringify({ user }));
+
       // update user list
       io.to(room).emit('update user list', JSON.stringify({ users }));
     });
