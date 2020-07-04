@@ -88,6 +88,7 @@ const socketCon = (io) => {
           for (let recordIndex = records.length - 1; recordIndex >= 0; recordIndex--) {
             if (newDrawCreate_at > records[recordIndex].created_at) {
               records.splice(recordIndex + 1, 0, record);
+              break;
             }
           }
         }
