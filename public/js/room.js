@@ -258,6 +258,23 @@ const Controller = {
           Controller.chatbox.sendMsg();
         }
       });
+      // click and copy room invite url
+      get('.chatbox .copy-link-btn i').addEventListener('click', (e) => {
+        get('.room-info input[name="invite-url"]').value = `${HOMEPAGE_URL}/room.html?room=${Model.room.name}`;
+        const copyText = get('.room-info input[name="invite-url"]');
+        copyText.setAttribute('type', 'text');
+        copyText.select();
+        document.execCommand("copy");
+        copyText.setAttribute('type', 'hidden');
+        // copy invite url hint
+        const msgHTML = get('.room-info .copy-invite-url-msg');
+        if (!msgHTML.classList.contains('show-hide')) {
+          msgHTML.classList.add('show-hide');
+          setTimeout(function () {
+            msgHTML.classList.remove('show-hide');
+          }, 2000);
+        }
+      });
     },
     sendMsg: function () {
       const msg = get('.chatbox .send-msg textarea').value;

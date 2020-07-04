@@ -221,9 +221,33 @@ footer .copyright {
   font-size: 2rem;
 }
 
-.room-container .chatbox .room-info-container .room-info .copy-link-btn:hover {
+.room-container .chatbox .room-info-container .room-info .copy-link-btn i:hover {
   cursor: pointer;
   opacity: 0.5;
+}
+
+.room-container .chatbox .room-info-container .room-info .copy-invite-url-msg {
+  position: absolute;
+  top: 100%;
+  left: calc(50% + 60px + 16px);
+  font-size: 1.2rem;
+  width: 180px;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 9999;
+  border-radius: 10px;
+  background-color: #ADADAD;
+  opacity: 0;
+}
+
+.show-hide {
+  animation: show_hide 2s ;
+}
+
+@keyframes show_hide{
+    0%{ opacity: 0;}
+    10%{ opacity: 1;}
+    100%{ opacity: 0;}
 }
 
 .room-container .chatbox .msg-container {
