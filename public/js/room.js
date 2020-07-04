@@ -117,6 +117,9 @@ const View = {
         htmlContent += `<div>${users[userIndex]}</div>`;
       }
       get('.user-list .list-container').innerHTML = htmlContent;
+    },
+    displayRoomName: function () {
+      get('.room-info .room-name').innerHTML = Model.room.name;
     }
   },
 };
@@ -289,4 +292,5 @@ View.whiteboard.initWhiteboard();
 Controller.whiteboard.initListener();
 
 // chatbox
+View.chatbox.displayRoomName();
 Controller.chatbox.initListener();

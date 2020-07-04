@@ -194,7 +194,9 @@ footer .copyright {
 }
 
 .room-container .chatbox .room-info-container .room-info {
+  width: 120px;
   height: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -206,6 +208,22 @@ footer .copyright {
   font-size: 2rem;
   line-height: 1.5rem;  
   font-weight: bolder;
+}
+
+.room-container .chatbox .room-info-container .room-info input[name="invite-url"] {
+  position: absolute;
+  z-index: -9999;
+}
+
+.room-container .chatbox .room-info-container .room-info .copy-link-btn {
+  position: absolute;
+  left: calc(50% + 60px);
+  font-size: 2rem;
+}
+
+.room-container .chatbox .room-info-container .room-info .copy-link-btn:hover {
+  cursor: pointer;
+  opacity: 0.5;
 }
 
 .room-container .chatbox .msg-container {
