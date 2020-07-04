@@ -20,6 +20,10 @@ const rooms = {
   // }
 };
 
+const closeRoomTimer = {
+  // socket_id1: 'setTimeout',
+};
+
 const socketCon = (io) => {
   io.on('connection', (socket) => {
 
@@ -35,6 +39,11 @@ const socketCon = (io) => {
         if (io.sockets.connected[socket_id]) {
           io.sockets.connected[socket_id].disconnect();
         }
+      }
+
+      // cancel timer if it exist
+      if (closeRoomTimer[room]) {
+        clearTimeout(closeRoomTimer[room]);
       }
 
       // room
@@ -115,7 +124,10 @@ const socketCon = (io) => {
         delete rooms[room]['users'][id];
         users = Object.values(rooms[room].users);
         if (Object.keys(rooms[room].users).length === 0) {
-          delete rooms[room];
+          // set timer to delay close room
+          closeRoomTimer[room] = setTimeout(function () {
+            delete rooms[room];
+          }, 60000);
         }
       }
       delete clientsRoom[id];
