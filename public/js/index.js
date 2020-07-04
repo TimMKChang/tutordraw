@@ -13,5 +13,5 @@ function joinRoom() {
   if (user.replace(/\s/g, '') === '' || !/^[a-zA-Z0-9]+$/.test(room)) {
     return alert('Please enter your name or check the room name is correct');
   }
-  location.href = `/room.html?user=${user}&room=${room}`;
+  location.href = `/room.html?room=${room}&user=${user}`;
 }
