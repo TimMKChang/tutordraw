@@ -25,6 +25,24 @@ const closeRoomTimer = {
 };
 
 const socketCon = (io) => {
+  io.use(function (socket, next) {
+    socket.emit('autherror', 'error');
+    if (socket.handshake.query && socket.handshake.query.token) {
+      if (socket.handshake.query.token === 'drawnowisgood') {
+        next();
+      } else {
+        const err = new Error();
+        err.data = { type: 'authentication_error', message: 'authentication error' };
+        next(err);
+      }
+    }
+    else {
+      const err = new Error();
+      err.data = { type: 'authentication_error', message: 'authentication error' };
+      next(err);
+    }
+  })
+
   io.on('connection', (socket) => {
 
     console.log(`new user ${socket.id} has connected`);

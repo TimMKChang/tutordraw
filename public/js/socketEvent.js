@@ -1,4 +1,12 @@
-const socket = io();
+const socket = io({
+  query: {
+    token: 'drawnowisgood'
+  }
+});
+
+socket.on('error', function (error) {
+  alert(error.message);
+});
 
 socket.on('connect', () => {
   Model.user.id = socket.id;
