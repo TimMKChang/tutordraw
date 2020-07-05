@@ -17,7 +17,7 @@ const getChatmsg = async (requirement) => {
   const condition = { query: '', sql: '', binding: [] };
 
   if (requirement.room) {
-    condition.query = 'SELECT sender, msg, time FROM chatmsg ';
+    condition.query = 'SELECT sender, type, msg, time, created_at FROM chatmsg ';
     condition.sql = 'WHERE room = ?';
     condition.binding = [requirement.room];
   } else {

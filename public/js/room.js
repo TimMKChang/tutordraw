@@ -69,7 +69,7 @@ const View = {
   chatbox: {
     displayNewMsg: function (msgObjs) {
       for (let msgObjIndex = 0; msgObjIndex < msgObjs.length; msgObjIndex++) {
-        const { sender, type, msg, time } = msgObjs[msgObjIndex];
+        const { sender, type, msg, time, created_at } = msgObjs[msgObjIndex];
         // type text
         if (type === 'text') {
           if (sender === Model.user.name) {
@@ -87,6 +87,15 @@ const View = {
               </div>
             `;
           }
+        } else if (type === 'notification') {
+          get('.msg-container').innerHTML += `
+            <div class="msg-notification">
+              <div class="msg-notification-container">
+                <div>${Controller.chatbox.getTime(created_at)}</div>
+                <div>${msg}</div>
+              </div>
+            </div>
+          `;
         }
       }
 
@@ -95,24 +104,6 @@ const View = {
     scrollToBottom: function () {
       const msgContainerHTML = get('.msg-container');
       msgContainerHTML.scrollTop = msgContainerHTML.scrollHeight;
-    },
-    displayUserJoinLeaveMsg: function (user, condition) {
-      let msg;
-      if (condition === 'join') {
-        msg = `歡迎 ${user} 加入聊天室`;
-      } else if (condition === 'leave') {
-        msg = `${user} 已離開聊天室`;
-      }
-      get('.msg-container').innerHTML += `
-          <div class="msg-notification">
-            <div class="msg-notification-container">
-              <div>${Controller.chatbox.getTime()}</div>
-              <div>${msg}</div>
-            </div>
-          </div>
-        `;
-
-      View.chatbox.scrollToBottom();
     },
     displayUserList: function (users) {
       let htmlContent = '';
@@ -299,8 +290,8 @@ const Controller = {
       socket.emit('new chat msg', JSON.stringify(msgObj));
       get('.chatbox .send-msg textarea').value = '';
     },
-    getTime: function () {
-      const nowTime = new Date();
+    getTime: function (timestamp) {
+      const nowTime = timestamp ? new Date(+timestamp) : new Date();
       const hour24 = nowTime.getHours();
       const hour12 = hour24 > 12 ? `下午 ${('0' + hour24 % 12).substr(-2)}` : `上午 ${('0' + hour24).substr(-2)}`;
       const minute = ('0' + nowTime.getMinutes()).substr(-2);

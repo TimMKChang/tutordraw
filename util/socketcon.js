@@ -82,7 +82,14 @@ const socketCon = (io) => {
       }
 
       // user join message
-      socket.to(room).emit('user join msg', JSON.stringify({ user }));
+      const joinmsgObj = {
+        room,
+        type: 'notification',
+        msg: `歡迎 ${user} 加入聊天室`,
+        created_at: Date.now(),
+      }
+      await createChatmsg(joinmsgObj);
+      socket.to(room).emit('user join leave msg', JSON.stringify(joinmsgObj));
 
       // update user list
       io.to(room).emit('update user list',
@@ -129,7 +136,7 @@ const socketCon = (io) => {
       socket.to(room).emit('new chat msg', msgStr);
     });
 
-    socket.on('disconnect', function () {
+    socket.on('disconnect', async function () {
       console.log(`user ${socket.id} has disconnected`);
 
       // delete user, room
@@ -151,7 +158,14 @@ const socketCon = (io) => {
       delete clientsRoom[id];
 
       // user leave message
-      socket.to(room).emit('user leave msg', JSON.stringify({ user }));
+      const leavemsgObj = {
+        room,
+        type: 'notification',
+        msg: `${user} 已離開聊天室`,
+        created_at: Date.now(),
+      }
+      await createChatmsg(leavemsgObj);
+      socket.to(room).emit('user join leave msg', JSON.stringify(leavemsgObj));
 
       // update user list
       io.to(room).emit('update user list', JSON.stringify({ users }));
