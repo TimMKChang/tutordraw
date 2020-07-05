@@ -69,21 +69,24 @@ const View = {
   chatbox: {
     displayNewMsg: function (msgObjs) {
       for (let msgObjIndex = 0; msgObjIndex < msgObjs.length; msgObjIndex++) {
-        const { sender, msg, time } = msgObjs[msgObjIndex];
-        if (sender === Model.user.name) {
-          get('.msg-container').innerHTML += `
-          <div class="msg-self">
-            You： ${msg}
-            <span class="time-self">${time}</span>
-          </div>
-        `;
-        } else {
-          get('.msg-container').innerHTML += `
-          <div class="msg-other">
-            ${sender}： ${msg}
-            <span class="time-other">${time}</span>
-          </div>
-        `;
+        const { sender, type, msg, time } = msgObjs[msgObjIndex];
+        // type text
+        if (type === 'text') {
+          if (sender === Model.user.name) {
+            get('.msg-container').innerHTML += `
+              <div class="msg-self">
+                You： ${msg}
+                <span class="time-self">${time}</span>
+              </div>
+            `;
+          } else {
+            get('.msg-container').innerHTML += `
+              <div class="msg-other">
+                ${sender}： ${msg}
+                <span class="time-other">${time}</span>
+              </div>
+            `;
+          }
         }
       }
 
@@ -282,15 +285,17 @@ const Controller = {
         return;
       }
       const sender = Model.user.name;
+      const type = 'text';
       const time = Controller.chatbox.getTime();
       const msgObj = {
         room: Model.room.name,
         sender,
+        type,
         msg,
         time,
         created_at: Date.now()
       }
-      View.chatbox.displayNewMsg([{ sender, msg, time }]);
+      View.chatbox.displayNewMsg([{ sender, type, msg, time }]);
       socket.emit('new chat msg', JSON.stringify(msgObj));
       get('.chatbox .send-msg textarea').value = '';
     },

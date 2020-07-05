@@ -36,8 +36,8 @@ socket.on('new draw', function (recordStr) {
 });
 
 socket.on('new chat msg', function (msgStr) {
-  const { sender, msg, time } = JSON.parse(msgStr);
-  View.chatbox.displayNewMsg([{ sender, msg, time }]);
+  const { sender, type, msg, time } = JSON.parse(msgStr);
+  View.chatbox.displayNewMsg([{ sender, type, msg, time }]);
 });
 
 socket.on('load chat msg', function (msgObjsStr) {
