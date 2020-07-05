@@ -4,6 +4,10 @@ const {
 } = require('../server/controllers/chatmsg_controller');
 
 const {
+  getWhiteboard,
+} = require('../server/controllers/whiteboard_controller');
+
+const {
   uploadWhiteboard,
 } = require('../server/S3/uploadWhiteboard');
 
@@ -109,7 +113,16 @@ const socketCon = (io) => {
       }
 
       // load whiteboard records
-      socket.emit('load whiteboard records', JSON.stringify(rooms[room].whiteboard.records));
+      await loadWhiteboardRecords(room, rooms[room].whiteboard.start_at);
+      async function loadWhiteboardRecords(room, start_at) {
+        const { error, links } = await getWhiteboard({ room, start_at });
+        const records = rooms[room].whiteboard.records;
+        if (error) {
+          console.log(error);
+        } else {
+          socket.emit('load whiteboard records', JSON.stringify({ links, records }));
+        }
+      }
     });
 
     socket.on('new draw', function (drawStr) {
@@ -160,6 +173,12 @@ const socketCon = (io) => {
         delete rooms[room]['users'][id];
         users = Object.values(rooms[room].users);
         if (Object.keys(rooms[room].users).length === 0) {
+          // upload remain records to S3
+          const { start_at } = rooms[room].whiteboard;
+          const { records } = rooms[room].whiteboard;
+          const uploadRecords = records.splice(0, records.length);
+          uploadWhiteboard(room, start_at, uploadRecords);
+
           // set timer to delay close room
           closeRoomTimer[room] = setTimeout(function () {
             delete rooms[room];

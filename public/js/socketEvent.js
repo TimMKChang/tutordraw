@@ -40,8 +40,22 @@ socket.on('load chat msg', function (msgObjsStr) {
   View.chatbox.displayNewMsg(msgObjs);
 });
 
-socket.on('load whiteboard records', function (recordsStr) {
-  const records = JSON.parse(recordsStr);
-  Model.whiteboard.records = records;
+socket.on('load whiteboard records', async function (dataStr) {
+  Model.whiteboard.records = [];
+
+  const { links, records } = JSON.parse(dataStr);
+  const allRecords = [];
+  for (let linkIndex = 0; linkIndex < links.length; linkIndex++) {
+    const { link } = links[linkIndex];
+    await fetch(link)
+      .then(res => res.json())
+      .then(data => {
+        const { records } = data;
+        allRecords.push(...records);
+      })
+      .catch(error => console.error('Error:', error));
+  }
+  allRecords.push(...records);
+  Model.whiteboard.records.unshift(...allRecords);
   View.whiteboard.redraw();
 });

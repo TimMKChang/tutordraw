@@ -12,7 +12,7 @@ const Model = {
     name: getQuery().room,
   },
   whiteboard: {
-    color: 'blue',
+    color: '#000000',
     width: '3',
     drawType: 'line',
     records: [],
@@ -58,6 +58,8 @@ const View = {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     },
     redraw: function () {
+      View.whiteboard.initWhiteboard();
+
       for (let recordsIndex = 0; recordsIndex < Model.whiteboard.records.length; recordsIndex++) {
         const record = Model.whiteboard.records[recordsIndex];
         if (record.type === 'line') {

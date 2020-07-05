@@ -6,11 +6,20 @@ const s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_KEY
 });
 
+const {
+  createWhiteboard,
+} = require('../controllers/whiteboard_controller');
+
 const uploadWhiteboard = async (room, start_at, records) => {
+  if (records.length === 0) {
+    return;
+  }
+
   const lastRecordCreatedAt = records[records.length - 1].created_at;
+  const Key = `whiteboard/${room}/${start_at}/${lastRecordCreatedAt}`;
   const params = {
     Bucket: 'drawnow',
-    Key: `whiteboard/${room}/${start_at}/${lastRecordCreatedAt}`,
+    Key,
     Body: JSON.stringify({ room, start_at, records }),
     ACL: 'public-read',
     ContentType: `application/json`,
@@ -21,7 +30,12 @@ const uploadWhiteboard = async (room, start_at, records) => {
     if (err) {
       console.log(err);
     }
-    console.log('uploaded');
+    const whiteboardObj = {
+      room,
+      start_at,
+      link: `${process.env.AWS_CLOUDFRONT_DOMAIN}/${Key}`,
+    }
+    createWhiteboard(whiteboardObj);
   });
 };
 
