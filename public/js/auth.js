@@ -5,7 +5,11 @@ function checkRoomAndUser(room, user) {
     alert('Please enter the room id');
     location.href = '/';
   } else if (!user) {
-    const name = prompt("Please enter your name", "");
-    location.href = `/room.html?room=${room}&user=${name}`;
+    const user = prompt("Please enter your name");
+    if (!user) {
+      location.href = `/`;
+    } else {
+      location.href = `/room.html?room=${room}&user=${user}`;
+    }
   }
 }
