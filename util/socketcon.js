@@ -3,6 +3,10 @@ const {
   getChatmsg,
 } = require('../server/controllers/chatmsg_controller');
 
+const {
+  uploadWhiteboard,
+} = require('../server/S3/uploadWhiteboard');
+
 // users connection data
 const clientsRoom = {
   // socket_id1: 'room1',
@@ -75,7 +79,7 @@ const socketCon = (io) => {
       } else {
         rooms[room] = {
           users: {},
-          whiteboard: { records: [] },
+          whiteboard: { start_at: Date.now(), records: [] },
           created_at: Date.now(),
         };
         rooms[room]['users'][socket.id] = user;
@@ -125,6 +129,13 @@ const socketCon = (io) => {
               break;
             }
           }
+        }
+
+        // upload to S3
+        if (records.length > 30) {
+          const { start_at } = rooms[room].whiteboard;
+          const uploadRecords = records.splice(0, 30);
+          uploadWhiteboard(room, start_at, uploadRecords);
         }
       }
     });
