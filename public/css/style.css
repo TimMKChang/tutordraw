@@ -217,7 +217,7 @@ footer .copyright {
 
 .room-container .chatbox .room-info-container .room-info .copy-link-btn {
   position: absolute;
-  left: calc(50% + 60px);
+  left: calc(50% + 70px);
   font-size: 2rem;
 }
 
@@ -229,7 +229,7 @@ footer .copyright {
 .room-container .chatbox .room-info-container .room-info .copy-invite-url-msg {
   position: absolute;
   top: 100%;
-  left: calc(50% + 60px + 16px);
+  left: calc(50% + 70px + 16px);
   font-size: 1.2rem;
   width: 180px;
   transform: translateX(-50%);
