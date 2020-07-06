@@ -106,6 +106,24 @@ const View = {
               </div>
             </div>
           `;
+        } else if (type === 'image') {
+          if (sender === Model.user.name) {
+            get('.msg-container').innerHTML += `
+              <div class="msg-self">
+                You：
+                <img src="${msg}" class="image-msg">
+                <span class="time-self">${time}</span>
+              </div>
+            `;
+          } else {
+            get('.msg-container').innerHTML += `
+              <div class="msg-other">
+                ${sender}：
+                <img src="${msg}" class="image-msg">
+                <span class="time-other">${time}</span>
+              </div>
+            `;
+          }
         }
       }
 
@@ -333,7 +351,22 @@ const Controller = {
           const btnHTML = e.target.closest('button');
           if (btnHTML.classList.contains('send-image-btn')) {
             const imageFilename = await Controller.chatbox.uploadImage();
+            const room = Model.room.name;
+            const sender = Model.user.name;
+            const type = 'image';
+            const msg = `${AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`;
+            const time = Controller.chatbox.getTime();
 
+            const msgObj = {
+              room,
+              sender,
+              type,
+              msg,
+              time,
+              created_at: Date.now()
+            }
+            View.chatbox.displayNewMsg([{ sender, type, msg, time }]);
+            socket.emit('new chat msg', JSON.stringify(msgObj));
           }
           get('.chatbox .send-msg .preview-container').classList.add('hide');
           get('.chatbox .send-msg input[name="image"]').value = '';

@@ -326,6 +326,11 @@ footer .copyright {
   bottom: 0px;
 }
 
+.room-container .chatbox .msg-container .image-msg {
+  max-width: 100%;
+  margin-bottom: 10px;
+}
+
 .room-container .chatbox .send-msg {
   height: 15%;
   min-height: 50px;
