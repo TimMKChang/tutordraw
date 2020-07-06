@@ -225,12 +225,13 @@ const Controller = {
       });
 
       // create new
-      get('.edit-container .new').addEventListener('click', (e) => {
+      get('.edit-container .new').addEventListener('click', async (e) => {
         if (Model.whiteboard.records.length === 0) {
           return;
         }
         const isNew = confirm('Sure to create a new whiteboard?');
         if (isNew) {
+          await Controller.whiteboard.uploadWhiteboardImage();
           View.whiteboard.initWhiteboard();
           Model.whiteboard.records = [];
           socket.emit('new whiteboard', JSON.stringify({ room: Model.room.name, user: Model.user.name }));
@@ -244,6 +245,32 @@ const Controller = {
         link.href = canvas.toDataURL();
         link.click();
       })
+    },
+    uploadWhiteboardImage: async function () {
+      const blob = await getCanvasBlob(canvas);
+      const formData = new FormData();
+      formData.append('image', blob, `whiteboard-${getNowTimeString()}.png`);
+      formData.append('room', Model.room.name);
+      const url = HOMEPAGE_URL + '/room/image';
+
+      await fetch(url, {
+        method: 'POST',
+        body: formData,
+      }).then(res => res.json())
+        .then(resObj => {
+          if (resObj.error) {
+            return;
+          }
+        })
+        .catch(error => console.log(error));
+
+      function getCanvasBlob(canvas) {
+        return new Promise(function (resolve, reject) {
+          canvas.toBlob(function (blob) {
+            resolve(blob)
+          })
+        })
+      }
     },
   },
   chatbox: {
