@@ -154,7 +154,7 @@ const socketCon = (io) => {
     });
 
     socket.on('new whiteboard', async function (dataStr) {
-      const { room, user } = JSON.parse(dataStr);
+      const { room, user, imageFilename } = JSON.parse(dataStr);
       socket.to(room).emit('new whiteboard', '');
       // who does new whiteboard message
       const msgObj = {
@@ -165,6 +165,15 @@ const socketCon = (io) => {
       }
       await createChatmsg(msgObj);
       io.to(room).emit('notification msg', JSON.stringify(msgObj));
+      // save whiteboard image message to DB and then send message back
+      const whiteboardmsgObj = {
+        room,
+        type: 'whiteboard',
+        msg: `${process.env.AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`,
+        created_at: Date.now(),
+      }
+      await createChatmsg(whiteboardmsgObj);
+      io.to(room).emit('notification msg', JSON.stringify(whiteboardmsgObj));
       // upload remain records to S3
       if (room in rooms) {
         const { start_at } = rooms[room].whiteboard;

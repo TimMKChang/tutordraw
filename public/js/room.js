@@ -98,6 +98,14 @@ const View = {
               </div>
             </div>
           `;
+        } else if (type === 'whiteboard') {
+          get('.msg-container').innerHTML += `
+            <div class="msg-notification">
+              <div class="msg-notification-container">
+                <img src="${msg}" class="whiteboard-image">
+              </div>
+            </div>
+          `;
         }
       }
 
@@ -231,12 +239,14 @@ const Controller = {
         }
         const isNew = confirm('Sure to create a new whiteboard?');
         if (isNew) {
-          await Controller.whiteboard.uploadWhiteboardImage();
+          const imageFilename = await Controller.whiteboard.uploadWhiteboardImage();
           View.whiteboard.initWhiteboard();
           Model.whiteboard.records = [];
-          socket.emit('new whiteboard', JSON.stringify({ room: Model.room.name, user: Model.user.name }));
+          socket.emit('new whiteboard', JSON.stringify({
+            room: Model.room.name, user: Model.user.name, imageFilename
+          }));
         }
-      })
+      });
 
       // download
       get('.edit-container .download').addEventListener('click', (e) => {
@@ -244,12 +254,13 @@ const Controller = {
         link.download = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`;
         link.href = canvas.toDataURL();
         link.click();
-      })
+      });
     },
     uploadWhiteboardImage: async function () {
       const blob = await getCanvasBlob(canvas);
       const formData = new FormData();
-      formData.append('image', blob, `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`);
+      const imageFilename = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`
+      formData.append('image', blob, imageFilename);
       formData.append('room', Model.room.name);
       const url = HOMEPAGE_URL + '/room/image';
 
@@ -264,12 +275,14 @@ const Controller = {
         })
         .catch(error => console.log(error));
 
+      return imageFilename;
+
       function getCanvasBlob(canvas) {
         return new Promise(function (resolve, reject) {
           canvas.toBlob(function (blob) {
-            resolve(blob)
-          })
-        })
+            resolve(blob);
+          });
+        });
       }
     },
   },

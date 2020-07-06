@@ -286,14 +286,20 @@ footer .copyright {
 }
 
 .room-container .chatbox .msg-container .msg-notification .msg-notification-container {  
-  min-width: 50%;
+  min-width: 60%;
+  max-width: 90%;
   text-align: center;
   margin: 0 auto;
   margin-bottom: 5px;
-  padding: 5px;
+  padding: 5px 10px;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.3);
   color: #FFFFFF;
+}
+
+.room-container .chatbox .msg-container .msg-notification .msg-notification-container .whiteboard-image {
+  max-width: 100%;
+  padding: 10px;
 }
 
 .room-container .chatbox .msg-container .msg-self, .msg-other {
