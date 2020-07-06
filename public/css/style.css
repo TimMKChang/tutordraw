@@ -256,6 +256,10 @@ footer .copyright {
   padding-top: 10px;
 }
 
+.room-container .chatbox .msg-container img:hover {
+  cursor: pointer;
+}
+
 .room-container .chatbox .msg-container .msg-self {
   max-width: 45%;
   margin-left: auto;
@@ -369,7 +373,8 @@ footer .copyright {
 }
 
 .room-container .chatbox .send-msg .preview-container {
-  top: -150px;
+  left: 0;
+  bottom: 10%;
   position: absolute;
   background-color: #ADADAD;
   text-align: center;
@@ -388,6 +393,32 @@ footer .copyright {
 
 .hide {
   display: none;
+  z-index: -9999;
+}
+
+.chatbox-large-image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chatbox-large-image-container img {
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.chatbox-large-image-container .close-btn {
+  position: absolute;
+  top: 5vh;
+  right: 10vw;
+  font-size: 3rem;
+  color: #FFFFFF;
 }
 
 /* RWD for canvas */

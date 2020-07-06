@@ -372,6 +372,20 @@ const Controller = {
           get('.chatbox .send-msg input[name="image"]').value = '';
         }
       });
+      // display large size image for small message image
+      get('.chatbox .msg-container').addEventListener('click', (e) => {
+        if (e.target.tagName === 'IMG') {
+          const src = e.target.src;
+          get('.chatbox-large-image-container img').src = src;
+          get('.chatbox-large-image-container').classList.remove('hide');
+        }
+      });
+      // close large size image
+      get('.chatbox-large-image-container').addEventListener('click', (e) => {
+        if (e.target.tagName !== 'IMG') {
+          get('.chatbox-large-image-container').classList.add('hide');
+        }
+      });
     },
     sendMsg: function () {
       const msg = get('.chatbox .send-msg textarea').value;
