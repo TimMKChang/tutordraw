@@ -97,7 +97,7 @@ const socketCon = (io) => {
         created_at: Date.now(),
       }
       await createChatmsg(joinmsgObj);
-      socket.to(room).emit('user join leave msg', JSON.stringify(joinmsgObj));
+      socket.to(room).emit('notification msg', JSON.stringify(joinmsgObj));
 
       // update user list
       io.to(room).emit('update user list',
@@ -164,7 +164,7 @@ const socketCon = (io) => {
         created_at: Date.now(),
       }
       await createChatmsg(msgObj);
-      io.to(room).emit('user join leave msg', JSON.stringify(msgObj));
+      io.to(room).emit('notification msg', JSON.stringify(msgObj));
       // upload remain records to S3
       if (room in rooms) {
         const { start_at } = rooms[room].whiteboard;
@@ -218,7 +218,7 @@ const socketCon = (io) => {
         created_at: Date.now(),
       }
       await createChatmsg(leavemsgObj);
-      socket.to(room).emit('user join leave msg', JSON.stringify(leavemsgObj));
+      socket.to(room).emit('notification msg', JSON.stringify(leavemsgObj));
 
       // update user list
       io.to(room).emit('update user list', JSON.stringify({ users }));

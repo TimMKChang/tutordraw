@@ -14,7 +14,7 @@ socket.on('connect', () => {
     JSON.stringify({ room: Model.room.name, user: Model.user.name }));
 });
 
-socket.on('user join leave msg', function (dataStr) {
+socket.on('notification msg', function (dataStr) {
   const { type, msg, created_at } = JSON.parse(dataStr);
   View.chatbox.displayNewMsg([{ type, msg, created_at }]);
 });
