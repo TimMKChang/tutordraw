@@ -1,5 +1,6 @@
 require('dotenv').config();
 const aws = require('aws-sdk');
+const fs = require('fs');
 
 const s3 = new aws.S3({
   accessKeyId: process.env.AWS_SECRET_ACCESS,
@@ -39,6 +40,29 @@ const uploadWhiteboard = async (room, start_at, records) => {
   });
 };
 
+const uploadImage = async (room, filePath, imageFilename) => {
+  return new Promise((resolve, reject) => {
+    const extension = imageFilename.split('.')[1];
+    const fileContent = fs.readFileSync(filePath);
+    const params = {
+      Bucket: 'drawnow',
+      Key: `images/${room}/${imageFilename}`,
+      Body: fileContent,
+      ACL: 'public-read',
+      ContentType: `image/${extension}`,
+    };
+
+    // Uploading files to the bucket
+    s3.upload(params, function (err, data) {
+      if (err) {
+        reject(err);
+      }
+      resolve();
+    });
+  });
+};
+
 module.exports = {
   uploadWhiteboard,
+  uploadImage,
 };

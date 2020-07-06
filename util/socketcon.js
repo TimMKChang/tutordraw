@@ -9,7 +9,7 @@ const {
 
 const {
   uploadWhiteboard,
-} = require('../server/S3/uploadWhiteboard');
+} = require('../server/S3/uploadImage');
 
 // users connection data
 const clientsRoom = {
