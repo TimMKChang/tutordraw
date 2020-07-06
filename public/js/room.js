@@ -19,6 +19,7 @@ const Model = {
   },
   chatbox: {
     lastOldestCreated_at: 0,
+    scrollLock: false,
   },
 };
 
@@ -73,6 +74,10 @@ const View = {
   },
   chatbox: {
     displayNewMsg: function (msgObjs, isLoad) {
+      if (isLoad && msgObjs.length === 0) {
+        Model.chatbox.scrollLock = true;
+        return;
+      }
       for (let msgObjIndex = 0; msgObjIndex < msgObjs.length; msgObjIndex++) {
         const { sender, type, msg, time, created_at } = msgObjs[msgObjIndex];
         let htmlContent = '';
@@ -144,6 +149,7 @@ const View = {
       // mark oldest created_at
       if (isLoad) {
         Model.chatbox.lastOldestCreated_at = msgObjs[msgObjs.length - 1].created_at;
+        Model.chatbox.scrollLock = false;
       }
     },
     scrollToBottom: function () {
@@ -405,7 +411,9 @@ const Controller = {
       });
       // load history chat message when scroll
       get('.msg-container').onscroll = () => {
-        if (get('.msg-container').scrollTop <= 300) {
+        if (get('.msg-container').scrollTop <= 300 && !Model.chatbox.scrollLock) {
+          // lock
+          Model.chatbox.scrollLock = true;
           const lastOldestCreated_at = Model.chatbox.lastOldestCreated_at;
           socket.emit('load chat msg', JSON.stringify({
             room: Model.room.name, lastOldestCreated_at
