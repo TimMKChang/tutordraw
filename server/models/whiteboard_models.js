@@ -18,7 +18,7 @@ const getWhiteboard = async (requirement) => {
 
   if (requirement.room && requirement.start_at) {
     condition.query = 'SELECT link FROM whiteboard ';
-    condition.sql = 'WHERE room = ? AND start_at = ?';
+    condition.sql = 'WHERE room = ? AND start_at = ? ORDER BY id ASC';
     condition.binding = [requirement.room, requirement.start_at];
   } else {
     return { error: 'requirement is necessary' };

@@ -18,7 +18,7 @@ const getChatmsg = async (requirement) => {
 
   if (requirement.room) {
     condition.query = 'SELECT sender, type, msg, time, created_at FROM chatmsg ';
-    condition.sql = 'WHERE room = ?';
+    condition.sql = 'WHERE room = ? ORDER BY created_at ASC';
     condition.binding = [requirement.room];
   } else {
     return { error: 'requirement is necessary' };
