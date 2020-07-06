@@ -332,6 +332,7 @@ footer .copyright {
   display: flex;
   justify-content: start;
   align-items: center;
+  position: relative;
 }
 
 .room-container .chatbox .send-msg textarea {
@@ -347,8 +348,41 @@ footer .copyright {
   outline: none;
 }
 
-.room-container .chatbox .send-msg .send-btn i {
+.room-container .chatbox .send-msg button {
+  margin: 0 5px;
+  padding: 5px !important;
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.room-container .chatbox .send-msg button i {
   font-size: 1.5rem;
+}
+
+.room-container .chatbox .send-msg input[name="image"] {
+  display: none;
+}
+
+.room-container .chatbox .send-msg .preview-container {
+  top: -150px;
+  position: absolute;
+  background-color: #ADADAD;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.room-container .chatbox .send-msg .preview-container img {
+  max-width: 200px;
+  max-height: 200px;
+  margin: 10px;
+}
+
+.room-container .chatbox .send-msg .preview-container .option-container {
+  margin: 0px auto 10px;
+}
+
+.hide {
+  display: none;
 }
 
 /* RWD for canvas */

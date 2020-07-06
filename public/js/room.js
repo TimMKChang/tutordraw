@@ -259,7 +259,7 @@ const Controller = {
     uploadWhiteboardImage: async function () {
       const blob = await getCanvasBlob(canvas);
       const formData = new FormData();
-      const imageFilename = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`
+      const imageFilename = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`;
       formData.append('image', blob, imageFilename);
       formData.append('room', Model.room.name);
       const url = HOMEPAGE_URL + '/room/image';
@@ -315,6 +315,30 @@ const Controller = {
           }, 2000);
         }
       });
+      // add image
+      get('.chatbox .send-msg').addEventListener('click', (e) => {
+        if (e.target.closest('.add-image-btn')) {
+          get('.chatbox .send-msg input[name="image"]').click();
+        }
+      });
+      // preview upload image
+      get('.chatbox .send-msg input[name="image"]').addEventListener('change', (e) => {
+        const image = URL.createObjectURL(get('.chatbox .send-msg input[name="image"]').files[0]);
+        get('.chatbox .send-msg img.preview').src = image;
+        get('.chatbox .send-msg .preview-container').classList.remove('hide');
+      });
+      // send or cancel image
+      get('.chatbox .send-msg .option-container').addEventListener('click', async (e) => {
+        if (e.target.tagName === 'I' || e.target.tagName === 'BUTTON') {
+          const btnHTML = e.target.closest('button');
+          if (btnHTML.classList.contains('send-image-btn')) {
+            const imageFilename = await Controller.chatbox.uploadImage();
+
+          }
+          get('.chatbox .send-msg .preview-container').classList.add('hide');
+          get('.chatbox .send-msg input[name="image"]').value = '';
+        }
+      });
     },
     sendMsg: function () {
       const msg = get('.chatbox .send-msg textarea').value;
@@ -342,6 +366,27 @@ const Controller = {
       const hour12 = hour24 > 12 ? `下午 ${('0' + hour24 % 12).substr(-2)}` : `上午 ${('0' + hour24).substr(-2)}`;
       const minute = ('0' + nowTime.getMinutes()).substr(-2);
       return `${hour12}:${minute}`;
+    },
+    uploadImage: async function () {
+      const formData = new FormData();
+      const file = get('.chatbox .send-msg input[name="image"]').files[0];
+      const filename = `image-${getNowTimeString()}-${getRandomString(8)}.${file.name.split('.').pop()}`;
+      formData.append('image', file, filename);
+      formData.append('room', Model.room.name);
+      const url = HOMEPAGE_URL + '/room/image';
+
+      await fetch(url, {
+        method: 'POST',
+        body: formData,
+      }).then(res => res.json())
+        .then(resObj => {
+          if (resObj.error) {
+            return;
+          }
+        })
+        .catch(error => console.log(error));
+
+      return filename;
     },
   },
 };
