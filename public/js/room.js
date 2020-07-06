@@ -241,7 +241,7 @@ const Controller = {
       // download
       get('.edit-container .download').addEventListener('click', (e) => {
         const link = document.createElement('a');
-        link.download = `whiteboard-${getNowTimeString()}.png`;
+        link.download = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`;
         link.href = canvas.toDataURL();
         link.click();
       })
@@ -249,7 +249,7 @@ const Controller = {
     uploadWhiteboardImage: async function () {
       const blob = await getCanvasBlob(canvas);
       const formData = new FormData();
-      formData.append('image', blob, `whiteboard-${getNowTimeString()}.png`);
+      formData.append('image', blob, `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`);
       formData.append('room', Model.room.name);
       const url = HOMEPAGE_URL + '/room/image';
 

@@ -52,3 +52,12 @@ function getNowTimeString() {
   const nowTimeString = '' + now.getFullYear() + ('0' + (now.getMonth() + 1)).substr(-2) + ('0' + now.getDate()).substr(-2) + ('0' + now.getHours()).substr(-2) + ('0' + now.getMinutes()).substr(-2) + ('0' + now.getSeconds()).substr(-2);
   return nowTimeString;
 }
+
+function getRandomString(total) {
+  let prefixStr = '';
+  for (let count = 0; count < total; count++) {
+    prefixStr += '0';
+  }
+  const randomString = (prefixStr + Math.random().toString(36).slice(2, -1)).substr(-total);
+  return randomString;
+}
