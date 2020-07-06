@@ -42,7 +42,8 @@ socket.on('new chat msg', function (msgStr) {
 
 socket.on('load chat msg', function (msgObjsStr) {
   const msgObjs = JSON.parse(msgObjsStr);
-  View.chatbox.displayNewMsg(msgObjs);
+  const isLoad = true;
+  View.chatbox.displayNewMsg(msgObjs, isLoad);
 });
 
 socket.on('load whiteboard records', async function (dataStr) {

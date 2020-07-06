@@ -17,6 +17,9 @@ const Model = {
     drawType: 'line',
     records: [],
   },
+  chatbox: {
+    lastOldestCreated_at: 0,
+  },
 };
 
 const View = {
@@ -69,20 +72,21 @@ const View = {
     },
   },
   chatbox: {
-    displayNewMsg: function (msgObjs) {
+    displayNewMsg: function (msgObjs, isLoad) {
       for (let msgObjIndex = 0; msgObjIndex < msgObjs.length; msgObjIndex++) {
         const { sender, type, msg, time, created_at } = msgObjs[msgObjIndex];
+        let htmlContent = '';
         // type text
         if (type === 'text') {
           if (sender === Model.user.name) {
-            get('.msg-container').innerHTML += `
+            htmlContent += `
               <div class="msg-self">
                 You： ${msg}
                 <span class="time-self">${time}</span>
               </div>
             `;
           } else {
-            get('.msg-container').innerHTML += `
+            htmlContent += `
               <div class="msg-other">
                 ${sender}： ${msg}
                 <span class="time-other">${time}</span>
@@ -90,7 +94,7 @@ const View = {
             `;
           }
         } else if (type === 'notification') {
-          get('.msg-container').innerHTML += `
+          htmlContent += `
             <div class="msg-notification">
               <div class="msg-notification-container">
                 <div>${Controller.chatbox.getTime(created_at)}</div>
@@ -99,7 +103,7 @@ const View = {
             </div>
           `;
         } else if (type === 'whiteboard') {
-          get('.msg-container').innerHTML += `
+          htmlContent += `
             <div class="msg-notification">
               <div class="msg-notification-container">
                 <img src="${msg}" class="whiteboard-image">
@@ -108,7 +112,7 @@ const View = {
           `;
         } else if (type === 'image') {
           if (sender === Model.user.name) {
-            get('.msg-container').innerHTML += `
+            htmlContent += `
               <div class="msg-self">
                 You：
                 <img src="${msg}" class="image-msg">
@@ -116,7 +120,7 @@ const View = {
               </div>
             `;
           } else {
-            get('.msg-container').innerHTML += `
+            htmlContent += `
               <div class="msg-other">
                 ${sender}：
                 <img src="${msg}" class="image-msg">
@@ -125,9 +129,22 @@ const View = {
             `;
           }
         }
+        // load message or not
+        if (isLoad) {
+          get('.msg-container').insertAdjacentHTML('afterbegin', htmlContent);
+        } else {
+          get('.msg-container').insertAdjacentHTML('beforeend', htmlContent);
+        }
       }
 
-      View.chatbox.scrollToBottom();
+      //  first time load message and not load message
+      if (!isLoad || Model.chatbox.lastOldestCreated_at === 0) {
+        View.chatbox.scrollToBottom();
+      }
+      // mark oldest created_at
+      if (isLoad) {
+        Model.chatbox.lastOldestCreated_at = msgObjs[msgObjs.length - 1].created_at;
+      }
     },
     scrollToBottom: function () {
       const msgContainerHTML = get('.msg-container');
@@ -386,6 +403,15 @@ const Controller = {
           get('.chatbox-large-image-container').classList.add('hide');
         }
       });
+      // load history chat message when scroll
+      get('.msg-container').onscroll = () => {
+        if (get('.msg-container').scrollTop <= 300) {
+          const lastOldestCreated_at = Model.chatbox.lastOldestCreated_at;
+          socket.emit('load chat msg', JSON.stringify({
+            room: Model.room.name, lastOldestCreated_at
+          }));
+        }
+      };
     },
     sendMsg: function () {
       const msg = get('.chatbox .send-msg textarea').value;

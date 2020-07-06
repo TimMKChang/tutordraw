@@ -125,6 +125,17 @@ const socketCon = (io) => {
       }
     });
 
+    socket.on('load chat msg', async function (dataStr) {
+      const { room, lastOldestCreated_at } = JSON.parse(dataStr);
+      // load message
+      const { error, chatmsgs } = await getChatmsg({ room, lastOldestCreated_at });
+      if (error) {
+        console.log(error);
+      } else {
+        socket.emit('load chat msg', JSON.stringify(chatmsgs));
+      }
+    });
+
     socket.on('new draw', function (drawStr) {
       const { room, record } = JSON.parse(drawStr);
       socket.to(room).emit('new draw', JSON.stringify(record));

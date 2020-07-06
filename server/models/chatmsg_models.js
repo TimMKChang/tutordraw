@@ -15,12 +15,12 @@ const createChatmsg = async (chatmsg) => {
 
 const getChatmsg = async (requirement) => {
   const condition = { query: '', sql: '', binding: [] };
-  const paging = requirement.paging || 0;
-  const limit = (paging + 1) * 20
+  const lastOldestCreated_at = requirement.lastOldestCreated_at || Date.now();
+  const limit = 20;
   if (requirement.room) {
-    condition.query = 'SELECT sender, type, msg, time, created_at FROM (SELECT * FROM chatmsg WHERE room = ? ORDER BY created_at DESC LIMIT ?) AS sub ';
-    condition.sql = 'ORDER BY created_at ASC';
-    condition.binding = [requirement.room, limit];
+    condition.query = 'SELECT sender, type, msg, time, created_at FROM chatmsg ';
+    condition.sql = 'WHERE room = ? AND created_at < ? ORDER BY created_at DESC LIMIT ?';
+    condition.binding = [requirement.room, lastOldestCreated_at, limit];
   } else {
     return { error: 'requirement is necessary' };
   }
