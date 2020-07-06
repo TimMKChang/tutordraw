@@ -153,6 +153,29 @@ const socketCon = (io) => {
       }
     });
 
+    socket.on('new whiteboard', async function (dataStr) {
+      const { room, user } = JSON.parse(dataStr);
+      socket.to(room).emit('new whiteboard', '');
+      // who does new whiteboard message
+      const msgObj = {
+        room,
+        type: 'notification',
+        msg: `${user} 重新開了一張畫布`,
+        created_at: Date.now(),
+      }
+      await createChatmsg(msgObj);
+      io.to(room).emit('user join leave msg', JSON.stringify(msgObj));
+      // upload remain records to S3
+      if (room in rooms) {
+        const { start_at } = rooms[room].whiteboard;
+        const { records } = rooms[room].whiteboard;
+        const uploadRecords = records.splice(0, records.length);
+        uploadWhiteboard(room, start_at, uploadRecords);
+        // create new whiteboard
+        rooms[room].whiteboard = { start_at: Date.now(), records: [] };
+      }
+    });
+
     socket.on('new chat msg', async function (msgStr) {
       const msgObj = JSON.parse(msgStr);
       await createChatmsg(msgObj);

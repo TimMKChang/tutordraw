@@ -30,6 +30,11 @@ socket.on('new draw', function (recordStr) {
   View.whiteboard.line.draw(record);
 });
 
+socket.on('new whiteboard', function () {
+  View.whiteboard.initWhiteboard();
+  Model.whiteboard.records = [];
+});
+
 socket.on('new chat msg', function (msgStr) {
   const { sender, type, msg, time } = JSON.parse(msgStr);
   View.chatbox.displayNewMsg([{ sender, type, msg, time }]);

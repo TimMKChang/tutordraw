@@ -226,10 +226,14 @@ const Controller = {
 
       // create new
       get('.edit-container .new').addEventListener('click', (e) => {
+        if (Model.whiteboard.records.length === 0) {
+          return;
+        }
         const isNew = confirm('Sure to create a new whiteboard?');
         if (isNew) {
           View.whiteboard.initWhiteboard();
           Model.whiteboard.records = [];
+          socket.emit('new whiteboard', JSON.stringify({ room: Model.room.name, user: Model.user.name }));
         }
       })
 
