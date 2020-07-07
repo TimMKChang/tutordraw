@@ -42,7 +42,7 @@ function getQuery() {
     const value = cur.split('=')[1];
     acc[key] = value;
     return acc;
-  }, {})
+  }, {});
 
   return query;
 }

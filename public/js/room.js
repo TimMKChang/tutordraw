@@ -499,7 +499,7 @@ const Controller = {
               msg,
               time,
               created_at: Date.now()
-            }
+            };
             View.chatbox.displayNewMsg([{ sender, type, msg, time }]);
             socket.emit('new chat msg', JSON.stringify(msgObj));
           }
@@ -548,7 +548,7 @@ const Controller = {
         msg,
         time,
         created_at: Date.now()
-      }
+      };
       View.chatbox.displayNewMsg([{ sender, type, msg, time }]);
       socket.emit('new chat msg', JSON.stringify(msgObj));
       get('.chatbox .send-msg textarea').value = '';

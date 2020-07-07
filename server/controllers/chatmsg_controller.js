@@ -9,7 +9,7 @@ const createChatmsg = async (chatmsgObj) => {
     msg,
     time,
     created_at,
-  }
+  };
   const { error, message } = await chatmsgModel.createChatmsg(chatmsg);
   if (error) {
     console.log(error);

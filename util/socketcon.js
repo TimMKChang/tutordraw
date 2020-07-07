@@ -49,7 +49,7 @@ const socketCon = (io) => {
       err.data = { type: 'authentication_error', message: 'authentication error' };
       next(err);
     }
-  })
+  });
 
   io.on('connection', (socket) => {
 
@@ -95,7 +95,7 @@ const socketCon = (io) => {
         type: 'notification',
         msg: `歡迎 ${user} 加入聊天室`,
         created_at: Date.now(),
-      }
+      };
       await createChatmsg(joinmsgObj);
       socket.to(room).emit('notification msg', JSON.stringify(joinmsgObj));
 
@@ -173,7 +173,7 @@ const socketCon = (io) => {
         type: 'notification',
         msg: `${user} 重新開了一張畫布`,
         created_at: Date.now(),
-      }
+      };
       await createChatmsg(msgObj);
       io.to(room).emit('notification msg', JSON.stringify(msgObj));
       // save whiteboard image message to DB and then send message back
@@ -182,7 +182,7 @@ const socketCon = (io) => {
         type: 'whiteboard',
         msg: `${process.env.AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`,
         created_at: Date.now(),
-      }
+      };
       await createChatmsg(whiteboardmsgObj);
       io.to(room).emit('notification msg', JSON.stringify(whiteboardmsgObj));
       // upload remain records to S3
@@ -236,7 +236,7 @@ const socketCon = (io) => {
         type: 'notification',
         msg: `${user} 已離開聊天室`,
         created_at: Date.now(),
-      }
+      };
       await createChatmsg(leavemsgObj);
       socket.to(room).emit('notification msg', JSON.stringify(leavemsgObj));
 
@@ -245,8 +245,8 @@ const socketCon = (io) => {
     });
 
   });
-}
+};
 
 module.exports = {
   socketCon
-}
+};

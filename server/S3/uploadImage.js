@@ -35,7 +35,7 @@ const uploadWhiteboard = async (room, start_at, records) => {
       room,
       start_at,
       link: `${process.env.AWS_CLOUDFRONT_DOMAIN}/${Key}`,
-    }
+    };
     createWhiteboard(whiteboardObj);
   });
 };
