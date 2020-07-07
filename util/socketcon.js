@@ -247,6 +247,14 @@ const socketCon = (io) => {
   });
 };
 
+function errorHandling(io, data) {
+  io.use(function (socket, next) {
+    const err = new Error();
+    err.data = data;
+    next(err);
+  });
+}
+
 module.exports = {
   socketCon
 };
