@@ -27,7 +27,11 @@ socket.on('update user list', function (dataStr) {
 socket.on('new draw', function (recordStr) {
   const record = JSON.parse(recordStr);
   Model.whiteboard.records.push(record);
-  View.whiteboard.line.draw(record);
+  if (record.type === 'line') {
+    View.whiteboard.line.draw(record);
+  } else if (record.type === 'image') {
+    View.whiteboard.image.draw(record);
+  }
 });
 
 socket.on('new whiteboard', function () {

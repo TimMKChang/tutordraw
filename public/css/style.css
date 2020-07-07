@@ -87,6 +87,7 @@ footer .copyright {
   width: 70%;
   background-color: #bbbbbb;
   overflow: auto;
+  position: relative;
 }
 
 .whiteboard .tool-box {
@@ -131,12 +132,32 @@ footer .copyright {
 .whiteboard .edit-container i {
   font-size: 2rem;
   border-radius: 50%;
-  border: 3px solid	#E0E0E0	;
+  border: 5px solid	#E0E0E0	;
 }
 
 .whiteboard .edit-container i:hover {
   cursor: pointer;
-  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.8);
+}
+
+.whiteboard .image-whiteboard-preview-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1200px;
+  height: 800px;
+}
+
+.whiteboard .image-whiteboard-preview-container img {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border: 3px dashed #000000;
+  max-width: 800px;
+  max-height: 600px;
+}
+
+.whiteboard .image-whiteboard-preview-container img:hover {
+  cursor: move;
 }
 
 .room-container .chatbox {

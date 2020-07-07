@@ -16,6 +16,11 @@ const Model = {
     width: '3',
     drawType: 'line',
     records: [],
+    image: {
+      imageReferencePosition: [0, 0],
+      imagePosition: [300, 50],
+      imageMovable: false,
+    },
   },
   chatbox: {
     lastOldestCreated_at: 0,
@@ -57,17 +62,32 @@ const View = {
         }
       }
     },
+    image: {
+      draw: function (record) {
+        return new Promise(function (resolve, reject) {
+          const { x, y, width, height, link } = record;
+          const img = new Image();
+          img.onload = function () {
+            ctx.drawImage(img, x, y, width, height);
+            resolve();
+          };
+          img.src = link;
+        });
+      }
+    },
     initWhiteboard: function () {
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     },
-    redraw: function () {
+    redraw: async function () {
       View.whiteboard.initWhiteboard();
 
       for (let recordsIndex = 0; recordsIndex < Model.whiteboard.records.length; recordsIndex++) {
         const record = Model.whiteboard.records[recordsIndex];
         if (record.type === 'line') {
           View.whiteboard.line.draw(record);
+        } else if (record.type === 'image') {
+          await View.whiteboard.image.draw(record);
         }
       }
     },
@@ -296,6 +316,77 @@ const Controller = {
         link.href = canvas.toDataURL();
         link.click();
       });
+
+      // add image on whiteboard
+      get('.edit-container .add-image').addEventListener('click', (e) => {
+        get('.edit-container input[name="image-whiteboard"]').click();
+      });
+      // preview upload image on whiteboard
+      get('.edit-container input[name="image-whiteboard"]').addEventListener('change', (e) => {
+        const image = URL.createObjectURL(get('.edit-container input[name="image-whiteboard"]').files[0]);
+        get('.image-whiteboard-preview-container img.preview').src = image;
+        get('.image-whiteboard-preview-container').classList.remove('hide');
+        const [left, top] = Model.whiteboard.image.imagePosition;
+        get('.image-whiteboard-preview-container img.preview').style.left = `${left}px`;
+        get('.image-whiteboard-preview-container img.preview').style.top = `${top}px`;
+      });
+      // move image
+      get('.image-whiteboard-preview-container img.preview').addEventListener('dragstart', (e) => {
+        e.preventDefault();
+      });
+      get('.image-whiteboard-preview-container img.preview').addEventListener('mousedown', (e) => {
+        Model.whiteboard.image.imageReferencePosition = [e.clientX, e.clientY];
+        Model.whiteboard.image.imageMovable = true;
+      });
+      get('.image-whiteboard-preview-container img.preview').addEventListener('mouseup', (e) => {
+        const left = +get('.image-whiteboard-preview-container img.preview').style.left.replace('px', '');
+        const top = +get('.image-whiteboard-preview-container img.preview').style.top.replace('px', '');
+        Model.whiteboard.image.imagePosition = [left, top];
+        Model.whiteboard.image.imageMovable = false;
+      });
+      get('.image-whiteboard-preview-container img.preview').addEventListener('mouseout', (e) => {
+        const left = +get('.image-whiteboard-preview-container img.preview').style.left.replace('px', '');
+        const top = +get('.image-whiteboard-preview-container img.preview').style.top.replace('px', '');
+        Model.whiteboard.image.imagePosition = [left, top];
+        Model.whiteboard.image.imageMovable = false;
+      });
+      get('.image-whiteboard-preview-container img.preview').addEventListener('mousemove', (e) => {
+        if (!Model.whiteboard.image.imageMovable) {
+          return;
+        }
+        const dx = Model.whiteboard.image.imagePosition[0] + e.clientX - Model.whiteboard.image.imageReferencePosition[0];
+        const dy = Model.whiteboard.image.imagePosition[1] + e.clientY - Model.whiteboard.image.imageReferencePosition[1];
+        get('.image-whiteboard-preview-container img.preview').style.left = `${dx}px`;
+        get('.image-whiteboard-preview-container img.preview').style.top = `${dy}px`;
+      });
+      // draw image on whiteboard
+      get('.image-whiteboard-preview-container').addEventListener('mousedown', async (e) => {
+        if (e.target.tagName !== 'IMG') {
+          const room = Model.room.name;
+          const { width, height } = get('.image-whiteboard-preview-container img.preview').getBoundingClientRect();
+          const [x, y] = Model.whiteboard.image.imagePosition;
+          // let the user who upload the image no need to wait for the uploading delay
+          await View.whiteboard.image.draw({ x, y, width, height, link: URL.createObjectURL(get('.edit-container input[name="image-whiteboard"]').files[0]) });
+          get('.image-whiteboard-preview-container').classList.add('hide');
+          Model.whiteboard.image.imagePosition = [300, 50];
+          // upload and send new draw
+          const imageFilename = await Controller.whiteboard.uploadImage();
+          const link = `${AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`;
+          const record = {
+            author: Model.user.name,
+            type: 'image',
+            created_at: Date.now(),
+            x,
+            y,
+            width,
+            height,
+            link,
+          };
+          socket.emit('new draw', JSON.stringify({ room, record }));
+          // clear input value
+          get('.edit-container input[name="image-whiteboard"]').value = '';
+        }
+      });
     },
     uploadWhiteboardImage: async function () {
       const blob = await getCanvasBlob(canvas);
@@ -325,6 +416,27 @@ const Controller = {
           });
         });
       }
+    },
+    uploadImage: async function () {
+      const formData = new FormData();
+      const file = get('.edit-container input[name="image-whiteboard"]').files[0];
+      const filename = `image-${getNowTimeString()}-${getRandomString(8)}.${file.name.split('.').pop()}`;
+      formData.append('image', file, filename);
+      formData.append('room', Model.room.name);
+      const url = HOMEPAGE_URL + '/room/image';
+
+      await fetch(url, {
+        method: 'POST',
+        body: formData,
+      }).then(res => res.json())
+        .then(resObj => {
+          if (resObj.error) {
+            return;
+          }
+        })
+        .catch(error => console.log(error));
+
+      return filename;
     },
   },
   chatbox: {
