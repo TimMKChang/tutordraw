@@ -1,6 +1,14 @@
 const { query, transaction, commit, rollback } = require('../../util/mysqlcon');
 
 const createRoomUser = async (roomUser) => {
+  const { room, user_id } = roomUser;
+  // check roomUser exist
+  const roomUsers = await query('SELECT id FROM roomUser WHERE room = ? AND user_id = ?', [room, user_id]);
+  if (roomUsers.length > 0) {
+    // roomUser exist, but it is not an error
+    return { message: 'roomUser Already Exists' };
+  }
+
   try {
     await transaction();
     await query('INSERT INTO roomUser SET ?', roomUser);

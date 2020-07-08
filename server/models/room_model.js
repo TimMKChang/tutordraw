@@ -13,6 +13,20 @@ const createRoom = async (room) => {
   }
 };
 
+const verifyPassword = async (room_id, password) => {
+  const rooms = await query('SELECT id, password FROM room WHERE id = ?', [room_id]);
+  const room = rooms[0];
+  if (!room) {
+    return { error: 'room does not exist' };
+  }
+  if (room.password !== password) {
+    return { error: 'Incorrect password. Please contact the owner of the room to get the password' };
+  }
+
+  return { message: 'room password verified' };
+};
+
 module.exports = {
   createRoom,
+  verifyPassword,
 };
