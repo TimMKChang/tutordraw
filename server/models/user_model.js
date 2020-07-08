@@ -15,7 +15,7 @@ const signUp = async (name, email, password) => {
     // hash password
     const hashedPassword = hashPassword(password);
 
-    await query('INSERT INTO user SET ?', {
+    const result = await query('INSERT INTO user SET ?', {
       name,
       email,
       password: hashedPassword,
@@ -23,8 +23,9 @@ const signUp = async (name, email, password) => {
     });
     await commit();
 
+    const id = result.insertId;
     // accessToken
-    const access_JWT = createJWT({ name, email });
+    const access_JWT = createJWT({ id, name, email });
     return { access_JWT };
 
   } catch (error) {
@@ -34,7 +35,7 @@ const signUp = async (name, email, password) => {
 };
 
 const signIn = async (email, password) => {
-  const users = await query('SELECT name, email, password FROM user WHERE email = ?', email);
+  const users = await query('SELECT id, name, email, password FROM user WHERE email = ?', email);
   const user = users[0];
   if (!user) {
     return { error: 'Email Does Not Exist' };
@@ -46,7 +47,7 @@ const signIn = async (email, password) => {
   }
 
   // accessToken
-  const access_JWT = createJWT({ name: user.name, email });
+  const access_JWT = createJWT({ id: user.id, name: user.name, email });
   return { access_JWT };
 };
 
