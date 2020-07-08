@@ -6,8 +6,12 @@ const multerUpload = upload.fields([
 ]);
 
 const {
+  createRoom,
   uploadImage,
 } = require('../controllers/room_controller');
+
+router.route('/room/')
+  .post(wrapAsync(createRoom));
 
 router.route('/room/image')
   .post(multerUpload, wrapAsync(uploadImage));

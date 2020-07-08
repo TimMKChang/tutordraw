@@ -1,5 +1,37 @@
 const fs = require('fs');
+const Room = require('../models/room_model');
 const uploadImageS3 = require('../S3/uploadImage').uploadImage;
+const { verifyJWT } = require('../../util/util');
+
+const createRoom = async (req, res) => {
+  const { password } = req.body;
+  if (!password) {
+    return res.status(400).json({ error: 'Password is required.' });
+  }
+
+  const authHeader = req.headers.authorization;
+  const JWT = authHeader.replace(/Bearer /, '');
+  const verifyJWTResult = verifyJWT(JWT);
+  if (verifyJWTResult.error) {
+    return res.status(403).json({ error: verifyJWTResult.error });
+  }
+
+  // room id
+  const id = Date.now().toString(36) + Math.random().toString(36).split('.')[1].substr(-8);
+
+  const room = {
+    id,
+    password,
+    whiteboard_start_at: Date.now(),
+  };
+
+  const createRoomResult = await Room.createRoom(room);
+  if (createRoomResult.error) {
+    return res.status(403).json({ error: createRoomResult.error });
+  }
+
+  return res.status(200).json({ room_id: id });
+};
 
 const uploadImage = async (req, res) => {
   const { room } = req.body;
@@ -17,5 +49,6 @@ const uploadImage = async (req, res) => {
 };
 
 module.exports = {
+  createRoom,
   uploadImage,
 };
