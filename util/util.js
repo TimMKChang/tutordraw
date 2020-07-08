@@ -1,4 +1,6 @@
+require('dotenv').config();
 const multer = require('multer');
+const crypto = require('crypto');
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -26,7 +28,30 @@ const wrapAsync = (fn) => {
   };
 };
 
+const verifyJWT = (JWT) => {
+  // check JWT style
+  if (!JWT.toString().match(/.+\..+\..+/)) {
+    return { error: 'Wrong Token Style' };
+  }
+
+  const [header, payload, signature] = JWT.split('.');
+
+  // check signature
+  if (signature !== crypto.createHmac('sha256', process.env.JWT_SECRET).update(`${header}.${payload}`).digest('base64')) {
+    return { error: 'Wrong Token Signature' };
+  }
+
+  // check exp
+  const data = JSON.parse(Buffer.from(payload, 'base64').toString());
+  if (Date.now() > data.exp) {
+    return { error: 'Token Expired' };
+  }
+
+  return data;
+};
+
 module.exports = {
   upload,
-  wrapAsync
+  wrapAsync,
+  verifyJWT
 };
