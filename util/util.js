@@ -47,7 +47,7 @@ const verifyJWT = (JWT) => {
     return { error: 'Token Expired' };
   }
 
-  return data;
+  return { data };
 };
 
 module.exports = {
