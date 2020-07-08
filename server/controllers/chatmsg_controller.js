@@ -1,4 +1,4 @@
-const chatmsgModel = require('../models/chatmsg_models');
+const Chatmsg = require('../models/chatmsg_model');
 
 const createChatmsg = async (chatmsgObj) => {
   const { room, sender, type, msg, time, created_at } = chatmsgObj;
@@ -10,14 +10,14 @@ const createChatmsg = async (chatmsgObj) => {
     time,
     created_at,
   };
-  const { error, message } = await chatmsgModel.createChatmsg(chatmsg);
+  const { error, message } = await Chatmsg.createChatmsg(chatmsg);
   if (error) {
     console.log(error);
   }
 };
 
 const getChatmsg = async (requirement) => {
-  return await chatmsgModel.getChatmsg(requirement);
+  return await Chatmsg.getChatmsg(requirement);
 };
 
 module.exports = {

@@ -1,14 +1,14 @@
-const whiteboardModel = require('../models/whiteboard_models');
+const Whiteboard = require('../models/whiteboard_model');
 
 const createWhiteboard = async (whiteboard) => {
-  const { error, message } = await whiteboardModel.createWhiteboard(whiteboard);
+  const { error, message } = await Whiteboard.createWhiteboard(whiteboard);
   if (error) {
     console.log(error);
   }
 };
 
 const getWhiteboard = async (requirement) => {
-  return await whiteboardModel.getWhiteboard(requirement);
+  return await Whiteboard.getWhiteboard(requirement);
 };
 
 module.exports = {
