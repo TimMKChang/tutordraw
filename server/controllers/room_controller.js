@@ -1,5 +1,6 @@
 const fs = require('fs');
 const Room = require('../models/room_model');
+const RoomUser = require('../models/roomUser_model');
 const uploadImageS3 = require('../S3/uploadImage').uploadImage;
 const { verifyJWT } = require('../../util/util');
 
@@ -18,7 +19,6 @@ const createRoom = async (req, res) => {
 
   // room id
   const id = Date.now().toString(36) + Math.random().toString(36).split('.')[1].substr(-8);
-
   const room = {
     id,
     password,
@@ -28,6 +28,15 @@ const createRoom = async (req, res) => {
   const createRoomResult = await Room.createRoom(room);
   if (createRoomResult.error) {
     return res.status(403).json({ error: createRoomResult.error });
+  }
+
+  const createRoomUserResult = await RoomUser.createRoomUser({
+    room: id,
+    user_id: verifyJWTResult.data.id,
+    isOwner: true,
+  });
+  if (createRoomUserResult.error) {
+    return res.status(403).json({ error: createRoomUserResult.error });
   }
 
   return res.status(200).json({ room_id: id });
