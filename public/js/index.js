@@ -1,10 +1,29 @@
 function createRoom() {
-  const user = get('.create-form input[name="user"]').value;
-  if (user.replace(/\s/g, '') === '') {
-    return alert('Please enter your name!');
+  const password = get('.create-form input[name="roomPassword"]').value;
+  if (!password) {
+    return alert('Please enter room password');
   }
-  const room = Date.now().toString(36) + Math.random().toString(36).substr(-4);
-  location.href = `/room.html?room=${room}&user=${user}`;
+
+  // create room
+  const url = HOMEPAGE_URL + '/room';
+
+  fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({ password }),
+    headers: {
+      'content-type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('access_JWT')}`,
+    },
+  }).then(res => res.json())
+    .then(resObj => {
+      const { error, room_id } = resObj;
+      if (error) {
+        alert(error);
+        return;
+      }
+      location.href = `/room.html?room=${room_id}`;
+    })
+    .catch(error => console.log(error));
 }
 
 function joinRoom() {
