@@ -103,7 +103,7 @@ function signup() {
         return;
       }
       localStorage.setItem('access_JWT', access_JWT);
-      localStorage.setItem('user', user);
+      localStorage.setItem('user', window.atob(access_JWT.split('.')[1]));
       alert('sign up successfully');
     })
     .catch(error => console.log(error));
@@ -132,7 +132,7 @@ function signin() {
         return;
       }
       localStorage.setItem('access_JWT', access_JWT);
-      localStorage.setItem('user', user);
+      localStorage.setItem('user', window.atob(access_JWT.split('.')[1]));
       alert('sign in successfully');
     })
     .catch(error => console.log(error));
