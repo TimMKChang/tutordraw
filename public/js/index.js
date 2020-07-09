@@ -74,3 +74,66 @@ function joinRoom() {
     })
     .catch(error => console.log(error));
 }
+
+function signup() {
+  const email = get('.signup-form input[name="signupEmail"]').value;
+  const name = get('.signup-form input[name="name"]').value;
+  const password = get('.signup-form input[name="signupPassword"]').value;
+  const password2 = get('.signup-form input[name="signupPassword"]').value;
+  if (!email || !name || !password || !password2) {
+    return alert('All fields are required.');
+  }
+  if (password !== password2) {
+    return alert('Password and Confirm Password do not match.');
+  }
+
+  const url = HOMEPAGE_URL + '/user/signup';
+
+  fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({ email, name, password }),
+    headers: {
+      'content-type': 'application/json',
+    },
+  }).then(res => res.json())
+    .then(resObj => {
+      const { access_JWT, user, error } = resObj;
+      if (error) {
+        alert(error);
+        return;
+      }
+      localStorage.setItem('access_JWT', access_JWT);
+      localStorage.setItem('user', user);
+      alert('sign up successfully');
+    })
+    .catch(error => console.log(error));
+}
+
+function signin() {
+  const email = get('.signin-form input[name="signinEmail"]').value;
+  const password = get('.signin-form input[name="signinPassword"]').value;
+  if (!email || !password) {
+    return alert('All fields are required.');
+  }
+
+  const url = HOMEPAGE_URL + '/user/signin';
+
+  fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+    headers: {
+      'content-type': 'application/json',
+    },
+  }).then(res => res.json())
+    .then(resObj => {
+      const { access_JWT, user, error } = resObj;
+      if (error) {
+        alert(error);
+        return;
+      }
+      localStorage.setItem('access_JWT', access_JWT);
+      localStorage.setItem('user', user);
+      alert('sign in successfully');
+    })
+    .catch(error => console.log(error));
+}
