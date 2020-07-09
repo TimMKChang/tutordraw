@@ -39,7 +39,7 @@ const createRoom = async (req, res) => {
     return res.status(403).json({ error: createRoomUserResult.error });
   }
 
-  return res.status(200).json({ room_id: id });
+  return res.status(200).json({ room: id });
 };
 
 const uploadImage = async (req, res) => {
