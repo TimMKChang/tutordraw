@@ -6,17 +6,27 @@ function createRoom() {
 
   // create room
   const url = HOMEPAGE_URL + '/room';
+  const access_JWT = localStorage.getItem('access_JWT');
+  if (!access_JWT) {
+    alert('Please sign in first');
+    return;
+  }
 
   fetch(url, {
     method: 'POST',
     body: JSON.stringify({ password }),
     headers: {
       'content-type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('access_JWT')}`,
+      'Authorization': `Bearer ${access_JWT}`,
     },
   }).then(res => res.json())
     .then(resObj => {
-      const { error, room } = resObj;
+      const { authError, error, room } = resObj;
+      if (authError) {
+        alert('Please sign in first');
+        return;
+      }
+
       if (error) {
         alert(error);
         return;
@@ -35,17 +45,27 @@ function joinRoom() {
 
   // join room, create roomUser
   const url = HOMEPAGE_URL + '/roomUser';
+  const access_JWT = localStorage.getItem('access_JWT');
+  if (!access_JWT) {
+    alert('Please sign in first');
+    return;
+  }
 
   fetch(url, {
     method: 'POST',
     body: JSON.stringify({ room, password }),
     headers: {
       'content-type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('access_JWT')}`,
+      'Authorization': `Bearer ${access_JWT}`,
     },
   }).then(res => res.json())
     .then(resObj => {
-      const { error, message } = resObj;
+      const { authError, error, message } = resObj;
+      if (authError) {
+        alert('Please sign in first');
+        return;
+      }
+
       if (error) {
         alert(error);
         return;

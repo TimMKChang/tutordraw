@@ -14,7 +14,7 @@ const createRoom = async (req, res) => {
   const JWT = authHeader.replace(/Bearer /, '');
   const verifyJWTResult = verifyJWT(JWT);
   if (verifyJWTResult.error) {
-    return res.status(403).json({ error: verifyJWTResult.error });
+    return res.status(403).json({ authError: verifyJWTResult.error });
   }
 
   // room id
