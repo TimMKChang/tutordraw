@@ -1,8 +1,9 @@
 const Chatmsg = require('../models/chatmsg_model');
 
 const createChatmsg = async (chatmsgObj) => {
-  const { room, sender, type, msg, time, created_at } = chatmsgObj;
+  const { user_id, room, sender, type, msg, time, created_at } = chatmsgObj;
   const chatmsg = {
+    user_id,
     room,
     sender,
     type,

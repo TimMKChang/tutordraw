@@ -222,8 +222,12 @@ const socketCon = (io) => {
 
     socket.on('new chat msg', async function (msgStr) {
       const msgObj = JSON.parse(msgStr);
+      // check user_id and sender
+      const { room, user_id, sender } = msgObj;
+      if (userClients[user_id] !== socket.id || (rooms[room] && rooms[room].users[socket.id] !== sender)) {
+        return;
+      }
       await createChatmsg(msgObj);
-      const { room } = msgObj;
       socket.to(room).emit('new chat msg', msgStr);
     });
 

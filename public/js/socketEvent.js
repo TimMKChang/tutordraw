@@ -10,7 +10,6 @@ socket.on('error', function (error) {
 });
 
 socket.on('connect', () => {
-  Model.user.id = socket.id;
   socket.emit('join room',
     JSON.stringify({ room: Model.room.name, user: Model.user.name }));
 });
@@ -41,8 +40,8 @@ socket.on('new whiteboard', function () {
 });
 
 socket.on('new chat msg', function (msgStr) {
-  const { sender, type, msg, time } = JSON.parse(msgStr);
-  View.chatbox.displayNewMsg([{ sender, type, msg, time }]);
+  const { user_id, sender, type, msg, time } = JSON.parse(msgStr);
+  View.chatbox.displayNewMsg([{ user_id, sender, type, msg, time }]);
 });
 
 socket.on('load chat msg', function (msgObjsStr) {

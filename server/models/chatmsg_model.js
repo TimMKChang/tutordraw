@@ -18,7 +18,7 @@ const getChatmsg = async (requirement) => {
   const lastOldestCreated_at = requirement.lastOldestCreated_at || Date.now();
   const limit = 20;
   if (requirement.room) {
-    condition.query = 'SELECT sender, type, msg, time, created_at FROM chatmsg ';
+    condition.query = 'SELECT user_id, sender, type, msg, time, created_at FROM chatmsg ';
     condition.sql = 'WHERE room = ? AND created_at < ? ORDER BY created_at DESC LIMIT ?';
     condition.binding = [requirement.room, lastOldestCreated_at, limit];
   } else {

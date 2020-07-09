@@ -4,10 +4,7 @@ const canvas = get('.whiteboard canvas');
 const ctx = canvas.getContext('2d');
 
 const Model = {
-  user: {
-    id: '',
-    name: decodeURI(getQuery().user),
-  },
+  user: JSON.parse(localStorage.getItem('user')),
   room: {
     name: getQuery().room,
   },
@@ -99,11 +96,11 @@ const View = {
         return;
       }
       for (let msgObjIndex = 0; msgObjIndex < msgObjs.length; msgObjIndex++) {
-        const { sender, type, msg, time, created_at } = msgObjs[msgObjIndex];
+        const { user_id, sender, type, msg, time, created_at } = msgObjs[msgObjIndex];
         let htmlContent = '';
         // type text
         if (type === 'text') {
-          if (sender === Model.user.name) {
+          if (user_id === Model.user.id) {
             htmlContent += `
               <div class="msg-self">
                 You： ${msg}
@@ -136,7 +133,7 @@ const View = {
             </div>
           `;
         } else if (type === 'image') {
-          if (sender === Model.user.name) {
+          if (user_id === Model.user.id) {
             htmlContent += `
               <div class="msg-self">
                 You：
@@ -486,6 +483,7 @@ const Controller = {
           const btnHTML = e.target.closest('button');
           if (btnHTML.classList.contains('send-image-btn')) {
             const imageFilename = await Controller.chatbox.uploadImage();
+            const user_id = Model.user.id;
             const room = Model.room.name;
             const sender = Model.user.name;
             const type = 'image';
@@ -493,6 +491,7 @@ const Controller = {
             const time = Controller.chatbox.getTime();
 
             const msgObj = {
+              user_id,
               room,
               sender,
               type,
@@ -500,7 +499,7 @@ const Controller = {
               time,
               created_at: Date.now()
             };
-            View.chatbox.displayNewMsg([{ sender, type, msg, time }]);
+            View.chatbox.displayNewMsg([{ user_id, sender, type, msg, time }]);
             socket.emit('new chat msg', JSON.stringify(msgObj));
           }
           get('.chatbox .send-msg .preview-container').classList.add('hide');
@@ -528,7 +527,7 @@ const Controller = {
           Model.chatbox.scrollLock = true;
           const lastOldestCreated_at = Model.chatbox.lastOldestCreated_at;
           socket.emit('load chat msg', JSON.stringify({
-            room: Model.room.name, lastOldestCreated_at
+            room: getQuery().room, lastOldestCreated_at
           }));
         }
       };
@@ -538,10 +537,12 @@ const Controller = {
       if (msg.replace(/\s/g, '') === '') {
         return;
       }
+      const user_id = Model.user.id;
       const sender = Model.user.name;
       const type = 'text';
       const time = Controller.chatbox.getTime();
       const msgObj = {
+        user_id,
         room: Model.room.name,
         sender,
         type,
@@ -549,7 +550,7 @@ const Controller = {
         time,
         created_at: Date.now()
       };
-      View.chatbox.displayNewMsg([{ sender, type, msg, time }]);
+      View.chatbox.displayNewMsg([{ user_id, sender, type, msg, time }]);
       socket.emit('new chat msg', JSON.stringify(msgObj));
       get('.chatbox .send-msg textarea').value = '';
     },
