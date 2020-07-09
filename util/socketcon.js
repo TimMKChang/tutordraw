@@ -12,20 +12,26 @@ const {
 } = require('../server/S3/uploadImage');
 
 const { verifyJWT } = require('./util');
+const Room = require('../server/models/room_model');
 const RoomUser = require('../server/models/roomUser_model');
 
 // users connection data
 const clientsRoom = {
-  // socket_id1: 'room1',
+  // socket_id: 'room',
+};
+
+const userClients = {
+  // user_id: 'socket_id',
 };
 
 const rooms = {
-  // room1: {
+  // room: {
   //   users: {
-  //     socket_id1: 'alice',
-  //     socket_id2: 'bob',
+  //     socket_id: 'alice',
+  //     socket_id: 'bob',
   //   },
   //   whiteboard: {
+  //     start_at: timestamp
   //     records: [],
   //   }
   // }
@@ -47,7 +53,7 @@ const socketCon = (io) => {
         next(err);
       } else {
         socket.handshake.query.user_id = verifyJWTResult.data.id;
-        socket.handshake.query.name = verifyJWTResult.data.name;
+        socket.handshake.query.user = verifyJWTResult.data.name;
         next();
       }
     }
@@ -60,7 +66,7 @@ const socketCon = (io) => {
 
   // join room
   io.use(async function (socket, next) {
-    const { room, user_id, name } = socket.handshake.query;
+    const { room, user_id, user } = socket.handshake.query;
     // check roomUser
     const verifyRoomUserResult = await RoomUser.verifyRoomUser(room, user_id);
     if (verifyRoomUserResult.error) {
@@ -68,24 +74,23 @@ const socketCon = (io) => {
       err.data = { type: 'authError', message: 'Please contact the owner of the room to get the password to join the room' };
       next(err);
     } else {
-      next();
-    }
-  });
-
-  io.on('connection', (socket) => {
-
-    console.log(`new user ${socket.id} has connected`);
-
-    socket.on('join room', async function (data) {
-      const { room, user } = JSON.parse(data);
-
       // avoid connect repeatedly
+      const lastConnectSocket_id = userClients[user_id];
+      if (io.sockets.connected[lastConnectSocket_id]) {
+        io.sockets.connected[lastConnectSocket_id].disconnect();
+      }
+      userClients[user_id] = socket.id;
+
+      const { start_at } = await Room.getWhiteboardStart_at(room);
       if (room in rooms) {
-        const users = rooms[room]['users'];
-        const socket_id = Object.keys(users).find(key => users[key] === user);
-        if (io.sockets.connected[socket_id]) {
-          io.sockets.connected[socket_id].disconnect();
-        }
+        rooms[room]['users'][socket.id] = user;
+      } else {
+        rooms[room] = {
+          users: {},
+          whiteboard: { start_at, records: [] },
+          // created_at: Date.now(),
+        };
+        rooms[room]['users'][socket.id] = user;
       }
 
       // cancel timer if it exist
@@ -95,19 +100,26 @@ const socketCon = (io) => {
 
       // room
       socket.join(room);
-
-      // add user to rooms
       clientsRoom[socket.id] = room;
 
-      if (room in rooms) {
-        rooms[room]['users'][socket.id] = user;
+      next();
+    }
+  });
+
+  io.on('connection', (socket) => {
+
+    console.log(`new user ${socket.id} has connected`);
+
+    socket.on('join room', async function (data) {
+      const { room, user_id, user } = socket.handshake.query;
+
+      // load message
+      const { error, chatmsgs } = await getChatmsg({ room });
+      if (error) {
+        console.log(error);
       } else {
-        rooms[room] = {
-          users: {},
-          whiteboard: { start_at: Date.now(), records: [] },
-          created_at: Date.now(),
-        };
-        rooms[room]['users'][socket.id] = user;
+        // send to self
+        socket.emit('load chat msg', JSON.stringify(chatmsgs));
       }
 
       // user join message
@@ -118,20 +130,11 @@ const socketCon = (io) => {
         created_at: Date.now(),
       };
       await createChatmsg(joinmsgObj);
-      socket.to(room).emit('notification msg', JSON.stringify(joinmsgObj));
+      io.to(room).emit('notification msg', JSON.stringify(joinmsgObj));
 
       // update user list
       io.to(room).emit('update user list',
         JSON.stringify({ users: Object.values(rooms[room].users) }));
-
-      // load message
-      const { error, chatmsgs } = await getChatmsg({ room });
-      if (error) {
-        console.log(error);
-      } else {
-        // send to self
-        socket.emit('load chat msg', JSON.stringify(chatmsgs));
-      }
 
       // load whiteboard records
       await loadWhiteboardRecords(room, rooms[room].whiteboard.start_at);
@@ -228,18 +231,18 @@ const socketCon = (io) => {
       console.log(`user ${socket.id} has disconnected`);
 
       // delete user, room
-      const id = socket.id;
-      const room = clientsRoom[id];
+      const socket_id = socket.id;
+      const room = clientsRoom[socket_id];
       let user;
       let users = [];
       if (rooms[room]) {
-        user = rooms[room]['users'][id];
-        delete rooms[room]['users'][id];
+        user = rooms[room]['users'][socket_id];
+        delete rooms[room]['users'][socket_id];
+
         users = Object.values(rooms[room].users);
-        if (Object.keys(rooms[room].users).length === 0) {
+        if (users.length === 0) {
           // upload remain records to S3
-          const { start_at } = rooms[room].whiteboard;
-          const { records } = rooms[room].whiteboard;
+          const { start_at, records } = rooms[room].whiteboard;
           const uploadRecords = records.splice(0, records.length);
           uploadWhiteboard(room, start_at, uploadRecords);
 
@@ -249,7 +252,9 @@ const socketCon = (io) => {
           }, 60000);
         }
       }
-      delete clientsRoom[id];
+      delete clientsRoom[socket_id];
+      const { user_id } = socket.handshake.query;
+      delete userClients[user_id];
 
       // user leave message
       const leavemsgObj = {

@@ -26,7 +26,18 @@ const verifyPassword = async (room_id, password) => {
   return { message: 'room password verified' };
 };
 
+const getWhiteboardStart_at = async (room_id) => {
+  const rooms = await query('SELECT whiteboard_start_at FROM room WHERE id = ?', [room_id]);
+  const room = rooms[0];
+  if (!room) {
+    return { error: 'room does not exist' };
+  }
+
+  return { start_at: room.whiteboard_start_at };
+};
+
 module.exports = {
   createRoom,
   verifyPassword,
+  getWhiteboardStart_at,
 };
