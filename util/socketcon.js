@@ -196,7 +196,12 @@ const socketCon = (io) => {
     });
 
     socket.on('new whiteboard', async function (dataStr) {
-      const { room, user, imageFilename } = JSON.parse(dataStr);
+      const { room, user_id, user, imageFilename } = JSON.parse(dataStr);
+      // check user_id and sender
+      if (userClients[user_id] !== socket.id || (rooms[room] && rooms[room].users[socket.id] !== user)) {
+        return;
+      }
+
       socket.to(room).emit('new whiteboard', '');
       // who does new whiteboard message
       const msgObj = {
@@ -223,7 +228,13 @@ const socketCon = (io) => {
         const uploadRecords = records.splice(0, records.length);
         uploadWhiteboard(room, start_at, uploadRecords);
         // create new whiteboard
-        rooms[room].whiteboard = { start_at: Date.now(), records: [] };
+        const new_start_at = Date.now();
+        rooms[room].whiteboard = { start_at: new_start_at, records: [] };
+        // update whiteboard start_at
+        const updateWhiteboardStart_atResult = await Room.updateWhiteboardStart_at(room, new_start_at);
+        if (updateWhiteboardStart_atResult.error) {
+          console.log(updateWhiteboardStart_atResult.error);
+        }
       }
     });
 

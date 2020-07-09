@@ -303,7 +303,7 @@ const Controller = {
           View.whiteboard.initWhiteboard();
           Model.whiteboard.records = [];
           socket.emit('new whiteboard', JSON.stringify({
-            room: Model.room.name, user: Model.user.name, imageFilename
+            room: Model.room.name, user_id: Model.user.id, user: Model.user.name, imageFilename
           }));
         }
       });
@@ -393,7 +393,7 @@ const Controller = {
       const formData = new FormData();
       const imageFilename = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`;
       formData.append('image', blob, imageFilename);
-      formData.append('room', Model.room.name);
+      formData.append('room', getQuery().room);
       const url = HOMEPAGE_URL + '/room/image';
 
       await fetch(url, {
@@ -422,7 +422,7 @@ const Controller = {
       const file = get('.edit-container input[name="image-whiteboard"]').files[0];
       const filename = `image-${getNowTimeString()}-${getRandomString(8)}.${file.name.split('.').pop()}`;
       formData.append('image', file, filename);
-      formData.append('room', Model.room.name);
+      formData.append('room', getQuery().room);
       const url = HOMEPAGE_URL + '/room/image';
 
       await fetch(url, {
@@ -569,7 +569,7 @@ const Controller = {
       const file = get('.chatbox .send-msg input[name="image"]').files[0];
       const filename = `image-${getNowTimeString()}-${getRandomString(8)}.${file.name.split('.').pop()}`;
       formData.append('image', file, filename);
-      formData.append('room', Model.room.name);
+      formData.append('room', getQuery().room);
       const url = HOMEPAGE_URL + '/room/image';
 
       await fetch(url, {

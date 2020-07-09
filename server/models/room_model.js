@@ -36,8 +36,21 @@ const getWhiteboardStart_at = async (room_id) => {
   return { start_at: room.whiteboard_start_at };
 };
 
+const updateWhiteboardStart_at = async (room, start_at) => {
+  try {
+    await transaction();
+    await query('UPDATE room SET whiteboard_start_at = ? WHERE id = ?', [start_at, room]);
+    await commit();
+    return { message: 'room whiteboard_start_at updated' };
+  } catch (error) {
+    await rollback();
+    return { error };
+  }
+};
+
 module.exports = {
   createRoom,
   verifyPassword,
   getWhiteboardStart_at,
+  updateWhiteboardStart_at,
 };
