@@ -9,6 +9,18 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// CORS
+app.use((req, res, next) => {
+  const allowedOrigins = ['https://haboy.xyz', 'https://www.haboy.xyz'];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'POST, GET');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  }
+  next();
+});
+
 // socket.io
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
