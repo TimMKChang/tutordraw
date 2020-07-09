@@ -195,7 +195,8 @@ const Controller = {
       currY: 0,
       isDrawing: false,
       record: {
-        author: 'teacher',
+        user_id: '',
+        author: '',
         type: 'line',
         created_at: Date.now(),
         color: 'blue',
@@ -212,6 +213,7 @@ const Controller = {
           this.currY = e.clientY - roomContainerHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
 
           this.record = {
+            user_id: Model.user.id,
             author: Model.user.name,
             type: 'line',
             created_at: Date.now(),
@@ -370,6 +372,7 @@ const Controller = {
           const imageFilename = await Controller.whiteboard.uploadImage();
           const link = `${AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`;
           const record = {
+            user_id: Model.user.id,
             author: Model.user.name,
             type: 'image',
             created_at: Date.now(),

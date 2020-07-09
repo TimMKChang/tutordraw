@@ -162,6 +162,13 @@ const socketCon = (io) => {
 
     socket.on('new draw', function (drawStr) {
       const { room, record } = JSON.parse(drawStr);
+
+      // check user_id and sender
+      const { user_id, author } = record;
+      if (userClients[user_id] !== socket.id || (rooms[room] && rooms[room].users[socket.id] !== author)) {
+        return;
+      }
+
       socket.to(room).emit('new draw', JSON.stringify(record));
 
       // save draw in room whiteboard (temporary in server)
