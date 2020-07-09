@@ -64,6 +64,7 @@ const View = {
         return new Promise(function (resolve, reject) {
           const { x, y, width, height, link } = record;
           const img = new Image();
+          img.crossOrigin = "Anonymous";
           img.onload = function () {
             ctx.drawImage(img, x, y, width, height);
             resolve();
@@ -383,6 +384,7 @@ const Controller = {
             link,
           };
           socket.emit('new draw', JSON.stringify({ room, record }));
+          Model.whiteboard.records.push(record);
           // clear input value
           get('.edit-container input[name="image-whiteboard"]').value = '';
         }
