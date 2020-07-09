@@ -1,6 +1,7 @@
 const socket = io({
   query: {
-    token: 'drawnowisgood'
+    access_JWT: localStorage.getItem('access_JWT'),
+    room: getQuery().room,
   }
 });
 

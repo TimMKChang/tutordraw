@@ -11,6 +11,9 @@ const {
   uploadWhiteboard,
 } = require('../server/S3/uploadImage');
 
+const { verifyJWT } = require('./util');
+const RoomUser = require('../server/models/roomUser_model');
+
 // users connection data
 const clientsRoom = {
   // socket_id1: 'room1',
@@ -33,21 +36,39 @@ const closeRoomTimer = {
 };
 
 const socketCon = (io) => {
+  // authentication
   io.use(function (socket, next) {
-    socket.emit('autherror', 'error');
-    if (socket.handshake.query && socket.handshake.query.token) {
-      if (socket.handshake.query.token === 'drawnowisgood') {
-        next();
-      } else {
+    if (socket.handshake.query && socket.handshake.query.access_JWT && socket.handshake.query.room) {
+      const { access_JWT, room } = socket.handshake.query;
+      const verifyJWTResult = verifyJWT(access_JWT);
+      if (verifyJWTResult.error) {
         const err = new Error();
-        err.data = { type: 'authentication_error', message: 'authentication error' };
+        err.data = { type: 'authError', message: 'authentication error' };
         next(err);
+      } else {
+        socket.handshake.query.user_id = verifyJWTResult.data.id;
+        socket.handshake.query.name = verifyJWTResult.data.name;
+        next();
       }
     }
     else {
       const err = new Error();
-      err.data = { type: 'authentication_error', message: 'authentication error' };
+      err.data = { type: 'authentication_error', message: 'socket connection error' };
       next(err);
+    }
+  });
+
+  // join room
+  io.use(async function (socket, next) {
+    const { room, user_id, name } = socket.handshake.query;
+    // check roomUser
+    const verifyRoomUserResult = await RoomUser.verifyRoomUser(room, user_id);
+    if (verifyRoomUserResult.error) {
+      const err = new Error();
+      err.data = { type: 'authError', message: 'Please contact the owner of the room to get the password to join the room' };
+      next(err);
+    } else {
+      next();
     }
   });
 
