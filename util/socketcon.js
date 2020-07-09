@@ -165,40 +165,38 @@ const socketCon = (io) => {
 
       // check user_id and sender
       const { user_id, author } = record;
-      if (userClients[user_id] !== socket.id || (rooms[room] && rooms[room].users[socket.id] !== author)) {
+      if (!room in rooms || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== author) {
         return;
       }
 
       socket.to(room).emit('new draw', JSON.stringify(record));
 
       // save draw in room whiteboard (temporary in server)
-      if (room in rooms) {
-        const newDrawCreate_at = record.created_at;
-        const { records } = rooms[room].whiteboard;
-        if (records.length === 0) {
-          records.push(record);
-        } else {
-          for (let recordIndex = records.length - 1; recordIndex >= 0; recordIndex--) {
-            if (newDrawCreate_at > records[recordIndex].created_at) {
-              records.splice(recordIndex + 1, 0, record);
-              break;
-            }
+      const newDrawCreate_at = record.created_at;
+      const { records } = rooms[room].whiteboard;
+      if (records.length === 0) {
+        records.push(record);
+      } else {
+        for (let recordIndex = records.length - 1; recordIndex >= 0; recordIndex--) {
+          if (newDrawCreate_at > records[recordIndex].created_at) {
+            records.splice(recordIndex + 1, 0, record);
+            break;
           }
         }
+      }
 
-        // upload to S3
-        if (records.length > 30) {
-          const { start_at } = rooms[room].whiteboard;
-          const uploadRecords = records.splice(0, 30);
-          uploadWhiteboard(room, start_at, uploadRecords);
-        }
+      // upload to S3
+      if (records.length > 30) {
+        const { start_at } = rooms[room].whiteboard;
+        const uploadRecords = records.splice(0, 30);
+        uploadWhiteboard(room, start_at, uploadRecords);
       }
     });
 
     socket.on('new whiteboard', async function (dataStr) {
       const { room, user_id, user, imageFilename } = JSON.parse(dataStr);
       // check user_id and sender
-      if (userClients[user_id] !== socket.id || (rooms[room] && rooms[room].users[socket.id] !== user)) {
+      if (!room in rooms || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== user) {
         return;
       }
 
@@ -222,19 +220,17 @@ const socketCon = (io) => {
       await createChatmsg(whiteboardmsgObj);
       io.to(room).emit('notification msg', JSON.stringify(whiteboardmsgObj));
       // upload remain records to S3
-      if (room in rooms) {
-        const { start_at } = rooms[room].whiteboard;
-        const { records } = rooms[room].whiteboard;
-        const uploadRecords = records.splice(0, records.length);
-        uploadWhiteboard(room, start_at, uploadRecords);
-        // create new whiteboard
-        const new_start_at = Date.now();
-        rooms[room].whiteboard = { start_at: new_start_at, records: [] };
-        // update whiteboard start_at
-        const updateWhiteboardStart_atResult = await Room.updateWhiteboardStart_at(room, new_start_at);
-        if (updateWhiteboardStart_atResult.error) {
-          console.log(updateWhiteboardStart_atResult.error);
-        }
+      const { start_at } = rooms[room].whiteboard;
+      const { records } = rooms[room].whiteboard;
+      const uploadRecords = records.splice(0, records.length);
+      uploadWhiteboard(room, start_at, uploadRecords);
+      // create new whiteboard
+      const new_start_at = Date.now();
+      rooms[room].whiteboard = { start_at: new_start_at, records: [] };
+      // update whiteboard start_at
+      const updateWhiteboardStart_atResult = await Room.updateWhiteboardStart_at(room, new_start_at);
+      if (updateWhiteboardStart_atResult.error) {
+        console.log(updateWhiteboardStart_atResult.error);
       }
     });
 
@@ -242,7 +238,7 @@ const socketCon = (io) => {
       const msgObj = JSON.parse(msgStr);
       // check user_id and sender
       const { room, user_id, sender } = msgObj;
-      if (userClients[user_id] !== socket.id || (rooms[room] && rooms[room].users[socket.id] !== sender)) {
+      if (!room in rooms || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== sender) {
         return;
       }
       await createChatmsg(msgObj);
@@ -255,24 +251,23 @@ const socketCon = (io) => {
       // delete user, room
       const socket_id = socket.id;
       const room = clientsRoom[socket_id];
-      let user;
-      let users = [];
-      if (rooms[room]) {
-        user = rooms[room]['users'][socket_id];
-        delete rooms[room]['users'][socket_id];
+      if (!room in rooms) {
+        return;
+      }
+      const user = rooms[room]['users'][socket_id];
+      delete rooms[room]['users'][socket_id];
 
-        users = Object.values(rooms[room].users);
-        if (users.length === 0) {
-          // upload remain records to S3
-          const { start_at, records } = rooms[room].whiteboard;
-          const uploadRecords = records.splice(0, records.length);
-          uploadWhiteboard(room, start_at, uploadRecords);
+      const users = Object.values(rooms[room].users);
+      if (users.length === 0) {
+        // upload remain records to S3
+        const { start_at, records } = rooms[room].whiteboard;
+        const uploadRecords = records.splice(0, records.length);
+        uploadWhiteboard(room, start_at, uploadRecords);
 
-          // set timer to delay close room
-          closeRoomTimer[room] = setTimeout(function () {
-            delete rooms[room];
-          }, 60000);
-        }
+        // set timer to delay close room
+        closeRoomTimer[room] = setTimeout(function () {
+          delete rooms[room];
+        }, 60000);
       }
       delete clientsRoom[socket_id];
       const { user_id } = socket.handshake.query;
