@@ -1,34 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chivo&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
+@font-face {
+  font-family: 'cwTeXYen';
+  font-style: normal;
+  font-weight: 500;
+  src: url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.eot);
+  src: url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.eot?#iefix) format('embedded-opentype'),
+       url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.woff2) format('woff2'),
+       url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.woff) format('woff'),
+       url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.ttf) format('truetype');
+}
+
+a:link, a:visited, a:hover, a:active {
+  text-decoration: none;
+}
+
 body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;  
-  background-color: #272727;
+  /* font-family: 'Chivo', 'cwTeXYen', Verdana;   */
+  font-family: 'Josefin Sans', 'cwTeXYen', Verdana;
+  position: relative;
 }
 
-header {
- height: 50px;
- background-color: #272727;
+header.index {
+ height: 100px;
+ width: 100%;
+ background-color: #FFFFFF;
  display: flex;
- justify-content: center;
+ justify-content: space-between;
  align-items: center;
+ padding: 0 100px;
+ position: fixed;
+ /* box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1); */
 }
 
-header .title {
+header.index .title-container .title {
+  display: block;
   text-align: center;
-  font-size: 2rem;
+  font-size: 3rem;
+  color: #000000;
+  font-family: 'Kalam', Verdana;
+  font-weight: 700;
+  padding-top: 20px;
+}
+
+header.index .member-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+}
+
+header.index .member-container .item {
+  margin-right: 20px;
+}
+
+header.index .member-container .item:hover {
+  color: #7be0ad;
+  cursor: pointer;
+}
+
+header.index .member-container .signup-form-btn {
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #7be0ad;
+  transition: linear 0.3s;
+}
+
+header.index .member-container .signup-form-btn:hover {
+  background-color: #10a8a0;
   color: #FFFFFF;
+  cursor: pointer;
 }
 
 .main-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #272727;
 }
 
-footer {
- height: 50px;
- background-color: #272727;
+footer.index {
+ height: 100px;
+ background-color: #7be0ad;
  display: flex;
  justify-content: center;
  align-items: center;
@@ -36,42 +89,134 @@ footer {
 
 footer .copyright {
   text-align: center;
-  font-size: 1rem;
-  color: #FFFFFF;
+  font-weight: 700;
 }
 
 .index-container {
   width: 100%;
-  min-height: calc(100vh - 100px);
+  background-color: #7be0ad;
+}
+
+.index-container section.top {
+  height: 100vh;
+  min-height: 650px;
+  padding-top: 200px;
+}
+
+.index-container section {
+  width: 100%;
+  height: calc(100vh - 100px);
+  min-height: 550px;
   background-color: #FFFFFF;
-  border-radius: 0px 0px 100px 100px;
+  border: 1px solid #000000;
+  padding: 0 200px;
+  margin: 0 auto;
   display: flex;
   justify-content: center;
+}
+
+.index-container section.bottom {
+  height: calc(100vh - 200px);
+  min-height: 450px;
+  border-radius: 0px 0px 200px 200px;
+}
+
+.index-container section .narrow {
+  width: 40%;
+  max-width: 600px;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.index-container section .wide {
+  width: 60%;
+  max-width: 900px;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.index-container section .narrow .title {
+  height: 30%;
+  font-size: 3rem;
+  display: flex;
+  justify-content: flex-start;
   align-items: center;
-  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.index-container section .narrow .text {
+  height: 30%;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.index-container section .btn {
+  width: 60%;
+  padding: 15px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 10px;
+  background-color: #7be0ad;
+  transition: linear 0.3s;
+}
+
+.index-container section .btn:hover {
+  background-color: #10a8a0;
+  color: #FFFFFF;
+  cursor: pointer;
 }
 
 .index-container .form-container {
-  width: 30%;
-  min-width: 400px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.index-container form {
+  width: 90vw;
+  max-width: 500px;
+  background-color: #FFFFFF;
+  margin: 0 auto;
+  margin-top: 100px;
+  padding: 40px 50px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.3);
+}
+
+.index-container form .title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.index-container form .form-group {
+  font-size: 1.2rem;
   margin: 20px 0;
 }
 
-.index-container .form-container .title {
-  font-size: 2rem;
-  text-align: center;
+.index-container form .form-group label {
+  margin-left: 12px;
 }
 
-.index-container .form-container .title-small {
-  margin: 10px 0;
-  font-size: 1.5rem;
-  text-align: center;
-}
-
-.index-container .form-container form {
-  padding: 10px 50px;
-  border: 5px solid #272727;
+.index-container form button {
+  font-weight: 700;
+  padding: 15px;
   border-radius: 10px;
+  background-color: #7be0ad;
+  transition: linear 0.3s;
+}
+
+.index-container form button:hover {
+  background-color: #10a8a0;
+  color: #FFFFFF;
+  cursor: pointer;
 }
 
 .room-container {
@@ -440,12 +585,4 @@ footer .copyright {
   right: 10vw;
   font-size: 3rem;
   color: #FFFFFF;
-}
-
-/* RWD for canvas */
-@media (min-width: 1715px) {
-  .main-container {
-    max-width: 1715px;
-    margin: 0 calc((100% - 1715px) / 2);
-  }
 }
