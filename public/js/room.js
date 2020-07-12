@@ -144,6 +144,14 @@ const View = {
         }
       }
     },
+    displayMouseTrace: function (user_id, mouseTrace) {
+      const { x, y } = mouseTrace;
+      const userHTML = get(`.whiteboard .mouse-trace [data-user_id="${user_id}"]`);
+      if (userHTML) {
+        userHTML.style.top = `${y}px`;
+        userHTML.style.left = `${x}px`;
+      }
+    },
   },
   chatbox: {
     displayNewMsg: function (msgObjs, isLoad) {
@@ -324,6 +332,17 @@ const Controller = {
               width,
               path: [[this.prevX, this.prevY], [this.currX, this.currY]],
             });
+
+            // mouse trace
+            const mouseTrace = {
+              x: this.currX,
+              y: this.currY,
+            };
+            socket.emit('mouse trace', JSON.stringify({
+              room: Model.room.name,
+              user_id: this.record.user_id,
+              mouseTrace
+            }));
           }
         } else if (action === 'up' || action === 'out') {
           if (this.isDrawing) {
@@ -531,11 +550,17 @@ const Controller = {
       }
 
       const traceHTML = get('.whiteboard .trace');
+      const mouseTraceHTML = get('.whiteboard .mouse-trace');
 
       if (Model.user.id !== user_id) {
         const userHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
         if (!userHTML) {
           traceHTML.innerHTML += `
+            <div class="author" data-user_id="${user_id}">
+              <span>${user}</span>
+            </div>
+          `;
+          mouseTraceHTML.innerHTML += `
             <div class="author" data-user_id="${user_id}">
               <span>${user}</span>
             </div>
@@ -551,6 +576,7 @@ const Controller = {
           `;
         }
         traceHTML.innerHTML = htmlContent;
+        mouseTraceHTML.innerHTML = htmlContent;
       }
     },
   },

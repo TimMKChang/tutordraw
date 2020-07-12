@@ -375,7 +375,7 @@ footer .copyright {
   cursor: move;
 }
 
-.whiteboard .trace {
+.whiteboard .trace, .whiteboard .mouse-trace {
   position: absolute;
   top: 0;
   left: 0;
@@ -387,8 +387,8 @@ footer .copyright {
 
 .whiteboard .trace .author {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: -100%;
+  left: -100%;
   width: 0;
   height: 0;
   border: 2px dashed rgba(16, 168, 160, 0.7);
@@ -402,6 +402,27 @@ footer .copyright {
   transform: translateY(100%);
   display: inline-block;
   background-color: rgba(16, 168, 160, 0.7);
+}
+
+.whiteboard .mouse-trace .author {
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(248, 160, 179, 0.7);
+}
+
+.whiteboard .mouse-trace .author span {
+  position: absolute;
+  top: -3px;
+  left: 0px;
+  padding: 0 5px;
+  transform: translateY(-100%);
+  display: inline-block;
+  background-color: rgba(248, 160, 179, 0.7);
 }
 
 .room-container .chatbox {

@@ -45,6 +45,11 @@ socket.on('new chat msg', function (msgStr) {
   View.chatbox.displayNewMsg([{ user_id, sender, type, msg, time }]);
 });
 
+socket.on('mouse trace', function (dataStr) {
+  const { user_id, mouseTrace } = JSON.parse(dataStr);
+  View.whiteboard.displayMouseTrace(user_id, mouseTrace);
+});
+
 socket.on('load chat msg', function (msgObjsStr) {
   const msgObjs = JSON.parse(msgObjsStr);
   const isLoad = true;

@@ -255,6 +255,16 @@ const socketCon = (io) => {
       socket.to(room).emit('new chat msg', msgStr);
     });
 
+    socket.on('mouse trace', async function (dataStr) {
+      const mouseTraceObj = JSON.parse(dataStr);
+      // check user_id
+      const { room, user_id, mouseTrace } = mouseTraceObj;
+      if (!room in rooms || userClients[user_id] !== socket.id) {
+        return;
+      }
+      socket.to(room).emit('mouse trace', dataStr);
+    });
+
     socket.on('disconnect', async function () {
       console.log(`user ${socket.id} has disconnected`);
 
