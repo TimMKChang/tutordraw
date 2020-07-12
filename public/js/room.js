@@ -113,8 +113,20 @@ const View = {
             resolve();
           };
           img.src = link;
+          // trace
+          View.whiteboard.image.updateTrace(record, x, y, width, height);
         });
-      }
+      },
+      updateTrace: function (record, x, y, width, height) {
+        const { user_id } = record;
+        const userHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
+        if (userHTML) {
+          userHTML.style.top = `${y - 10}px`;
+          userHTML.style.left = `${x - 10}px`;
+          userHTML.style.width = `${width + 20}px`;
+          userHTML.style.height = `${height + 20}px`;
+        }
+      },
     },
     initWhiteboard: function () {
       ctx.fillStyle = '#FFFFFF';
@@ -438,6 +450,10 @@ const Controller = {
           await View.whiteboard.image.draw({ x, y, width, height, link: URL.createObjectURL(get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0]) });
           get('.image-whiteboard-preview-container').classList.add('hide');
           Model.whiteboard.image.imagePosition = [300, 50];
+
+          // trace
+          View.whiteboard.image.updateTrace({ user_id: Model.user.id }, x, y, width, height);
+
           // upload and send new draw
           const imageFilename = await Controller.whiteboard.uploadImage();
           const link = `${AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`;
