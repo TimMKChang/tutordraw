@@ -382,13 +382,26 @@ footer .copyright {
   width: 1200px;
   height: 800px;
   pointer-events: none;
-
-  background-color: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .whiteboard .trace .author {
-  display: inline;
-  background-color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border: 2px dashed rgba(16, 168, 160, 0.7);
+}
+
+.whiteboard .trace .author span {
+  position: absolute;
+  bottom: -3px;
+  right: 10px;
+  padding: 0 5px;
+  transform: translateY(100%);
+  display: inline-block;
+  background-color: rgba(16, 168, 160, 0.7);
 }
 
 .room-container .chatbox {

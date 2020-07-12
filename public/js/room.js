@@ -18,6 +18,12 @@ const Model = {
       imagePosition: [300, 50],
       imageMovable: false,
     },
+    boundary: {
+      minX: 0,
+      maxX: 0,
+      minY: 0,
+      maxY: 0,
+    },
   },
   chatbox: {
     lastOldestCreated_at: 0,
@@ -29,7 +35,15 @@ const View = {
   whiteboard: {
     line: {
       draw: function (record) {
-        const { color, width, path } = record;
+        const { author, color, width, path } = record;
+
+        // get trace boundary
+        const boundary = {
+          minX: path[0][0],
+          maxX: path[0][0],
+          minY: path[0][1],
+          maxY: path[0][1],
+        };
 
         if (path.length === 1) {
           const currX = path[0][0];
@@ -47,6 +61,20 @@ const View = {
           const currX = path[pathIndex][0];
           const currY = path[pathIndex][1];
 
+          // trace boundary
+          if (currX < boundary.minX) {
+            boundary.minX = currX;
+          }
+          if (currX > boundary.maxX) {
+            boundary.maxX = currX;
+          }
+          if (currY < boundary.minY) {
+            boundary.minY = currY;
+          }
+          if (currY > boundary.maxY) {
+            boundary.maxY = currY;
+          }
+
           ctx.beginPath();
           ctx.lineCap = 'round';
           ctx.lineJoin = 'round';
@@ -57,7 +85,22 @@ const View = {
           ctx.closePath();
           ctx.stroke();
         }
-      }
+
+        if (author !== 'self') {
+          View.whiteboard.line.updateTrace(record, boundary);
+        }
+      },
+      updateTrace: function (record, boundary) {
+        const { user_id, path, width } = record;
+        const { minX, maxX, minY, maxY } = boundary;
+        const userHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
+        if (userHTML) {
+          userHTML.style.top = `${minY - +width / 2 - 10}px`;
+          userHTML.style.left = `${minX - +width / 2 - 10}px`;
+          userHTML.style.width = `${maxX - minX + +width + 20}px`;
+          userHTML.style.height = `${maxY - minY + +width + 20}px`;
+        }
+      },
     },
     image: {
       draw: function (record) {
@@ -213,6 +256,14 @@ const Controller = {
           this.currX = e.clientX - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
           this.currY = e.clientY - whiteboardHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
 
+          // trace boundary
+          Model.whiteboard.boundary = {
+            minX: this.currX,
+            maxX: this.currX,
+            minY: this.currY,
+            maxY: this.currY,
+          };
+
           this.record = {
             user_id: Model.user.id,
             author: Model.user.name,
@@ -226,6 +277,7 @@ const Controller = {
           this.isDrawing = true;
 
           View.whiteboard.line.draw({
+            author: 'self',
             color,
             width,
             path: [[this.currX, this.currY]],
@@ -238,9 +290,24 @@ const Controller = {
             this.currX = e.clientX - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
             this.currY = e.clientY - whiteboardHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
 
+            // trace boundary
+            if (this.currX < Model.whiteboard.boundary.minX) {
+              Model.whiteboard.boundary.minX = this.currX;
+            }
+            if (this.currX > Model.whiteboard.boundary.maxX) {
+              Model.whiteboard.boundary.maxX = this.currX;
+            }
+            if (this.currY < Model.whiteboard.boundary.minY) {
+              Model.whiteboard.boundary.minY = this.currY;
+            }
+            if (this.currY > Model.whiteboard.boundary.maxY) {
+              Model.whiteboard.boundary.maxY = this.currY;
+            }
+
             this.record.path.push([this.currX, this.currY]);
 
             View.whiteboard.line.draw({
+              author: 'self',
               color,
               width,
               path: [[this.prevX, this.prevY], [this.currX, this.currY]],
@@ -251,6 +318,8 @@ const Controller = {
             Model.whiteboard.records.push(this.record);
             // socket
             socket.emit('new draw', JSON.stringify({ room: Model.room.name, record: this.record }));
+            // trace
+            View.whiteboard.line.updateTrace(this.record, Model.whiteboard.boundary);
           }
           this.isDrawing = false;
         }
@@ -451,14 +520,18 @@ const Controller = {
         const userHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
         if (!userHTML) {
           traceHTML.innerHTML += `
-            <div class="author" data-user_id="${user_id}">${user}</div>
+            <div class="author" data-user_id="${user_id}">
+              <span>${user}</span>
+            </div>
           `;
         }
       } else {
         let htmlContent = '';
         for (const user_id in users) {
           htmlContent += `
-            <div class="author" data-user_id="${user_id}">${users[user_id]}</div>
+            <div class="author" data-user_id="${user_id}">
+              <span>${users[user_id]}</span>
+            </div>
           `;
         }
         traceHTML.innerHTML = htmlContent;
