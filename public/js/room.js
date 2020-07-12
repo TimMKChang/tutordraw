@@ -443,9 +443,9 @@ const Controller = {
       });
 
       // text size
-      get('.text-conatiner input').addEventListener('input', (e) => {
+      get('.text-container input').addEventListener('input', (e) => {
         get('.text-whiteboard-preview-container input').style.fontSize = `${e.target.value}px`;
-        get('.whiteboard-toolbox .text-conatiner .size span').innerHTML = e.target.value;
+        get('.whiteboard-toolbox .text-container .size span').innerHTML = e.target.value;
       });
 
       // create new
