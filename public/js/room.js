@@ -440,6 +440,30 @@ const Controller = {
 
       return filename;
     },
+    updateTraceList: function (users, user, user_id, state) {
+      if (state === 'leave') {
+        return;
+      }
+
+      const traceHTML = get('.whiteboard .trace');
+
+      if (Model.user.id !== user_id) {
+        const userHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
+        if (!userHTML) {
+          traceHTML.innerHTML += `
+            <div class="author" data-user_id="${user_id}">${user}</div>
+          `;
+        }
+      } else {
+        let htmlContent = '';
+        for (const user_id in users) {
+          htmlContent += `
+            <div class="author" data-user_id="${user_id}">${users[user_id]}</div>
+          `;
+        }
+        traceHTML.innerHTML = htmlContent;
+      }
+    },
   },
   chatbox: {
     initListener: function () {

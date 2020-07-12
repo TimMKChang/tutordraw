@@ -375,6 +375,22 @@ footer .copyright {
   cursor: move;
 }
 
+.whiteboard .trace {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1200px;
+  height: 800px;
+  pointer-events: none;
+
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.whiteboard .trace .author {
+  display: inline;
+  background-color: white;
+}
+
 .room-container .chatbox {
   width:20%;
   min-width: 400px;

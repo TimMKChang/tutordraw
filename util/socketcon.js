@@ -24,6 +24,10 @@ const userClients = {
   // user_id: 'socket_id',
 };
 
+const user_idUser = {
+  // user_id: 'alice',
+};
+
 const rooms = {
   // room: {
   //   users: {
@@ -80,6 +84,7 @@ const socketCon = (io) => {
         io.sockets.connected[lastConnectSocket_id].disconnect();
       }
       userClients[user_id] = socket.id;
+      user_idUser[user_id] = user;
 
       const { start_at } = await Room.getWhiteboardStart_at(room);
       if (room in rooms) {
@@ -134,7 +139,12 @@ const socketCon = (io) => {
 
       // update user list
       io.to(room).emit('update user list',
-        JSON.stringify({ users: Object.values(rooms[room].users) }));
+        JSON.stringify({
+          state: 'join',
+          users: user_idUser,
+          user,
+          user_id,
+        }));
 
       // load whiteboard records
       await loadWhiteboardRecords(room, rooms[room].whiteboard.start_at);
@@ -272,6 +282,7 @@ const socketCon = (io) => {
       delete clientsRoom[socket_id];
       const { user_id } = socket.handshake.query;
       delete userClients[user_id];
+      delete user_idUser[user_id];
 
       // user leave message
       const leavemsgObj = {
@@ -284,7 +295,12 @@ const socketCon = (io) => {
       socket.to(room).emit('notification msg', JSON.stringify(leavemsgObj));
 
       // update user list
-      io.to(room).emit('update user list', JSON.stringify({ users }));
+      io.to(room).emit('update user list', JSON.stringify({
+        state: 'leave',
+        users: user_idUser,
+        user,
+        user_id,
+      }));
     });
 
   });

@@ -20,8 +20,9 @@ socket.on('notification msg', function (dataStr) {
 });
 
 socket.on('update user list', function (dataStr) {
-  const { users } = JSON.parse(dataStr);
-  View.chatbox.displayUserList(users);
+  const { state, users, user, user_id } = JSON.parse(dataStr);
+  View.chatbox.displayUserList(Object.values(users));
+  Controller.whiteboard.updateTraceList(users, user, user_id, state);
 });
 
 socket.on('new draw', function (recordStr) {
