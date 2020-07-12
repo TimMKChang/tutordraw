@@ -182,7 +182,7 @@ const View = {
       get('.user-list .list-container').innerHTML = htmlContent;
     },
     displayRoomName: function () {
-      get('.room-info .room-name').innerHTML = Model.room.name;
+      get('.user-list .room-name').innerHTML = Model.room.name;
     }
   },
 };
@@ -210,8 +210,8 @@ const Controller = {
         if (action === 'down') {
           this.prevX = this.currX;
           this.prevY = this.currY;
-          this.currX = e.clientX - roomContainerHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
-          this.currY = e.clientY - roomContainerHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
+          this.currX = e.clientX - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
+          this.currY = e.clientY - whiteboardHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
 
           this.record = {
             user_id: Model.user.id,
@@ -235,8 +235,8 @@ const Controller = {
           if (this.isDrawing) {
             this.prevX = this.currX;
             this.prevY = this.currY;
-            this.currX = e.clientX - roomContainerHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
-            this.currY = e.clientY - roomContainerHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
+            this.currX = e.clientX - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
+            this.currY = e.clientY - whiteboardHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
 
             this.record.path.push([this.currX, this.currY]);
 
@@ -294,7 +294,7 @@ const Controller = {
       });
 
       // create new
-      get('.edit-container .new').addEventListener('click', async (e) => {
+      get('.whiteboard-toolbox .new').addEventListener('click', async (e) => {
         if (Model.whiteboard.records.length === 0) {
           return;
         }
@@ -310,7 +310,7 @@ const Controller = {
       });
 
       // download
-      get('.edit-container .download').addEventListener('click', (e) => {
+      get('.whiteboard-toolbox .download').addEventListener('click', (e) => {
         const link = document.createElement('a');
         link.download = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`;
         link.href = canvas.toDataURL();
@@ -318,12 +318,12 @@ const Controller = {
       });
 
       // add image on whiteboard
-      get('.edit-container .add-image').addEventListener('click', (e) => {
-        get('.edit-container input[name="image-whiteboard"]').click();
+      get('.whiteboard-toolbox .add-image').addEventListener('click', (e) => {
+        get('.whiteboard-toolbox input[name="image-whiteboard"]').click();
       });
       // preview upload image on whiteboard
-      get('.edit-container input[name="image-whiteboard"]').addEventListener('change', (e) => {
-        const image = URL.createObjectURL(get('.edit-container input[name="image-whiteboard"]').files[0]);
+      get('.whiteboard-toolbox input[name="image-whiteboard"]').addEventListener('change', (e) => {
+        const image = URL.createObjectURL(get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0]);
         get('.image-whiteboard-preview-container img.preview').src = image;
         get('.image-whiteboard-preview-container').classList.remove('hide');
         const [left, top] = Model.whiteboard.image.imagePosition;
@@ -366,7 +366,7 @@ const Controller = {
           const { width, height } = get('.image-whiteboard-preview-container img.preview').getBoundingClientRect();
           const [x, y] = Model.whiteboard.image.imagePosition;
           // let the user who upload the image no need to wait for the uploading delay
-          await View.whiteboard.image.draw({ x, y, width, height, link: URL.createObjectURL(get('.edit-container input[name="image-whiteboard"]').files[0]) });
+          await View.whiteboard.image.draw({ x, y, width, height, link: URL.createObjectURL(get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0]) });
           get('.image-whiteboard-preview-container').classList.add('hide');
           Model.whiteboard.image.imagePosition = [300, 50];
           // upload and send new draw
@@ -386,7 +386,7 @@ const Controller = {
           socket.emit('new draw', JSON.stringify({ room, record }));
           Model.whiteboard.records.push(record);
           // clear input value
-          get('.edit-container input[name="image-whiteboard"]').value = '';
+          get('.whiteboard-toolbox input[name="image-whiteboard"]').value = '';
         }
       });
     },
@@ -421,7 +421,7 @@ const Controller = {
     },
     uploadImage: async function () {
       const formData = new FormData();
-      const file = get('.edit-container input[name="image-whiteboard"]').files[0];
+      const file = get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0];
       const filename = `image-${getNowTimeString()}-${getRandomString(8)}.${file.name.split('.').pop()}`;
       formData.append('image', file, filename);
       formData.append('room', getQuery().room);
@@ -454,15 +454,15 @@ const Controller = {
         }
       });
       // click and copy room invite url
-      get('.chatbox .copy-link-btn i').addEventListener('click', (e) => {
-        get('.room-info input[name="invite-url"]').value = `${HOMEPAGE_URL}/room.html?room=${Model.room.name}`;
-        const copyText = get('.room-info input[name="invite-url"]');
+      get('.chatbox-toolbox .copy-link').addEventListener('click', (e) => {
+        get('.copy-link input[name="invite-url"]').value = `${HOMEPAGE_URL}/room.html?room=${Model.room.name}`;
+        const copyText = get('.copy-link input[name="invite-url"]');
         copyText.setAttribute('type', 'text');
         copyText.select();
         document.execCommand("copy");
         copyText.setAttribute('type', 'hidden');
         // copy invite url hint
-        const msgHTML = get('.room-info .copy-invite-url-msg');
+        const msgHTML = get('.copy-link .copy-invite-url-msg');
         if (!msgHTML.classList.contains('show-hide')) {
           msgHTML.classList.add('show-hide');
           setTimeout(function () {
