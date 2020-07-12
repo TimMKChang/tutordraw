@@ -32,6 +32,8 @@ socket.on('new draw', function (recordStr) {
     View.whiteboard.line.draw(record);
   } else if (record.type === 'image') {
     View.whiteboard.image.draw(record);
+  } else if (record.type === 'text') {
+    View.whiteboard.text.draw(record);
   }
 });
 

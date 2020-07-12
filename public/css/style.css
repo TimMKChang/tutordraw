@@ -279,12 +279,12 @@ footer .copyright {
   display: none;
 }
 
-.whiteboard-toolbox .color-btn-container {
+.whiteboard-toolbox .pen-conatiner .color-btn-container {
   display: flex;
   justify-content: start;
 }
 
-.whiteboard-toolbox .color-btn {
+.whiteboard-toolbox .pen-conatiner .color-btn {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -292,24 +292,44 @@ footer .copyright {
   margin: 0 5px;
 }
 
-.whiteboard-toolbox .color-btn:hover {
+.whiteboard-toolbox .pen-conatiner .color-btn:hover {
   box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.8);
 }
 
-.whiteboard-toolbox .now-color {
+.whiteboard-toolbox .pen-conatiner .now-color {
   box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 1.0);
 }
 
-.whiteboard-toolbox .width-btn-container input {
+.whiteboard-toolbox .pen-conatiner .width-btn-container input {
   width: 100%;
 }
 
-.whiteboard-toolbox .value-range-display {
+.whiteboard-toolbox .pen-conatiner .value-range-display {
   width: 0;
   height: 0;
   border-style: solid;
   border-width: 0 0 25px 200px;
   border-color: transparent transparent #5B5B5B transparent;
+}
+
+.whiteboard-toolbox i.add-text:hover .text-conatiner {
+  display: block;
+}
+
+.whiteboard-toolbox .text-conatiner {
+  padding: 10px;
+  position: absolute;
+  top: 40px;
+  left: -5px;
+  z-index: 9999;  
+  background-color: rgba(123, 224, 173, 0.7);
+  box-shadow: 0px 0px 3px 3px #10A8A0;
+  display: none;
+}
+
+.whiteboard-toolbox .text-conatiner .size {
+  font-size: 1.5rem;
+  color: #000000;
 }
 
 .chatbox-toolbox {
@@ -354,7 +374,7 @@ footer .copyright {
 	background-color: rgba(123, 224, 173, 0.7);
 }
 
-.whiteboard .image-whiteboard-preview-container {
+.whiteboard .image-whiteboard-preview-container, .whiteboard .text-whiteboard-preview-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -373,6 +393,15 @@ footer .copyright {
 
 .whiteboard .image-whiteboard-preview-container img:hover {
   cursor: move;
+}
+
+.whiteboard .text-whiteboard-preview-container input {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;  
+  font-size: 32px;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .whiteboard .trace, .whiteboard .mouse-trace {

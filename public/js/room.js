@@ -18,6 +18,11 @@ const Model = {
       imagePosition: [300, 50],
       imageMovable: false,
     },
+    text: {
+      textReferencePosition: [0, 0],
+      textPosition: [300, 50],
+      textMovable: false,
+    },
     boundary: {
       minX: 0,
       maxX: 0,
@@ -128,6 +133,29 @@ const View = {
         }
       },
     },
+    text: {
+      draw: function (record) {
+        const { content, x, y, size } = record;
+        ctx.font = `${size} Josefin Sans, cwTeXYen, Verdana`;
+        ctx.fillStyle = '#000000';
+        const width = ctx.measureText(content).width;
+        const height = +size.replace('px', '');
+        // offset
+        ctx.fillText(content, x + 2, y + 0.25 * height);
+        // trace
+        View.whiteboard.text.updateTrace(record, x + 2, y + 0.25 * height, width, height);
+      },
+      updateTrace: function (record, x, y, width, height) {
+        const { user_id } = record;
+        const userHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
+        if (userHTML) {
+          userHTML.style.top = `${y - 10 - height}px`;
+          userHTML.style.left = `${x - 10}px`;
+          userHTML.style.width = `${width + 20}px`;
+          userHTML.style.height = `${height + 20}px`;
+        }
+      },
+    },
     initWhiteboard: function () {
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -141,6 +169,8 @@ const View = {
           View.whiteboard.line.draw(record);
         } else if (record.type === 'image') {
           await View.whiteboard.image.draw(record);
+        } else if (record.type === 'text') {
+          View.whiteboard.text.draw(record);
         }
       }
     },
@@ -379,6 +409,25 @@ const Controller = {
         }
       });
 
+      // toolbox cancel all feature
+      get('.whiteboard-toolbox').addEventListener('mousedown', (e) => {
+        if (e.target.tagName !== 'I') {
+          return;
+        }
+
+        // image
+        get('.image-whiteboard-preview-container').classList.add('hide');
+        // clear input value
+        get('.whiteboard-toolbox input[name="image-whiteboard"]').value = '';
+        Model.whiteboard.image.imagePosition = [300, 50];
+
+        // text
+        get('.text-whiteboard-preview-container').classList.add('hide');
+        // clear input value
+        get('.text-whiteboard-preview-container input').value = '';
+        Model.whiteboard.text.textPosition = [300, 50];
+      });
+
       // color
       get('.color-btn-container').addEventListener('click', (e) => {
         if (e.target.classList.contains('color-btn')) {
@@ -389,8 +438,14 @@ const Controller = {
       });
 
       // width
-      get('.width-btn-container input').addEventListener('change', (e) => {
+      get('.width-btn-container input').addEventListener('input', (e) => {
         Model.whiteboard.width = e.target.value || Model.whiteboard.width;
+      });
+
+      // text size
+      get('.text-conatiner input').addEventListener('input', (e) => {
+        get('.text-whiteboard-preview-container input').style.fontSize = `${e.target.value}px`;
+        get('.whiteboard-toolbox .text-conatiner .size span').innerHTML = e.target.value;
       });
 
       // create new
@@ -491,6 +546,68 @@ const Controller = {
           Model.whiteboard.records.push(record);
           // clear input value
           get('.whiteboard-toolbox input[name="image-whiteboard"]').value = '';
+        }
+      });
+
+      // add text on whiteboard
+      get('.whiteboard-toolbox .add-text').addEventListener('click', (e) => {
+        get('.text-whiteboard-preview-container').classList.remove('hide');
+        get('.text-whiteboard-preview-container input').focus();
+        const [left, top] = Model.whiteboard.text.textPosition;
+        get('.text-whiteboard-preview-container input').style.left = `${left}px`;
+        get('.text-whiteboard-preview-container input').style.top = `${top}px`;
+      });
+      // move text
+      get('.text-whiteboard-preview-container input').addEventListener('mousedown', (e) => {
+        Model.whiteboard.text.textReferencePosition = [e.clientX, e.clientY];
+        Model.whiteboard.text.textMovable = true;
+      });
+      get('.text-whiteboard-preview-container input').addEventListener('mouseup', (e) => {
+        const left = +get('.text-whiteboard-preview-container input').style.left.replace('px', '');
+        const top = +get('.text-whiteboard-preview-container input').style.top.replace('px', '');
+        Model.whiteboard.text.textPosition = [left, top];
+        Model.whiteboard.text.textMovable = false;
+      });
+      get('.text-whiteboard-preview-container input').addEventListener('mouseout', (e) => {
+        const left = +get('.text-whiteboard-preview-container input').style.left.replace('px', '');
+        const top = +get('.text-whiteboard-preview-container input').style.top.replace('px', '');
+        Model.whiteboard.text.textPosition = [left, top];
+        Model.whiteboard.text.textMovable = false;
+      });
+      get('.text-whiteboard-preview-container input').addEventListener('mousemove', (e) => {
+        if (!Model.whiteboard.text.textMovable) {
+          return;
+        }
+        const dx = Model.whiteboard.text.textPosition[0] + e.clientX - Model.whiteboard.text.textReferencePosition[0];
+        const dy = Model.whiteboard.text.textPosition[1] + e.clientY - Model.whiteboard.text.textReferencePosition[1];
+        get('.text-whiteboard-preview-container input').style.left = `${dx}px`;
+        get('.text-whiteboard-preview-container input').style.top = `${dy}px`;
+      });
+      // draw text
+      get('.text-whiteboard-preview-container').addEventListener('mousedown', async (e) => {
+        if (e.target.tagName !== 'INPUT') {
+          if (get('.text-whiteboard-preview-container input').value.replace(/\s/g, '') !== '') {
+            const room = Model.room.name;
+            const [x, y] = Model.whiteboard.text.textPosition;
+            const content = get('.text-whiteboard-preview-container input').value;
+            const size = get('.text-whiteboard-preview-container input').style.fontSize || '32px';
+            const record = {
+              user_id: Model.user.id,
+              author: Model.user.name,
+              type: 'text',
+              created_at: Date.now(),
+              x,
+              y,
+              content,
+              size,
+            };
+            View.whiteboard.text.draw(record);
+            socket.emit('new draw', JSON.stringify({ room, record }));
+            Model.whiteboard.records.push(record);
+          }
+          get('.text-whiteboard-preview-container').classList.add('hide');
+          Model.whiteboard.text.textPosition = [300, 50];
+          get('.text-whiteboard-preview-container input').value = '';
         }
       });
     },
