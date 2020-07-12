@@ -271,7 +271,7 @@ footer .copyright {
 .whiteboard-toolbox .pen-conatiner {
   padding: 10px;
   position: absolute;
-  top: 40px;
+  top: 35px;
   left: -5px;
   z-index: 9999;  
   background-color: rgba(123, 224, 173, 0.7);
@@ -319,7 +319,7 @@ footer .copyright {
 .whiteboard-toolbox .text-conatiner {
   padding: 10px;
   position: absolute;
-  top: 40px;
+  top: 35px;
   left: -5px;
   z-index: 9999;  
   background-color: rgba(123, 224, 173, 0.7);
