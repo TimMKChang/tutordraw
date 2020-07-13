@@ -14,11 +14,18 @@ const createPin = async (pin) => {
 };
 
 const updatePin = async (pin) => {
-  const { content, whiteboard_start_at, created_at } = pin;
+  const { content, x, y, whiteboard_start_at, created_at } = pin;
   const condition = { query: '', sql: '', binding: [] };
-  condition.query = 'UPDATE pin SET content = ? ';
-  condition.sql = 'WHERE whiteboard_start_at = ? AND created_at = ?';
-  condition.binding = [content, whiteboard_start_at, created_at];
+
+  if (content) {
+    condition.query = 'UPDATE pin SET content = ? ';
+    condition.sql = 'WHERE whiteboard_start_at = ? AND created_at = ?';
+    condition.binding = [content, whiteboard_start_at, created_at];
+  } else if (x && y) {
+    condition.query = 'UPDATE pin SET x = ?, y = ? ';
+    condition.sql = 'WHERE whiteboard_start_at = ? AND created_at = ?';
+    condition.binding = [x, y, whiteboard_start_at, created_at];
+  }
 
   try {
     await transaction();

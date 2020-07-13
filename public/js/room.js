@@ -195,10 +195,26 @@ const View = {
         }
       },
       update: function (pin) {
-        const { created_at, content } = pin;
-        const pinTextareaHTML = get(`.whiteboard .pin-container [data-created_at="${created_at}"] textarea`);
-        if (pinTextareaHTML) {
-          pinTextareaHTML.value = content;
+        const { created_at, content, x, y } = pin;
+        if (content) {
+          const pinTextareaHTML = get(`.whiteboard .pin-container [data-created_at="${created_at}"] textarea`);
+          if (pinTextareaHTML) {
+            pinTextareaHTML.value = content;
+          }
+        } else if (x && y) {
+          // offset from preview-container size
+          const preWidth = 100;
+          const preHeight = 100;
+
+          // offset from pin itself size
+          const pinWidth = 40;
+          const pinHeight = 40;
+
+          const pinHTML = get(`.whiteboard .pin-container [data-created_at="${created_at}"]`);
+          if (pinHTML) {
+            pinHTML.style.left = `${x + preWidth / 2 - pinWidth / 2}px`;
+            pinHTML.style.top = `${y + preHeight / 2 - pinHeight / 2}px`;
+          }
         }
       },
       clear: function () {
@@ -766,6 +782,59 @@ const Controller = {
         };
 
         socket.emit('update whiteboard pin', JSON.stringify(pin));
+      });
+      // move pin
+      get('.whiteboard .pin-container').addEventListener('mousedown', async (e) => {
+        if (e.target.closest('.pin')) {
+          const left = +e.target.closest('.pin').style.left.replace('px', '');
+          const top = +e.target.closest('.pin').style.top.replace('px', '');
+          Model.whiteboard.pin.pinPosition = [left, top];
+          Model.whiteboard.pin.pinMovable = true;
+          Model.whiteboard.pin.pinReferencePosition = [e.clientX, e.clientY];
+        }
+      });
+      get('.whiteboard .pin-container').addEventListener('mousemove', async (e) => {
+        if (!Model.whiteboard.pin.pinMovable) {
+          return;
+        }
+        if (e.target.closest('.pin')) {
+          const dx = Model.whiteboard.pin.pinPosition[0] + e.clientX - Model.whiteboard.pin.pinReferencePosition[0];
+          const dy = Model.whiteboard.pin.pinPosition[1] + e.clientY - Model.whiteboard.pin.pinReferencePosition[1];
+          e.target.closest('.pin').style.left = `${dx}px`;
+          e.target.closest('.pin').style.top = `${dy}px`;
+        }
+      });
+      $('.whiteboard .pin-container').on('mouseup mouseout', async (e) => {
+        if (!Model.whiteboard.pin.pinMovable) {
+          return;
+        }
+        if (e.target.closest('.pin')) {
+          const left = +e.target.closest('.pin').style.left.replace('px', '');
+          const top = +e.target.closest('.pin').style.top.replace('px', '');
+          Model.whiteboard.pin.pinPosition = [left, top];
+          Model.whiteboard.pin.pinMovable = false;
+
+          const created_at = e.target.closest('.pin').dataset.created_at;
+
+          // offset from preview-container size
+          const preWidth = 100;
+          const preHeight = 100;
+
+          // offset from pin itself size
+          const pinWidth = 40;
+          const pinHeight = 40;
+
+          const pin = {
+            room: Model.room.name,
+            user_id: Model.user.id,
+            author: Model.user.name,
+            created_at,
+            // reverse offset
+            x: left - (+ preWidth / 2 - pinWidth / 2),
+            y: top - (+ preHeight / 2 - pinHeight / 2),
+          };
+          socket.emit('update whiteboard pin', JSON.stringify(pin));
+        }
       });
     },
     uploadWhiteboardImage: async function () {
