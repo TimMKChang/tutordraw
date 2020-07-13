@@ -93,3 +93,13 @@ socket.on('load whiteboard records', async function (dataStr) {
   Model.whiteboard.records.unshift(...allRecords);
   View.whiteboard.redraw();
 });
+
+socket.on('load whiteboard pin', function (dataStr) {
+  const { pins } = JSON.parse(dataStr);
+  for (let pinIndex = 0; pinIndex < pins.length; pinIndex++) {
+    const pin = pins[pinIndex];
+    View.whiteboard.pin.create(pin);
+  }
+  // close all pins
+  get('.whiteboard .pin-container').click();
+});

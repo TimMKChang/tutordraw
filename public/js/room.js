@@ -163,11 +163,11 @@ const View = {
     },
     pin: {
       create: function (pin) {
-        const { x, y, created_at } = pin;
+        const { x, y, created_at, content } = pin;
         get('.whiteboard .pin-container').innerHTML += `
           <i class="fas fa-thumbtack pin" data-created_at="${created_at}">
             <div class="pin-text">
-              <textarea name="pin-text"></textarea>
+              <textarea name="pin-text">${content}</textarea>
             </div>
           </i>
         `;
@@ -732,8 +732,6 @@ const Controller = {
           const pins = getAll('.whiteboard .pin-container .pin-text:not(.hide)');
           for (let pinIndex = 0; pinIndex < pins.length; pinIndex++) {
             pins[pinIndex].classList.add('hide');
-            // save pin text
-
           }
         } else {
           get('.whiteboard .pin-container').classList.remove('pointer-none');

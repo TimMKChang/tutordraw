@@ -8,6 +8,12 @@ const {
 } = require('../server/controllers/whiteboard_controller');
 
 const {
+  createPin,
+  updatePin,
+  getPin,
+} = require('../server/controllers/pin_controller');
+
+const {
   uploadWhiteboard,
 } = require('../server/S3/uploadImage');
 
@@ -157,6 +163,17 @@ const socketCon = (io) => {
           socket.emit('load whiteboard records', JSON.stringify({ links, records }));
         }
       }
+
+      // load whiteboard pin
+      loadWhiteboardPin(room, rooms[room].whiteboard.start_at);
+      async function loadWhiteboardPin(room, start_at) {
+        const { error, pins } = await getPin({ room, start_at });
+        if (error) {
+          console.log(error);
+        } else {
+          socket.emit('load whiteboard pin', JSON.stringify({ pins }));
+        }
+      }
     });
 
     socket.on('load chat msg', async function (dataStr) {
@@ -266,23 +283,31 @@ const socketCon = (io) => {
     });
 
     socket.on('new whiteboard pin', async function (dataStr) {
-      const { room, user_id } = JSON.parse(dataStr);
+      const pin = JSON.parse(dataStr);
       // check user_id
+      const { room, user_id } = pin;
       if (!room in rooms || userClients[user_id] !== socket.id) {
         return;
       }
       // save to DB
+      const { start_at } = rooms[room].whiteboard;
+      pin.whiteboard_start_at = start_at;
+      await createPin(pin);
 
       socket.to(room).emit('new whiteboard pin', dataStr);
     });
 
     socket.on('update whiteboard pin', async function (dataStr) {
-      const { room, user_id } = JSON.parse(dataStr);
+      const pin = JSON.parse(dataStr);
       // check user_id
+      const { room, user_id } = pin;
       if (!room in rooms || userClients[user_id] !== socket.id) {
         return;
       }
       // update to DB
+      const { start_at } = rooms[room].whiteboard;
+      pin.whiteboard_start_at = start_at;
+      await updatePin(pin);
 
       socket.to(room).emit('update whiteboard pin', dataStr);
     });
