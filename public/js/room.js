@@ -208,8 +208,6 @@ const View = {
     initWhiteboard: function () {
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      // clear pin
-      View.whiteboard.pin.clear();
     },
     redraw: async function () {
       View.whiteboard.initWhiteboard();
@@ -531,6 +529,8 @@ const Controller = {
             socket.emit('new whiteboard', JSON.stringify({
               room: Model.room.name, user_id: Model.user.id, user: Model.user.name, imageFilename
             }));
+            // clear pin
+            View.whiteboard.pin.clear();
           }
         });
       });

@@ -46,6 +46,8 @@ socket.on('new draw', function (recordStr) {
 socket.on('new whiteboard', function () {
   View.whiteboard.initWhiteboard();
   Model.whiteboard.records = [];
+  // clear pin
+  View.whiteboard.pin.clear();
 });
 
 socket.on('new chat msg', function (msgStr) {

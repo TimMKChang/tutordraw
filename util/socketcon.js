@@ -165,7 +165,7 @@ const socketCon = (io) => {
       }
 
       // load whiteboard pin
-      loadWhiteboardPin(room, rooms[room].whiteboard.start_at);
+      await loadWhiteboardPin(room, rooms[room].whiteboard.start_at);
       async function loadWhiteboardPin(room, start_at) {
         const { error, pins } = await getPin({ room, start_at });
         if (error) {
