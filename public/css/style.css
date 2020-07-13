@@ -376,7 +376,9 @@ footer .copyright {
 	background-color: rgba(123, 224, 173, 0.7);
 }
 
-.whiteboard .image-whiteboard-preview-container, .whiteboard .text-whiteboard-preview-container {
+.whiteboard .image-whiteboard-preview-container, 
+.whiteboard .text-whiteboard-preview-container, 
+.whiteboard .pin-whiteboard-preview-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -404,6 +406,68 @@ footer .copyright {
   border: none;  
   font-size: 32px;
   background-color: rgba(0, 0, 0, 0);
+}
+
+.whiteboard .pin-whiteboard-preview-container i.pin {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: #10a8a0;
+  border-radius: 50%;
+  border-style: dashed;
+}
+
+.whiteboard .pin-whiteboard-preview-container i.pin:hover {
+  cursor: move;
+}
+
+.whiteboard .pin-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1200px;
+  height: 800px;
+  overflow: hidden;
+  /* pointer-events: none; */
+}
+
+.whiteboard .pin-container .pin {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(123, 224, 173, 0.7);
+  border-radius: 5px;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: #10a8a0;
+  pointer-events: auto;
+}
+
+.whiteboard .pin-container .pin:hover {
+  cursor: pointer;
+}
+
+.whiteboard .pin-container .pin .pin-text {
+  font-size: 1.5rem;
+  font-family: 'Josefin Sans', 'cwTeXYen', Verdana;
+  position: absolute;
+  top: 0;
+  left: calc(100% + 5px);
+}
+
+.whiteboard .pin-container .pin .pin-text textarea {
+  width: 200px;
+  height: 200px;
+  resize: none;
+  background-color: #f9ee8a;
 }
 
 .whiteboard .trace, .whiteboard .mouse-trace {
@@ -728,4 +792,8 @@ footer .copyright {
 .hide {
   display: none !important;
   z-index: -9999 !important;;
+}
+
+.pointer-none {
+  pointer-events: none;
 }

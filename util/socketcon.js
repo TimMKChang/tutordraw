@@ -265,6 +265,28 @@ const socketCon = (io) => {
       socket.to(room).emit('mouse trace', dataStr);
     });
 
+    socket.on('new whiteboard pin', async function (dataStr) {
+      const { room, user_id } = JSON.parse(dataStr);
+      // check user_id
+      if (!room in rooms || userClients[user_id] !== socket.id) {
+        return;
+      }
+      // save to DB
+
+      socket.to(room).emit('new whiteboard pin', dataStr);
+    });
+
+    socket.on('update whiteboard pin', async function (dataStr) {
+      const { room, user_id } = JSON.parse(dataStr);
+      // check user_id
+      if (!room in rooms || userClients[user_id] !== socket.id) {
+        return;
+      }
+      // update to DB
+
+      socket.to(room).emit('update whiteboard pin', dataStr);
+    });
+
     socket.on('disconnect', async function () {
       console.log(`user ${socket.id} has disconnected`);
 

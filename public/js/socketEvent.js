@@ -58,6 +58,16 @@ socket.on('mouse trace', function (dataStr) {
   View.whiteboard.displayMouseTrace(user_id, mouseTrace);
 });
 
+socket.on('new whiteboard pin', function (dataStr) {
+  const pin = JSON.parse(dataStr);
+  View.whiteboard.pin.create(pin);
+});
+
+socket.on('update whiteboard pin', function (dataStr) {
+  const pin = JSON.parse(dataStr);
+  View.whiteboard.pin.update(pin);
+});
+
 socket.on('load chat msg', function (msgObjsStr) {
   const msgObjs = JSON.parse(msgObjsStr);
   const isLoad = true;

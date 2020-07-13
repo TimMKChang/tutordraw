@@ -23,6 +23,11 @@ const Model = {
       textPosition: [300, 50],
       textMovable: false,
     },
+    pin: {
+      pinReferencePosition: [0, 0],
+      pinPosition: [300, 50],
+      pinMovable: false,
+    },
     boundary: {
       minX: 0,
       maxX: 0,
@@ -153,6 +158,39 @@ const View = {
           userHTML.style.left = `${x - 10}px`;
           userHTML.style.width = `${width + 20}px`;
           userHTML.style.height = `${height + 20}px`;
+        }
+      },
+    },
+    pin: {
+      create: function (pin) {
+        const { x, y, created_at } = pin;
+        get('.whiteboard .pin-container').innerHTML += `
+          <i class="fas fa-thumbtack pin" data-created_at="${created_at}">
+            <div class="pin-text">
+              <textarea name="pin-text"></textarea>
+            </div>
+          </i>
+        `;
+
+        const boundingClientRect = get('.pin-whiteboard-preview-container i.pin').getBoundingClientRect();
+        const preWidth = boundingClientRect.width;
+        const preHeight = boundingClientRect.height;
+
+        const pinWidth = window.getComputedStyle(get('.whiteboard .pin-container .pin')).width.replace('px', '');
+        const pinHeight = window.getComputedStyle(get('.whiteboard .pin-container .pin')).height.replace('px', '');
+
+        const pinHTML = get(`.whiteboard .pin-container [data-created_at="${created_at}"]`);
+        pinHTML.style.left = `${x + preWidth / 2 - pinWidth / 2}px`;
+        pinHTML.style.top = `${y + preHeight / 2 - pinHeight / 2}px`;
+
+        // pin container
+        get('.whiteboard .pin-container').classList.remove('pointer-none');
+      },
+      update: function (pin) {
+        const { created_at, content } = pin;
+        const pinTextareaHTML = get(`.whiteboard .pin-container [data-created_at="${created_at}"] textarea`);
+        if (pinTextareaHTML) {
+          pinTextareaHTML.value = content;
         }
       },
     },
@@ -426,6 +464,10 @@ const Controller = {
         // clear input value
         get('.text-whiteboard-preview-container input').value = '';
         Model.whiteboard.text.textPosition = [300, 50];
+
+        // pin
+        get('.pin-whiteboard-preview-container').classList.add('hide');
+        Model.whiteboard.pin.pinPosition = [300, 50];
       });
 
       // color
@@ -609,6 +651,94 @@ const Controller = {
           Model.whiteboard.text.textPosition = [300, 50];
           get('.text-whiteboard-preview-container input').value = '';
         }
+      });
+
+      // add pin on whiteboard
+      get('.whiteboard-toolbox .add-pin').addEventListener('click', (e) => {
+        get('.pin-whiteboard-preview-container').classList.remove('hide');
+        get('.pin-whiteboard-preview-container i.pin').focus();
+        const [left, top] = Model.whiteboard.pin.pinPosition;
+        get('.pin-whiteboard-preview-container i.pin').style.left = `${left}px`;
+        get('.pin-whiteboard-preview-container i.pin').style.top = `${top}px`;
+      });
+      // move pin
+      get('.pin-whiteboard-preview-container i.pin').addEventListener('mousedown', (e) => {
+        Model.whiteboard.pin.pinReferencePosition = [e.clientX, e.clientY];
+        Model.whiteboard.pin.pinMovable = true;
+      });
+      get('.pin-whiteboard-preview-container i.pin').addEventListener('mouseup', (e) => {
+        const left = +get('.pin-whiteboard-preview-container i.pin').style.left.replace('px', '');
+        const top = +get('.pin-whiteboard-preview-container i.pin').style.top.replace('px', '');
+        Model.whiteboard.pin.pinPosition = [left, top];
+        Model.whiteboard.pin.pinMovable = false;
+      });
+      get('.pin-whiteboard-preview-container i.pin').addEventListener('mouseout', (e) => {
+        const left = +get('.pin-whiteboard-preview-container i.pin').style.left.replace('px', '');
+        const top = +get('.pin-whiteboard-preview-container i.pin').style.top.replace('px', '');
+        Model.whiteboard.pin.pinPosition = [left, top];
+        Model.whiteboard.pin.pinMovable = false;
+      });
+      get('.pin-whiteboard-preview-container i.pin').addEventListener('mousemove', (e) => {
+        if (!Model.whiteboard.pin.pinMovable) {
+          return;
+        }
+        const dx = Model.whiteboard.pin.pinPosition[0] + e.clientX - Model.whiteboard.pin.pinReferencePosition[0];
+        const dy = Model.whiteboard.pin.pinPosition[1] + e.clientY - Model.whiteboard.pin.pinReferencePosition[1];
+        get('.pin-whiteboard-preview-container i.pin').style.left = `${dx}px`;
+        get('.pin-whiteboard-preview-container i.pin').style.top = `${dy}px`;
+      });
+      // draw pin
+      get('.pin-whiteboard-preview-container').addEventListener('mousedown', async (e) => {
+        if (e.target.tagName !== 'I') {
+          const room = Model.room.name;
+          const [x, y] = Model.whiteboard.pin.pinPosition;
+
+          const pin = {
+            room: Model.room.name,
+            user_id: Model.user.id,
+            author: Model.user.name,
+            created_at: Date.now(),
+            x,
+            y,
+            content: '',
+          };
+          View.whiteboard.pin.create(pin);
+          socket.emit('new whiteboard pin', JSON.stringify(pin));
+
+          get('.pin-whiteboard-preview-container').classList.add('hide');
+          Model.whiteboard.pin.pinPosition = [300, 50];
+        }
+      });
+      // pin container
+      get('.whiteboard .pin-container').addEventListener('click', async (e) => {
+        if (!e.target.closest('.pin')) {
+          get('.whiteboard .pin-container').classList.add('pointer-none');
+          const pins = getAll('.whiteboard .pin-container .pin-text:not(.hide)');
+          for (let pinIndex = 0; pinIndex < pins.length; pinIndex++) {
+            pins[pinIndex].classList.add('hide');
+            // save pin text
+
+          }
+        } else {
+          get('.whiteboard .pin-container').classList.remove('pointer-none');
+          e.target.closest('.pin').querySelector('.pin-text').classList.remove('hide');
+        }
+      });
+      // update pin text
+      get('.whiteboard .pin-container').addEventListener('change', (e) => {
+        const pinHTML = e.target.closest('.pin');
+        const created_at = pinHTML.dataset.created_at;
+        const content = e.target.value;
+
+        const pin = {
+          room: Model.room.name,
+          user_id: Model.user.id,
+          author: Model.user.name,
+          created_at,
+          content,
+        };
+
+        socket.emit('update whiteboard pin', JSON.stringify(pin));
       });
     },
     uploadWhiteboardImage: async function () {
