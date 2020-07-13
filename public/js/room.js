@@ -495,15 +495,31 @@ const Controller = {
         if (Model.whiteboard.records.length === 0) {
           return;
         }
-        const isNew = confirm('Sure to create a new whiteboard?');
-        if (isNew) {
-          const imageFilename = await Controller.whiteboard.uploadWhiteboardImage();
-          View.whiteboard.initWhiteboard();
-          Model.whiteboard.records = [];
-          socket.emit('new whiteboard', JSON.stringify({
-            room: Model.room.name, user_id: Model.user.id, user: Model.user.name, imageFilename
-          }));
-        }
+
+        Swal.fire({
+          title: 'Oops...',
+          text: 'Sure to create a new whiteboard?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes'
+        }).then(async (result) => {
+          if (result.value) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Your new whiteboard has been created.'
+            });
+
+            const imageFilename = await Controller.whiteboard.uploadWhiteboardImage();
+            View.whiteboard.initWhiteboard();
+            Model.whiteboard.records = [];
+            socket.emit('new whiteboard', JSON.stringify({
+              room: Model.room.name, user_id: Model.user.id, user: Model.user.name, imageFilename
+            }));
+          }
+        });
       });
 
       // download
