@@ -53,7 +53,7 @@ const socketCon = (io) => {
       const verifyJWTResult = verifyJWT(access_JWT);
       if (verifyJWTResult.error) {
         const err = new Error();
-        err.data = { type: 'authError', message: 'authentication error' };
+        err.data = { type: 'authError', message: 'Please sign in first' };
         next(err);
       } else {
         socket.handshake.query.user_id = verifyJWTResult.data.id;

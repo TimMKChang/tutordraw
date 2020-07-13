@@ -6,7 +6,13 @@ const socket = io({
 });
 
 socket.on('error', function (error) {
-  alert(error.message);
+  Swal.fire({
+    icon: 'error',
+    title: 'Oops...',
+    text: error.message,
+  }).then(() => {
+    location.href = '/';
+  });
 });
 
 socket.on('connect', () => {
