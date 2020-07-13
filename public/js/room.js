@@ -162,29 +162,37 @@ const View = {
       },
     },
     pin: {
-      create: function (pin) {
-        const { x, y, created_at, content } = pin;
-        get('.whiteboard .pin-container').innerHTML += `
-          <i class="fas fa-thumbtack pin" data-created_at="${created_at}">
-            <div class="pin-text">
-              <textarea name="pin-text">${content}</textarea>
-            </div>
-          </i>
-        `;
+      create: function (pins, isLoad) {
+        // offset from preview-container size
+        const preWidth = 100;
+        const preHeight = 100;
 
-        const boundingClientRect = get('.pin-whiteboard-preview-container i.pin').getBoundingClientRect();
-        const preWidth = boundingClientRect.width;
-        const preHeight = boundingClientRect.height;
+        // offset from pin itself size
+        const pinWidth = 40;
+        const pinHeight = 40;
 
-        const pinWidth = window.getComputedStyle(get('.whiteboard .pin-container .pin')).width.replace('px', '');
-        const pinHeight = window.getComputedStyle(get('.whiteboard .pin-container .pin')).height.replace('px', '');
+        for (let pinIndex = 0; pinIndex < pins.length; pinIndex++) {
+          const pin = pins[pinIndex];
+          const { x, y, created_at, content } = pin;
+          get('.whiteboard .pin-container').innerHTML += `
+            <i class="fas fa-thumbtack pin" data-created_at="${created_at}">
+              <div class="pin-text">
+                <textarea name="pin-text">${content}</textarea>
+              </div>
+            </i>
+          `;
+          const pinHTML = get(`.whiteboard .pin-container [data-created_at="${created_at}"]`);
+          pinHTML.style.left = `${x + preWidth / 2 - pinWidth / 2}px`;
+          pinHTML.style.top = `${y + preHeight / 2 - pinHeight / 2}px`;
+        }
 
-        const pinHTML = get(`.whiteboard .pin-container [data-created_at="${created_at}"]`);
-        pinHTML.style.left = `${x + preWidth / 2 - pinWidth / 2}px`;
-        pinHTML.style.top = `${y + preHeight / 2 - pinHeight / 2}px`;
-
-        // pin container
-        get('.whiteboard .pin-container').classList.remove('pointer-none');
+        if (isLoad) {
+          // close all pins
+          get('.whiteboard .pin-container').click();
+        } else {
+          // pin container
+          get('.whiteboard .pin-container').classList.remove('pointer-none');
+        }
       },
       update: function (pin) {
         const { created_at, content } = pin;
@@ -718,7 +726,7 @@ const Controller = {
             y,
             content: '',
           };
-          View.whiteboard.pin.create(pin);
+          View.whiteboard.pin.create([pin]);
           socket.emit('new whiteboard pin', JSON.stringify(pin));
 
           get('.pin-whiteboard-preview-container').classList.add('hide');

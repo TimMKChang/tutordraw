@@ -60,7 +60,7 @@ socket.on('mouse trace', function (dataStr) {
 
 socket.on('new whiteboard pin', function (dataStr) {
   const pin = JSON.parse(dataStr);
-  View.whiteboard.pin.create(pin);
+  View.whiteboard.pin.create([pin]);
 });
 
 socket.on('update whiteboard pin', function (dataStr) {
@@ -96,10 +96,6 @@ socket.on('load whiteboard records', async function (dataStr) {
 
 socket.on('load whiteboard pin', function (dataStr) {
   const { pins } = JSON.parse(dataStr);
-  for (let pinIndex = 0; pinIndex < pins.length; pinIndex++) {
-    const pin = pins[pinIndex];
-    View.whiteboard.pin.create(pin);
-  }
-  // close all pins
-  get('.whiteboard .pin-container').click();
+  const isLoad = true;
+  View.whiteboard.pin.create(pins, isLoad);
 });
