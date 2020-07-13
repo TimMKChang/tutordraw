@@ -201,10 +201,15 @@ const View = {
           pinTextareaHTML.value = content;
         }
       },
+      clear: function () {
+        get('.whiteboard .pin-container').innerHTML = '';
+      },
     },
     initWhiteboard: function () {
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // clear pin
+      View.whiteboard.pin.clear();
     },
     redraw: async function () {
       View.whiteboard.initWhiteboard();
