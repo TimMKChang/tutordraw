@@ -74,6 +74,8 @@ header.index .member-container .signup-form-btn:hover {
 }
 
 .main-container {
+  min-height: 100vh;
+  background: linear-gradient(rgba(123, 224, 173, 0.7), #98a6d4);
   display: flex;
   justify-content: center;
   align-items: center;

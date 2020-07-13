@@ -303,8 +303,8 @@ const Controller = {
         if (action === 'down') {
           this.prevX = this.currX;
           this.prevY = this.currY;
-          this.currX = e.clientX - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
-          this.currY = e.clientY - whiteboardHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
+          this.currX = e.clientX - roomContainerHTML.offsetLeft - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
+          this.currY = e.clientY - roomContainerHTML.offsetTop - whiteboardHTML.offsetTop - whiteboardHTML.scrollTop + window.pageYOffset;
 
           // trace boundary
           Model.whiteboard.boundary = {
@@ -337,8 +337,8 @@ const Controller = {
           if (this.isDrawing) {
             this.prevX = this.currX;
             this.prevY = this.currY;
-            this.currX = e.clientX - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
-            this.currY = e.clientY - whiteboardHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
+            this.currX = e.clientX - roomContainerHTML.offsetLeft - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
+            this.currY = e.clientY - roomContainerHTML.offsetTop - whiteboardHTML.offsetTop - whiteboardHTML.scrollTop + window.pageYOffset;
 
             // trace boundary
             if (this.currX < Model.whiteboard.boundary.minX) {
