@@ -319,8 +319,9 @@ const View = {
       }
 
       //  first time load message and not load message
-      if (!isLoad || Model.chatbox.lastOldestCreated_at === 0) {
-        View.chatbox.scrollToBottom();
+      const isFirstLoad = Model.chatbox.lastOldestCreated_at === 0;
+      if (!isLoad || isFirstLoad) {
+        View.chatbox.scrollToBottom(isFirstLoad);
       }
       // mark oldest created_at
       if (isLoad) {
@@ -328,9 +329,17 @@ const View = {
         Model.chatbox.scrollLock = false;
       }
     },
-    scrollToBottom: function () {
+    scrollToBottom: function (isFirstLoad) {
       const msgContainerHTML = get('.msg-container');
-      msgContainerHTML.scrollTop = msgContainerHTML.scrollHeight;
+      if (isFirstLoad) {
+        msgContainerHTML.scrollTop = msgContainerHTML.scrollHeight;
+        return;
+      }
+
+      const maxScrollTop = msgContainerHTML.scrollHeight - msgContainerHTML.offsetHeight;
+      if (maxScrollTop - msgContainerHTML.scrollTop < msgContainerHTML.offsetHeight * 1.5) {
+        msgContainerHTML.scrollTop = msgContainerHTML.scrollHeight;
+      }
     },
     displayUserList: function (users) {
       let htmlContent = '';
@@ -1009,7 +1018,8 @@ const Controller = {
       });
       // load history chat message when scroll
       get('.msg-container').onscroll = () => {
-        if (get('.msg-container').scrollTop <= 300 && !Model.chatbox.scrollLock) {
+        const msgContainerHTML = get('.msg-container');
+        if (get('.msg-container').scrollTop <= msgContainerHTML.offsetHeight * 1.5 && !Model.chatbox.scrollLock) {
           // lock
           Model.chatbox.scrollLock = true;
           const lastOldestCreated_at = Model.chatbox.lastOldestCreated_at;
