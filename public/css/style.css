@@ -798,8 +798,6 @@ footer .copyright {
   left: 0;
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .call-container video {

@@ -4,6 +4,7 @@ const PeerjsCall = {
   getUserMedia: navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia,
   isAudio: false,
   isVideo: false,
+  isFirstCall: true,
   allLocalStream: {
 
   },
@@ -36,7 +37,9 @@ const PeerjsCall = {
       }));
 
       const callContainerHTML = document.querySelector('.call-container');
-      callContainerHTML.innerHTML = '';
+      callContainerHTML.innerHTML = `
+        <video src="" width="200" height="150" class="self" muted></video>
+      `;
     });
 
     PeerjsCall.peer.on('call', function (call) {
@@ -46,6 +49,14 @@ const PeerjsCall = {
         PeerjsCall.allLocalStream[callUserId] = stream;
         stream.getTracks()[0].enabled = PeerjsCall.isAudio;
         stream.getTracks()[1].enabled = PeerjsCall.isVedio;
+        if (PeerjsCall.isFirstCall) {
+          const video = document.querySelector('.call-container video.self');
+          video.srcObject = stream;
+          video.onloadedmetadata = function (e) {
+            video.play();
+          };
+          PeerjsCall.isFirstCall = false;
+        }
 
         let video;
         const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${callUserId}"]`);
@@ -85,6 +96,9 @@ const PeerjsCall = {
       const stream = PeerjsCall.allLocalStream[user_id];
       stream.getTracks().forEach(track => { track.stop(); });
     }
+
+    // recover first call state
+    PeerjsCall.isFirstCall = true;
   },
   callAll: function (usersInCall) {
     for (let userIndex = 0; userIndex < usersInCall.length; userIndex++) {
@@ -105,6 +119,14 @@ const PeerjsCall = {
         PeerjsCall.allLocalStream[callUserId] = stream;
         stream.getTracks()[0].enabled = PeerjsCall.isAudio;
         stream.getTracks()[1].enabled = PeerjsCall.isVedio;
+        if (PeerjsCall.isFirstCall) {
+          const video = document.querySelector('.call-container video.self');
+          video.srcObject = stream;
+          video.onloadedmetadata = function (e) {
+            video.play();
+          };
+          PeerjsCall.isFirstCall = false;
+        }
 
         const call = PeerjsCall.peer.call(callUserId, stream);
         call.on('stream', function (remoteStream) {
