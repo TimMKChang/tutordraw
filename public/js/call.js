@@ -2,6 +2,8 @@ const PeerjsCall = {
   peer_id: '',
   peer: '',
   getUserMedia: navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia,
+  isAudio: false,
+  isVideo: false,
   allLocalStream: {
 
   },
@@ -42,6 +44,8 @@ const PeerjsCall = {
 
         const callUserId = call.peer;
         PeerjsCall.allLocalStream[callUserId] = stream;
+        stream.getTracks()[0].enabled = PeerjsCall.isAudio;
+        stream.getTracks()[1].enabled = PeerjsCall.isVedio;
 
         let video;
         const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${callUserId}"]`);
@@ -75,6 +79,12 @@ const PeerjsCall = {
       user_id,
     }));
     PeerjsCall.peer.destroy();
+
+    // stop audio and video
+    for (let user_id in PeerjsCall.allLocalStream) {
+      const stream = PeerjsCall.allLocalStream[user_id];
+      stream.getTracks().forEach(track => { track.stop(); });
+    }
   },
   callAll: function (usersInCall) {
     for (let userIndex = 0; userIndex < usersInCall.length; userIndex++) {
@@ -93,6 +103,8 @@ const PeerjsCall = {
 
       PeerjsCall.getUserMedia({ video: true, audio: true }, function (stream) {
         PeerjsCall.allLocalStream[callUserId] = stream;
+        stream.getTracks()[0].enabled = PeerjsCall.isAudio;
+        stream.getTracks()[1].enabled = PeerjsCall.isVedio;
 
         const call = PeerjsCall.peer.call(callUserId, stream);
         call.on('stream', function (remoteStream) {
@@ -107,15 +119,17 @@ const PeerjsCall = {
     }
   },
   toggleAudio: function () {
-    for (user_id in PeerjsCall.allLocalStream) {
+    PeerjsCall.isAudio = !PeerjsCall.isAudio;
+    for (let user_id in PeerjsCall.allLocalStream) {
       const stream = PeerjsCall.allLocalStream[user_id];
-      stream.getTracks()[0].enabled = !stream.getTracks()[0].enabled;
+      stream.getTracks()[0].enabled = PeerjsCall.isAudio;
     }
   },
   toggleVedio: function () {
-    for (user_id in PeerjsCall.allLocalStream) {
+    PeerjsCall.isVedio = !PeerjsCall.isVedio;
+    for (let user_id in PeerjsCall.allLocalStream) {
       const stream = PeerjsCall.allLocalStream[user_id];
-      stream.getTracks()[1].enabled = !stream.getTracks()[1].enabled;
+      stream.getTracks()[1].enabled = PeerjsCall.isVedio;
     }
   },
 };

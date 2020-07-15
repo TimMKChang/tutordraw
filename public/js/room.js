@@ -1032,6 +1032,67 @@ const Controller = {
       // call
       get('.chatbox-toolbox i.call').addEventListener('click', (e) => {
         PeerjsCall.connect();
+        e.target.classList.toggle('fa-phone');
+        e.target.classList.toggle('fa-phone-slash');
+        e.target.classList.toggle('color-used');
+        if (e.target.classList.contains('fa-phone')) {
+          get('.chatbox-toolbox i.users').classList.add('fa-users');
+          get('.chatbox-toolbox i.users').classList.remove('fa-users-slash');
+          get('.chatbox-toolbox i.users').classList.add('color-used');
+          get('.call-container').classList.remove('hide');
+          get('.whiteboard').scrollTop = 0;
+          get('.whiteboard').classList.add('overflow-hidden');
+
+        } else {
+          get('.chatbox-toolbox i.users').classList.remove('fa-users');
+          get('.chatbox-toolbox i.users').classList.add('fa-users-slash');
+          get('.chatbox-toolbox i.users').classList.remove('color-used');
+          get('.call-container').classList.add('hide');
+          get('.whiteboard').classList.remove('overflow-hidden');
+        }
+        PeerjsCall.isAudio = false;
+        get('.chatbox-toolbox i.audio').classList.remove('fa-microphone');
+        get('.chatbox-toolbox i.audio').classList.add('fa-microphone-slash');
+        get('.chatbox-toolbox i.audio').classList.remove('color-used');
+        PeerjsCall.isVedio = false;
+        get('.chatbox-toolbox i.video').classList.remove('fa-video');
+        get('.chatbox-toolbox i.video').classList.add('fa-video-slash');
+        get('.chatbox-toolbox i.video').classList.remove('color-used');
+      });
+      // display all users video
+      get('.chatbox-toolbox i.users').addEventListener('click', (e) => {
+        e.target.classList.toggle('fa-users');
+        e.target.classList.toggle('fa-users-slash');
+        e.target.classList.toggle('color-used');
+        get('.call-container').classList.toggle('hide');
+        get('.whiteboard').scrollTop = 0;
+        get('.whiteboard').classList.toggle('overflow-hidden');
+      });
+      // audio
+      get('.chatbox-toolbox i.audio').addEventListener('click', (e) => {
+        PeerjsCall.toggleAudio();
+        if (PeerjsCall.isAudio) {
+          e.target.classList.add('fa-microphone');
+          e.target.classList.remove('fa-microphone-slash');
+          e.target.classList.add('color-used');
+        } else {
+          e.target.classList.remove('fa-microphone');
+          e.target.classList.add('fa-microphone-slash');
+          e.target.classList.remove('color-used');
+        }
+      });
+      // video
+      get('.chatbox-toolbox i.video').addEventListener('click', (e) => {
+        PeerjsCall.toggleVedio();
+        if (PeerjsCall.isVedio) {
+          e.target.classList.add('fa-video');
+          e.target.classList.remove('fa-video-slash');
+          e.target.classList.add('color-used');
+        } else {
+          e.target.classList.remove('fa-video');
+          e.target.classList.add('fa-video-slash');
+          e.target.classList.remove('color-used');
+        }
       });
     },
     sendMsg: function () {
