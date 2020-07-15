@@ -29,11 +29,8 @@ const { socketCon } = require('./util/socketcon');
 socketCon(io);
 
 // peerjs
-const peerServer = ExpressPeerServer(server, {
-  path: '/call'
-});
-
-app.use('/peerjs', peerServer);
+const { PeerServer } = require('peer');
+const peerServer = PeerServer({ port: 9000, path: '/call' });
 
 // API routes
 app.use('/',

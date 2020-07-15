@@ -16,9 +16,9 @@ const PeerjsCall = {
     PeerjsCall.peer_id = user_id;
 
     PeerjsCall.peer = new Peer(user_id, {
-      host: location.hostname,
-      port: 8000,
-      path: '/peerjs/call',
+      host: PEERJS_URL,
+      port: 9000,
+      path: '/call',
       proxied: true
     });
 
