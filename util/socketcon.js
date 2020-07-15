@@ -43,6 +43,9 @@ const rooms = {
   //   whiteboard: {
   //     start_at: timestamp
   //     records: [],
+  //   },
+  //   call: {
+  //     socket.id: user_id
   //   }
   // }
 };
@@ -99,6 +102,7 @@ const socketCon = (io) => {
         rooms[room] = {
           users: {},
           whiteboard: { start_at, records: [] },
+          call: {},
           // created_at: Date.now(),
         };
         rooms[room]['users'][socket.id] = user;
@@ -312,6 +316,28 @@ const socketCon = (io) => {
       socket.to(room).emit('update whiteboard pin', dataStr);
     });
 
+    socket.on('join call room', function (dataStr) {
+      const { room, user_id } = JSON.parse(dataStr);
+      // check user_id
+      if (!room in rooms || userClients[user_id] !== socket.id) {
+        return;
+      }
+
+      socket.emit('users in call', JSON.stringify(rooms[room].call));
+      rooms[room].call[socket.id] = user_id;
+    });
+
+    socket.on('leave call room', function (dataStr) {
+      const { room, user_id } = JSON.parse(dataStr);
+      // check user_id
+      if (!room in rooms || userClients[user_id] !== socket.id) {
+        return;
+      }
+
+      socket.to(room).emit('leave call room', user_id);
+      delete rooms[room].call[socket.id];
+    });
+
     socket.on('disconnect', async function () {
       console.log(`user ${socket.id} has disconnected`);
 
@@ -358,6 +384,10 @@ const socketCon = (io) => {
         user,
         user_id,
       }));
+
+      // call
+      io.to(room).emit('leave call room', rooms[room].call[socket.id]);
+      delete rooms[room].call[socket.id];
     });
 
   });

@@ -101,3 +101,16 @@ socket.on('load whiteboard pin', function (dataStr) {
   const isLoad = true;
   View.whiteboard.pin.create(pins, isLoad);
 });
+
+socket.on('users in call', function (dataStr) {
+  const call = JSON.parse(dataStr);
+  const usersInCall = Object.values(call);
+  PeerjsCall.callAll(usersInCall);
+});
+
+socket.on('leave call room', function (user_id) {
+  const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${user_id}"]`);
+  if (videoHTML) {
+    videoHTML.remove();
+  }
+});

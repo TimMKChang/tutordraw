@@ -4,6 +4,7 @@ const { PORT } = process.env;
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const { ExpressPeerServer } = require('peer');
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,6 +27,13 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const { socketCon } = require('./util/socketcon');
 socketCon(io);
+
+// peerjs
+const peerServer = ExpressPeerServer(server, {
+  path: '/call'
+});
+
+app.use('/peerjs', peerServer);
 
 // API routes
 app.use('/',

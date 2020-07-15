@@ -1028,6 +1028,11 @@ const Controller = {
           }));
         }
       };
+
+      // call
+      get('.chatbox-toolbox i.call').addEventListener('click', (e) => {
+        PeerjsCall.connect();
+      });
     },
     sendMsg: function () {
       const msg = get('.chatbox .send-msg textarea').value;

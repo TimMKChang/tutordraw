@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
     integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="/js/peerjs.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
 </head>
 
@@ -66,6 +67,7 @@
             <input type="hidden" name="invite-url" value="">
             <div class="copy-invite-url-msg">Copied</div>
           </i>
+          <i class="fas fa-phone call"></i>
           <i class="fas fa-microphone"></i>
           <i class="fas fa-video"></i>
         </div>
@@ -135,6 +137,8 @@
 
     </div>
 
+    <div class="call-container"></div>
+
   </div>
 
   <div class="chatbox-large-image-container hide">
@@ -160,6 +164,7 @@
   <script src="/js/main.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/room.js"></script>
+  <script src="/js/call.js"></script>
   <script src="/js/socketEvent.js"></script>
 
 </body>

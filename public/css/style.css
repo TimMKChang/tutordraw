@@ -789,6 +789,15 @@ footer .copyright {
   color: #FFFFFF;
 }
 
+.call-container {
+  width: 100vw;
+  height: calc(100vh - 50px);
+  position: absolute;
+  top: 50px;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
 .hide {
   display: none !important;
   z-index: -9999 !important;;
