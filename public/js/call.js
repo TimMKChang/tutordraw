@@ -4,7 +4,6 @@ const PeerjsCall = {
   getUserMedia: navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia,
   isAudio: false,
   isVideo: false,
-  isFirstCall: true,
   allLocalStream: {
 
   },
@@ -13,6 +12,20 @@ const PeerjsCall = {
       PeerjsCall.disconnect();
       return;
     }
+
+    PeerjsCall.getUserMedia({ video: true, audio: true }, function (stream) {
+      PeerjsCall.allLocalStream.self = stream;
+      stream.getTracks()[0].enabled = PeerjsCall.isAudio;
+      stream.getTracks()[1].enabled = PeerjsCall.isVedio;
+
+      const video = document.querySelector('.call-container video.self');
+      video.srcObject = stream;
+      video.onloadedmetadata = function (e) {
+        video.play();
+      };
+    }, function (err) {
+      console.log('Failed to get local stream', err);
+    });
 
     // const user_id = Math.random().toString(16).substr(-8);
     const user_id = Model.user.id.toString();
@@ -30,18 +43,6 @@ const PeerjsCall = {
       user_id,
     }));
 
-    PeerjsCall.peer.on('disconnected', function () {
-      socket.emit('leave call room', JSON.stringify({
-        room: Model.room.name,
-        user_id: PeerjsCall.peer_id,
-      }));
-
-      const callContainerHTML = document.querySelector('.call-container');
-      callContainerHTML.innerHTML = `
-        <video src="" width="200" height="150" class="self" muted></video>
-      `;
-    });
-
     PeerjsCall.peer.on('call', function (call) {
       PeerjsCall.getUserMedia({ video: true, audio: true }, function (stream) {
 
@@ -49,14 +50,6 @@ const PeerjsCall = {
         PeerjsCall.allLocalStream[callUserId] = stream;
         stream.getTracks()[0].enabled = PeerjsCall.isAudio;
         stream.getTracks()[1].enabled = PeerjsCall.isVedio;
-        if (PeerjsCall.isFirstCall) {
-          const video = document.querySelector('.call-container video.self');
-          video.srcObject = stream;
-          video.onloadedmetadata = function (e) {
-            video.play();
-          };
-          PeerjsCall.isFirstCall = false;
-        }
 
         let video;
         const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${callUserId}"]`);
@@ -97,35 +90,30 @@ const PeerjsCall = {
       stream.getTracks().forEach(track => { track.stop(); });
     }
 
-    // recover first call state
-    PeerjsCall.isFirstCall = true;
+    const callContainerHTML = document.querySelector('.call-container');
+    callContainerHTML.innerHTML = `
+      <video src="" width="200" height="150" class="self" muted></video>
+    `;
   },
   callAll: function (usersInCall) {
     for (let userIndex = 0; userIndex < usersInCall.length; userIndex++) {
-      const callUserId = usersInCall[userIndex];
-
-      let video;
-      if (document.querySelector(`.call-container video[data-call-user-id="${callUserId}"]`)) {
-        video = document.querySelector(`.call-container video[data-call-user-id="${callUserId}"]`);
-      } else {
-        video = document.createElement('video');
-        video.dataset.callUserId = callUserId;
-        video.width = 200;
-        video.height = 150;
-        document.querySelector('.call-container').appendChild(video);
-      }
 
       PeerjsCall.getUserMedia({ video: true, audio: true }, function (stream) {
+        const callUserId = usersInCall[userIndex];
         PeerjsCall.allLocalStream[callUserId] = stream;
         stream.getTracks()[0].enabled = PeerjsCall.isAudio;
         stream.getTracks()[1].enabled = PeerjsCall.isVedio;
-        if (PeerjsCall.isFirstCall) {
-          const video = document.querySelector('.call-container video.self');
-          video.srcObject = stream;
-          video.onloadedmetadata = function (e) {
-            video.play();
-          };
-          PeerjsCall.isFirstCall = false;
+
+        let video;
+        const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${callUserId}"]`);
+        if (videoHTML) {
+          video = videoHTML;
+        } else {
+          video = document.createElement('video');
+          video.dataset.callUserId = callUserId;
+          video.width = 200;
+          video.height = 150;
+          document.querySelector('.call-container').appendChild(video);
         }
 
         const call = PeerjsCall.peer.call(callUserId, stream);
