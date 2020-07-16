@@ -317,24 +317,24 @@ const socketCon = (io) => {
     });
 
     socket.on('join call room', function (dataStr) {
-      const { room, user_id } = JSON.parse(dataStr);
+      const { room, user_id, peer_id } = JSON.parse(dataStr);
       // check user_id
       if (!room in rooms || userClients[user_id] !== socket.id) {
         return;
       }
 
       socket.emit('users in call', JSON.stringify(rooms[room].call));
-      rooms[room].call[socket.id] = user_id;
+      rooms[room].call[socket.id] = peer_id;
     });
 
     socket.on('leave call room', function (dataStr) {
-      const { room, user_id } = JSON.parse(dataStr);
+      const { room, user_id, peer_id } = JSON.parse(dataStr);
       // check user_id
       if (!room in rooms || userClients[user_id] !== socket.id) {
         return;
       }
 
-      socket.to(room).emit('leave call room', user_id);
+      socket.to(room).emit('leave call room', peer_id);
       delete rooms[room].call[socket.id];
     });
 

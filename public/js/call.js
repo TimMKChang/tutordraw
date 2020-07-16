@@ -1,18 +1,69 @@
 const PeerjsCall = {
   peer_id: '',
-  peer: '',
+  peer: {},
   getUserMedia: navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia,
   isAudio: false,
   isVideo: false,
   isConnecting: false,
+  isConnected: false,
   allLocalStream: {
 
   },
+  init: async function () {
+    PeerjsCall.peer = await new Peer({
+      host: PEERJS_URL,
+      port: PEERJS_PORT,
+      path: '/call',
+      proxied: true
+    });
+
+    PeerjsCall.peer.on('open', function (id) {
+      PeerjsCall.peer_id = id;
+    });
+
+    PeerjsCall.peer.on('call', function (call) {
+      PeerjsCall.getUserMedia({ video: true, audio: true }, function (stream) {
+
+        const peer_id = call.peer;
+        PeerjsCall.allLocalStream[peer_id] = stream;
+        stream.getTracks()[0].enabled = PeerjsCall.isAudio;
+        stream.getTracks()[1].enabled = PeerjsCall.isVedio;
+
+        let video;
+        const videoHTML = document.querySelector(`.call-container video[data-peer_id="${peer_id}"]`);
+        if (videoHTML) {
+          video = videoHTML;
+        } else {
+          video = document.createElement('video');
+          video.dataset.peer_id = peer_id;
+          video.width = 200;
+          video.height = 150;
+          document.querySelector('.call-container').appendChild(video);
+        }
+
+        call.answer(stream); // Answer the call with an A/V stream.
+        call.on('stream', function (remoteStream) {
+          video.srcObject = remoteStream;
+          video.onloadedmetadata = function (e) {
+            video.play();
+          };
+        });
+      }, function (err) {
+        console.log('Failed to get local stream', err);
+      });
+    });
+  },
   connect: async function () {
-    if (PeerjsCall.peer.open) {
+    // peer ready
+    if (!PeerjsCall.peer.open) {
+      return;
+    }
+
+    if (PeerjsCall.isConnected) {
       PeerjsCall.disconnect();
       return;
     }
+    PeerjsCall.isConnected = true;
 
     await PeerjsCall.waitCalling();
 
@@ -31,65 +82,26 @@ const PeerjsCall = {
     });
 
     // const user_id = Math.random().toString(16).substr(-8);
-    const user_id = Model.user.id.toString();
-    PeerjsCall.peer_id = user_id;
-
-    PeerjsCall.peer = new Peer(user_id, {
-      host: PEERJS_URL,
-      port: PEERJS_PORT,
-      path: '/call',
-      proxied: true
-    });
 
     socket.emit('join call room', JSON.stringify({
       room: Model.room.name,
-      user_id,
+      user_id: Model.user.id,
+      peer_id: PeerjsCall.peer_id,
     }));
-
-    PeerjsCall.peer.on('call', function (call) {
-      PeerjsCall.getUserMedia({ video: true, audio: true }, function (stream) {
-
-        const callUserId = call.peer;
-        PeerjsCall.allLocalStream[callUserId] = stream;
-        stream.getTracks()[0].enabled = PeerjsCall.isAudio;
-        stream.getTracks()[1].enabled = PeerjsCall.isVedio;
-
-        let video;
-        const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${callUserId}"]`);
-        if (videoHTML) {
-          video = videoHTML;
-        } else {
-          video = document.createElement('video');
-          video.dataset.callUserId = callUserId;
-          video.width = 200;
-          video.height = 150;
-          document.querySelector('.call-container').appendChild(video);
-        }
-
-        call.answer(stream); // Answer the call with an A/V stream.
-        call.on('stream', function (remoteStream) {
-          video.srcObject = remoteStream;
-          video.onloadedmetadata = function (e) {
-            video.play();
-          };
-        });
-      }, function (err) {
-        console.log('Failed to get local stream', err);
-      });
-    });
 
   },
   disconnect: function () {
-    const user_id = PeerjsCall.peer.id;
+    const peer_id = PeerjsCall.peer.id;
     socket.emit('leave call room', JSON.stringify({
       room: Model.room.name,
-      user_id,
+      user_id: Model.user.id,
+      peer_id,
     }));
-    PeerjsCall.peer.destroy();
+    // PeerjsCall.peer.destroy();
 
     // stop audio and video
-    for (let user_id in PeerjsCall.allLocalStream) {
-      const stream = PeerjsCall.allLocalStream[user_id];
+    for (let peer_id in PeerjsCall.allLocalStream) {
+      const stream = PeerjsCall.allLocalStream[peer_id];
       stream.getTracks().forEach(track => { track.stop(); });
     }
     PeerjsCall.allLocalStream = {};
@@ -98,29 +110,31 @@ const PeerjsCall = {
     callContainerHTML.innerHTML = `
       <video src="" width="200" height="150" class="self" muted></video>
     `;
+
+    PeerjsCall.isConnected = false;
   },
-  callAll: function (usersInCall) {
-    for (let userIndex = 0; userIndex < usersInCall.length; userIndex++) {
+  callAll: function (peer_ids) {
+    for (let peer_idIndex = 0; peer_idIndex < peer_ids.length; peer_idIndex++) {
 
       PeerjsCall.getUserMedia({ video: true, audio: true }, function (stream) {
-        const callUserId = usersInCall[userIndex];
-        PeerjsCall.allLocalStream[callUserId] = stream;
+        const peer_id = peer_ids[peer_idIndex];
+        PeerjsCall.allLocalStream[peer_id] = stream;
         stream.getTracks()[0].enabled = PeerjsCall.isAudio;
         stream.getTracks()[1].enabled = PeerjsCall.isVedio;
 
         let video;
-        const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${callUserId}"]`);
+        const videoHTML = document.querySelector(`.call-container video[data-peer_id="${peer_id}"]`);
         if (videoHTML) {
           video = videoHTML;
         } else {
           video = document.createElement('video');
-          video.dataset.callUserId = callUserId;
+          video.dataset.peer_id = peer_id;
           video.width = 200;
           video.height = 150;
           document.querySelector('.call-container').appendChild(video);
         }
 
-        const call = PeerjsCall.peer.call(callUserId, stream);
+        const call = PeerjsCall.peer.call(peer_id, stream);
         call.on('stream', function (remoteStream) {
           video.srcObject = remoteStream;
           video.onloadedmetadata = function (e) {
@@ -132,39 +146,40 @@ const PeerjsCall = {
       });
     }
   },
-  removeLeave: function (user_id) {
-    const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${user_id}"]`);
+  removeLeave: function (peer_id) {
+    const videoHTML = document.querySelector(`.call-container video[data-peer_id="${peer_id}"]`);
     if (videoHTML) {
       videoHTML.remove();
     }
 
-    const stream = PeerjsCall.allLocalStream[user_id];
+    const stream = PeerjsCall.allLocalStream[peer_id];
     if (stream) {
-      console.log(stream);
       stream.getTracks().forEach(track => { track.stop(); });
-      delete PeerjsCall.allLocalStream[user_id];
+      delete PeerjsCall.allLocalStream[peer_id];
     }
 
   },
   waitCalling: async function () {
     get('.wait-call-spinner-container').classList.remove('hide');
     PeerjsCall.isConnecting = true;
-    await delay(3000);
+    await delay(1500);
     get('.wait-call-spinner-container').classList.add('hide');
     PeerjsCall.isConnecting = false;
   },
   toggleAudio: function () {
     PeerjsCall.isAudio = !PeerjsCall.isAudio;
-    for (let user_id in PeerjsCall.allLocalStream) {
-      const stream = PeerjsCall.allLocalStream[user_id];
+    for (let peer_id in PeerjsCall.allLocalStream) {
+      const stream = PeerjsCall.allLocalStream[peer_id];
       stream.getTracks()[0].enabled = PeerjsCall.isAudio;
     }
   },
   toggleVedio: function () {
     PeerjsCall.isVedio = !PeerjsCall.isVedio;
-    for (let user_id in PeerjsCall.allLocalStream) {
-      const stream = PeerjsCall.allLocalStream[user_id];
+    for (let peer_id in PeerjsCall.allLocalStream) {
+      const stream = PeerjsCall.allLocalStream[peer_id];
       stream.getTracks()[1].enabled = PeerjsCall.isVedio;
     }
   },
 };
+
+PeerjsCall.init();

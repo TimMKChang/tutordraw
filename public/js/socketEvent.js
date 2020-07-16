@@ -104,8 +104,8 @@ socket.on('load whiteboard pin', function (dataStr) {
 
 socket.on('users in call', function (dataStr) {
   const call = JSON.parse(dataStr);
-  const usersInCall = Object.values(call);
-  PeerjsCall.callAll(usersInCall);
+  const peer_ids = Object.values(call);
+  PeerjsCall.callAll(peer_ids);
 });
 
 socket.on('leave call room', function (user_id) {
