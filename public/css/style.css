@@ -15,6 +15,10 @@
 a:link, a:visited, a:hover, a:active {
   text-decoration: none;
 }
+/* for fontawesome */
+i.fas, i.far {
+  user-select: none;
+}
 
 body {
   /* font-family: 'Chivo', 'cwTeXYen', Verdana;   */
