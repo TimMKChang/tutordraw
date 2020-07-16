@@ -955,8 +955,10 @@ const Controller = {
         // copy invite url hint
         const msgHTML = get('.copy-link .copy-invite-url-msg');
         if (!msgHTML.classList.contains('show-hide')) {
+          msgHTML.classList.remove('hide');
           msgHTML.classList.add('show-hide');
           setTimeout(function () {
+            msgHTML.classList.add('hide');
             msgHTML.classList.remove('show-hide');
           }, 2000);
         }
