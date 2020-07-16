@@ -845,6 +845,28 @@ const Controller = {
           socket.emit('update whiteboard pin', JSON.stringify(pin));
         }
       });
+
+      // display history whitaboard container
+      get('.whiteboard-toolbox .display-history-whiteboard').addEventListener('click', (e) => {
+        get('.whiteboard .history-whiteboard-container').classList.remove('hide');
+      });
+      // hide history whitaboard container
+      get('.history-whiteboard-container').addEventListener('click', (e) => {
+        if (e.target.closest('.close-btn')) {
+          get('.whiteboard .history-whiteboard-container').classList.add('hide');
+        }
+
+        if (e.target.closest('.pin')) {
+          e.target.querySelector('.pin-text').classList.toggle('hide');
+        }
+      });
+      // display history whiteboard
+      get('.history-whiteboard-list').addEventListener('click', (e) => {
+        if (e.target.tagName === 'IMG') {
+
+        }
+      });
+
     },
     uploadWhiteboardImage: async function () {
       const blob = await getCanvasBlob(canvas);
