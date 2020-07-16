@@ -109,8 +109,5 @@ socket.on('users in call', function (dataStr) {
 });
 
 socket.on('leave call room', function (user_id) {
-  const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${user_id}"]`);
-  if (videoHTML) {
-    videoHTML.remove();
-  }
+  PeerjsCall.removeLeave(user_id);
 });

@@ -1031,7 +1031,11 @@ const Controller = {
 
       // call
       get('.chatbox-toolbox i.call').addEventListener('click', (e) => {
+        if (PeerjsCall.isConnecting) {
+          return;
+        }
         PeerjsCall.connect();
+
         e.target.classList.toggle('fa-phone');
         e.target.classList.toggle('fa-phone-slash');
         e.target.classList.toggle('color-used');

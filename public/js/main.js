@@ -61,3 +61,11 @@ function getRandomString(total) {
   const randomString = (prefixStr + Math.random().toString(36).slice(2, -1)).substr(-total);
   return randomString;
 }
+
+function delay(ms) {
+  return new Promise(function (resolve, reject) {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
+}

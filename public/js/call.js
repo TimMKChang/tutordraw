@@ -4,14 +4,17 @@ const PeerjsCall = {
   getUserMedia: navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia,
   isAudio: false,
   isVideo: false,
+  isConnecting: false,
   allLocalStream: {
 
   },
-  connect: function () {
+  connect: async function () {
     if (PeerjsCall.peer.open) {
       PeerjsCall.disconnect();
       return;
     }
+
+    await PeerjsCall.waitCalling();
 
     PeerjsCall.getUserMedia({ video: true, audio: true }, function (stream) {
       PeerjsCall.allLocalStream.self = stream;
@@ -89,6 +92,7 @@ const PeerjsCall = {
       const stream = PeerjsCall.allLocalStream[user_id];
       stream.getTracks().forEach(track => { track.stop(); });
     }
+    PeerjsCall.allLocalStream = {};
 
     const callContainerHTML = document.querySelector('.call-container');
     callContainerHTML.innerHTML = `
@@ -127,6 +131,27 @@ const PeerjsCall = {
         console.log('Failed to get local stream', err);
       });
     }
+  },
+  removeLeave: function (user_id) {
+    const videoHTML = document.querySelector(`.call-container video[data-call-user-id="${user_id}"]`);
+    if (videoHTML) {
+      videoHTML.remove();
+    }
+
+    const stream = PeerjsCall.allLocalStream[user_id];
+    if (stream) {
+      console.log(stream);
+      stream.getTracks().forEach(track => { track.stop(); });
+      delete PeerjsCall.allLocalStream[user_id];
+    }
+
+  },
+  waitCalling: async function () {
+    get('.wait-call-spinner-container').classList.remove('hide');
+    PeerjsCall.isConnecting = true;
+    await delay(3000);
+    get('.wait-call-spinner-container').classList.add('hide');
+    PeerjsCall.isConnecting = false;
   },
   toggleAudio: function () {
     PeerjsCall.isAudio = !PeerjsCall.isAudio;
