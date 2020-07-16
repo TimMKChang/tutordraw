@@ -33,13 +33,25 @@ socket.on('update user list', function (dataStr) {
 
 socket.on('new draw', function (recordStr) {
   const record = JSON.parse(recordStr);
-  Model.whiteboard.records.push(record);
-  if (record.type === 'line') {
-    View.whiteboard.line.draw(record);
-  } else if (record.type === 'image') {
-    View.whiteboard.image.draw(record);
-  } else if (record.type === 'text') {
-    View.whiteboard.text.draw(record);
+  const records = Model.whiteboard.records;
+
+  // reorder whiteboard records
+  for (let recordIndex = records.length - 1; recordIndex >= 0; recordIndex--) {
+    if (record.created_at > records[recordIndex].created_at) {
+      records.splice(recordIndex + 1, 0, record);
+      if (recordIndex === records.length - 1) {
+        if (record.type === 'line') {
+          View.whiteboard.line.draw(record);
+        } else if (record.type === 'image') {
+          View.whiteboard.image.draw(record);
+        } else if (record.type === 'text') {
+          View.whiteboard.text.draw(record);
+        }
+      } else {
+        View.whiteboard.redraw();
+      }
+      break;
+    }
   }
 });
 
