@@ -32,7 +32,7 @@ const getHistoryWB = async (requirement) => {
   }
 
   condition.query = 'SELECT whiteboard_start_at, x, y, content, created_at FROM pin ';
-  condition.sql = 'WHERE room = ?';
+  condition.sql = 'WHERE room = ? AND removed_at IS NULL';
   condition.binding = [requirement.room];
 
   let pins;

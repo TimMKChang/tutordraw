@@ -42,7 +42,7 @@ const updatePin = async (pin) => {
 const getPin = async (requirement) => {
   const condition = { query: '', sql: '', binding: [] };
   condition.query = 'SELECT user_id, author, x, y, content, created_at FROM pin ';
-  condition.sql = 'WHERE room = ? AND whiteboard_start_at = ?';
+  condition.sql = 'WHERE room = ? AND whiteboard_start_at = ? AND removed_at IS NULL';
   condition.binding = [requirement.room, requirement.start_at];
 
   try {
@@ -53,8 +53,29 @@ const getPin = async (requirement) => {
   }
 };
 
+const removePin = async (pin) => {
+  const { whiteboard_start_at, created_at } = pin;
+  const condition = { query: '', sql: '', binding: [] };
+
+  condition.query = 'UPDATE pin SET removed_at = ? ';
+  condition.sql = 'WHERE whiteboard_start_at = ? AND created_at = ?';
+  condition.binding = [Date.now(), whiteboard_start_at, created_at];
+
+  try {
+    await transaction();
+    await query(condition.query + condition.sql, condition.binding);
+    await commit();
+    return { message: 'pin removed' };
+
+  } catch (error) {
+    await rollback();
+    return { error };
+  }
+};
+
 module.exports = {
   createPin,
   updatePin,
   getPin,
+  removePin,
 };

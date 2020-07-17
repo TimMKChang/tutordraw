@@ -179,6 +179,7 @@ const View = {
             <i class="fas fa-thumbtack pin" data-created_at="${created_at}">
               <div class="pin-text">
                 <textarea name="pin-text">${content}</textarea>
+                <button class="btn btn-secondary remove-btn"><i class="far fa-trash-alt"></i></button>
               </div>
             </i>
           `;
@@ -217,6 +218,10 @@ const View = {
             pinHTML.style.top = `${y + preHeight / 2 - pinHeight / 2}px`;
           }
         }
+      },
+      remove: function (pin) {
+        const { created_at } = pin;
+        get(`.whiteboard .pin-container [data-created_at="${created_at}"]`).remove();
       },
       clear: function () {
         get('.whiteboard .pin-container').innerHTML = '';
@@ -815,6 +820,20 @@ const Controller = {
           if (e.target.classList.contains('pin')) {
             e.target.closest('.pin').querySelector('.pin-text').classList.toggle('hide');
           }
+        }
+
+        // remove pin
+        if (e.target.closest('.remove-btn')) {
+          const pinHTML = e.target.closest('.pin');
+          const created_at = pinHTML.dataset.created_at;
+
+          const pin = {
+            room: Model.room.name,
+            user_id: Model.user.id,
+            created_at,
+          };
+          View.whiteboard.pin.remove(pin);
+          socket.emit('remove whiteboard pin', JSON.stringify(pin));
         }
       });
       // update pin text

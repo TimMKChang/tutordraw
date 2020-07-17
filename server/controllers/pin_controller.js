@@ -23,8 +23,16 @@ const getPin = async (requirement) => {
   return { pins };
 };
 
+const removePin = async (pin) => {
+  const { error, message } = await Pin.removePin(pin);
+  if (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   createPin,
   updatePin,
   getPin,
+  removePin,
 };

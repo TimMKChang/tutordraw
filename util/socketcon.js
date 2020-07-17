@@ -11,6 +11,7 @@ const {
   createPin,
   updatePin,
   getPin,
+  removePin,
 } = require('../server/controllers/pin_controller');
 
 const {
@@ -326,6 +327,21 @@ const socketCon = (io) => {
       await updatePin(pin);
 
       socket.to(room).emit('update whiteboard pin', dataStr);
+    });
+
+    socket.on('remove whiteboard pin', async function (dataStr) {
+      const pin = JSON.parse(dataStr);
+      // check user_id
+      const { room, user_id } = pin;
+      if (!room in rooms || userClients[user_id] !== socket.id) {
+        return;
+      }
+      // update to DB
+      const { start_at } = rooms[room].whiteboard;
+      pin.whiteboard_start_at = start_at;
+      await removePin(pin);
+
+      socket.to(room).emit('remove whiteboard pin', dataStr);
     });
 
     socket.on('join call room', function (dataStr) {

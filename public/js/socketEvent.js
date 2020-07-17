@@ -82,6 +82,11 @@ socket.on('update whiteboard pin', function (dataStr) {
   View.whiteboard.pin.update(pin);
 });
 
+socket.on('remove whiteboard pin', function (dataStr) {
+  const pin = JSON.parse(dataStr);
+  View.whiteboard.pin.remove(pin);
+});
+
 socket.on('load chat msg', function (msgObjsStr) {
   const msgObjs = JSON.parse(msgObjsStr);
   const isLoad = true;

@@ -480,6 +480,17 @@ footer .copyright {
   background-color: #f9ee8a;
 }
 
+.whiteboard .pin-container .pin .pin-text .remove-btn, 
+.whiteboard .history-whiteboard-pin-container .pin .pin-text .remove-btn {
+  position: absolute;
+  top: 45px;
+  left: -45px;
+  font-size: 2rem;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
 .whiteboard .history-whiteboard-container {
   position: fixed;
   top: 0;
