@@ -812,7 +812,9 @@ const Controller = {
           }
         } else {
           get('.whiteboard .pin-container').classList.remove('pointer-none');
-          e.target.closest('.pin').querySelector('.pin-text').classList.remove('hide');
+          if (e.target.classList.contains('pin')) {
+            e.target.closest('.pin').querySelector('.pin-text').classList.toggle('hide');
+          }
         }
       });
       // update pin text
