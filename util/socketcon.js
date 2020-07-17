@@ -14,6 +14,10 @@ const {
 } = require('../server/controllers/pin_controller');
 
 const {
+  createHistoryWB,
+} = require('../server/controllers/historyWB_controller');
+
+const {
   uploadWhiteboard,
 } = require('../server/S3/uploadImage');
 
@@ -242,10 +246,11 @@ const socketCon = (io) => {
       await createChatmsg(msgObj);
       io.to(room).emit('notification msg', JSON.stringify(msgObj));
       // save whiteboard image message to DB and then send message back
+      const link = `${process.env.AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`;
       const whiteboardmsgObj = {
         room,
         type: 'whiteboard',
-        msg: `${process.env.AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`,
+        msg: link,
         created_at: Date.now(),
       };
       await createChatmsg(whiteboardmsgObj);
@@ -263,6 +268,13 @@ const socketCon = (io) => {
       if (updateWhiteboardStart_atResult.error) {
         console.log(updateWhiteboardStart_atResult.error);
       }
+      // add history whiteboard
+      const historyWB = {
+        room,
+        start_at,
+        link,
+      };
+      await createHistoryWB(historyWB);
     });
 
     socket.on('new chat msg', async function (msgStr) {
