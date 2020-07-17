@@ -39,6 +39,7 @@ const Model = {
     lastOldestCreated_at: 0,
     scrollLock: false,
   },
+  historyWB: [],
 };
 
 const View = {
@@ -220,6 +221,34 @@ const View = {
       clear: function () {
         get('.whiteboard .pin-container').innerHTML = '';
       },
+      createHistoryWB: function () {
+        // offset from preview-container size
+        const preWidth = 100;
+        const preHeight = 100;
+
+        // offset from pin itself size
+        const pinWidth = 40;
+        const pinHeight = 40;
+
+        get('.history-whiteboard-pin-container').innerHTML = '';
+        const pins = Model.historyWB.find((wb) => get('.history-whiteboard img').src === wb.link).pins;
+        for (let pinIndex = 0; pinIndex < pins.length; pinIndex++) {
+          const pin = pins[pinIndex];
+          const { x, y, content, created_at } = pin;
+
+          get('.history-whiteboard-pin-container').innerHTML += `
+            <i class="fas fa-thumbtack pin" data-created_at="${created_at}">
+              <div class="pin-text">
+                <textarea name="pin-text">${content}</textarea>
+              </div>
+            </i>
+          `;
+
+          const pinHTML = get(`.history-whiteboard-pin-container [data-created_at="${created_at}"]`);
+          pinHTML.style.left = `${x + preWidth / 2 - pinWidth / 2}px`;
+          pinHTML.style.top = `${y + preHeight / 2 - pinHeight / 2}px`;
+        }
+      },
     },
     initWhiteboard: function () {
       ctx.fillStyle = '#FFFFFF';
@@ -245,6 +274,16 @@ const View = {
       if (userHTML) {
         userHTML.style.top = `${y}px`;
         userHTML.style.left = `${x}px`;
+      }
+    },
+    displayHistoryWB: function () {
+      get('.history-whiteboard-list').innerHTML = '';
+
+      for (let wbIndex = 0; wbIndex < Model.historyWB.length; wbIndex++) {
+        const { link } = Model.historyWB[wbIndex];
+        get('.history-whiteboard-list').innerHTML += `
+          <img src="${link}" alt="">
+        `;
       }
     },
   },
@@ -847,7 +886,9 @@ const Controller = {
       });
 
       // display history whitaboard container
-      get('.whiteboard-toolbox .display-history-whiteboard').addEventListener('click', (e) => {
+      get('.whiteboard-toolbox .display-history-whiteboard').addEventListener('click', async (e) => {
+        await Controller.whiteboard.loadHistoryWB();
+        View.whiteboard.displayHistoryWB();
         get('.whiteboard .history-whiteboard-container').classList.remove('hide');
       });
       // hide history whitaboard container
@@ -863,10 +904,10 @@ const Controller = {
       // display history whiteboard
       get('.history-whiteboard-list').addEventListener('click', (e) => {
         if (e.target.tagName === 'IMG') {
-
+          get('.history-whiteboard img').src = e.target.src;
+          View.whiteboard.pin.createHistoryWB();
         }
       });
-
     },
     uploadWhiteboardImage: async function () {
       const blob = await getCanvasBlob(canvas);
@@ -952,6 +993,26 @@ const Controller = {
         traceHTML.innerHTML = htmlContent;
         mouseTraceHTML.innerHTML = htmlContent;
       }
+    },
+    loadHistoryWB: async function () {
+      const access_JWT = localStorage.getItem('access_JWT');
+      const url = HOMEPAGE_URL + `/whiteboard/${Model.room.name}`;
+      await fetch(url, {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': `Bearer ${access_JWT}`,
+        },
+      }).then(res => res.json())
+        .then(resObj => {
+          if (resObj.error) {
+            console.log(resObj.error);
+            return;
+          }
+          Model.historyWB = resObj.data;
+          console.log(Model.historyWB);
+        })
+        .catch(error => console.log(error));
     },
   },
   chatbox: {

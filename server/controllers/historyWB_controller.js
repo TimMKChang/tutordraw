@@ -10,7 +10,8 @@ const createHistoryWB = async (whiteboard) => {
 };
 
 const getHistoryWB = async (req, res) => {
-  const { room } = req.body;
+  const { room } = req.params;
+
   if (!room) {
     return res.status(400).json({ error: 'room is required.' });
   }

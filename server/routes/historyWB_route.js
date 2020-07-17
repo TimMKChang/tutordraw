@@ -5,7 +5,7 @@ const {
   getHistoryWB,
 } = require('../controllers/historyWB_controller');
 
-router.route('/whiteboard')
+router.route('/whiteboard/:room')
   .get(wrapAsync(getHistoryWB));
 
 module.exports = router;
