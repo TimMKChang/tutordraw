@@ -24,9 +24,11 @@ const Model = {
       textMovable: false,
     },
     pin: {
+      pinOriginalPosition: [0, 0],
       pinReferencePosition: [0, 0],
       pinPosition: [300, 50],
       pinMovable: false,
+      pinClickable: true,
     },
     boundary: {
       minX: 0,
@@ -818,7 +820,7 @@ const Controller = {
           }
         } else {
           get('.whiteboard .pin-container').classList.remove('pointer-none');
-          if (e.target.classList.contains('pin')) {
+          if (e.target.classList.contains('pin') && Model.whiteboard.pin.pinClickable) {
             e.target.closest('.pin').querySelector('.pin-text').classList.toggle('hide');
           }
         }
@@ -855,12 +857,14 @@ const Controller = {
       });
       // move pin
       get('.whiteboard .pin-container').addEventListener('mousedown', async (e) => {
-        if (e.target.closest('.pin')) {
+        if (e.target.classList.contains('pin')) {
           const left = +e.target.closest('.pin').style.left.replace('px', '');
           const top = +e.target.closest('.pin').style.top.replace('px', '');
           Model.whiteboard.pin.pinPosition = [left, top];
           Model.whiteboard.pin.pinMovable = true;
           Model.whiteboard.pin.pinReferencePosition = [e.clientX, e.clientY];
+          // check moved
+          Model.whiteboard.pin.pinOriginalPosition = [left, top];
         }
       });
       get('.whiteboard .pin-container').addEventListener('mousemove', async (e) => {
@@ -883,6 +887,17 @@ const Controller = {
           const top = +e.target.closest('.pin').style.top.replace('px', '');
           Model.whiteboard.pin.pinPosition = [left, top];
           Model.whiteboard.pin.pinMovable = false;
+
+          // check moved
+          const [originalLeft, originalTop] = Model.whiteboard.pin.pinOriginalPosition;
+          if (left === originalLeft && top === originalTop) {
+            return;
+          }
+
+          Model.whiteboard.pin.pinClickable = false;
+          setTimeout(() => {
+            Model.whiteboard.pin.pinClickable = true;
+          }, 100);
 
           const created_at = e.target.closest('.pin').dataset.created_at;
 
