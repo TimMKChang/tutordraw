@@ -175,17 +175,18 @@ const View = {
         for (let pinIndex = 0; pinIndex < pins.length; pinIndex++) {
           const pin = pins[pinIndex];
           const { x, y, created_at, content } = pin;
-          get('.whiteboard .pin-container').innerHTML += `
-            <i class="fas fa-thumbtack pin" data-created_at="${created_at}">
-              <div class="pin-text">
-                <textarea name="pin-text">${content}</textarea>
-                <button class="btn btn-secondary remove-btn"><i class="far fa-trash-alt"></i></button>
-              </div>
-            </i>
+          const iHTML = document.createElement('i');
+          iHTML.className = 'fas fa-thumbtack pin';
+          iHTML.dataset.created_at = created_at;
+          get('.whiteboard .pin-container').appendChild(iHTML);
+          iHTML.innerHTML += `
+            <div class="pin-text">
+              <textarea name="pin-text">${content}</textarea>
+              <button class="btn btn-secondary remove-btn"><i class="far fa-trash-alt"></i></button>
+            </div>
           `;
-          const pinHTML = get(`.whiteboard .pin-container [data-created_at="${created_at}"]`);
-          pinHTML.style.left = `${x + preWidth / 2 - pinWidth / 2}px`;
-          pinHTML.style.top = `${y + preHeight / 2 - pinHeight / 2}px`;
+          iHTML.style.left = `${x + preWidth / 2 - pinWidth / 2}px`;
+          iHTML.style.top = `${y + preHeight / 2 - pinHeight / 2}px`;
         }
 
         if (isLoad) {
