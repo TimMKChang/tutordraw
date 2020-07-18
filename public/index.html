@@ -18,9 +18,9 @@
       <a href="/" class="title">DrawNOW</a href="/">
     </div>
     <div class="member-container">
-      <div class="signin-form-btn item">Sign In</div>
-      <div class="signout-btn item">Sign Out</div>
-      <div class="signup-form-btn">GET STARTED</div>
+      <div class="signin-form-btn item">Sign in</div>
+      <div class="signout-btn item hide">Sign Out</div>
+      <div class="signup-form-btn">Sign up free <i class="fas fa-arrow-right"></i></div>
     </div>
   </header>
 
@@ -35,7 +35,7 @@
           <div class="text">
             <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut</span>
           </div>
-          <div class="signup-form-btn btn">GET STARTED</div>
+          <div class="signup-form-btn btn">Start a whiteboard <i class="fas fa-arrow-right"></i></div>
         </div>
         <div class="wide">
 
@@ -48,24 +48,24 @@
         </div>
         <div class="narrow">
           <div class="title">
-            <span>Create Room</span>
+            <span>Create room</span>
           </div>
           <div class="text">
             <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut</span>
           </div>
-          <div class="create-form-btn btn">CREATE</div>
+          <div class="create-form-btn btn">Create</div>
         </div>
       </section>
 
       <section class="bottom">
         <div class="narrow">
           <div class="title">
-            <span>Join Room</span>
+            <span>Join room</span>
           </div>
           <div class="text">
             <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut</span>
           </div>
-          <div class="join-form-btn btn">JOIN</div>
+          <div class="join-form-btn btn">Join</div>
         </div>
         <div class="wide">
 
@@ -75,66 +75,66 @@
       <div class="form-container hide">
 
         <form action="/room.html" class="create-form hide" onsubmit="event.preventDefault();createRoom();">
-          <div class="title">Create Room</div>
+          <div class="title">Create room</div>
 
           <div class="form-group">
-            <label for="createRoomPassword">Setting Room Password</label>
-            <input type="password" id="createRoomPassword" name="createRoomPassword" class="form-control"
-              placeholder="Password" />
+            <i class="fas fa-lock"></i>
+            <input type="password" id="createRoomPassword" name="createRoomPassword" class="form-control one"
+              placeholder="Setting room password" />
           </div>
 
-          <button type="submit" class="btn btn-block create-btn">CREATE</button>
+          <button type="submit" class="btn btn-block create-btn">Create room</button>
         </form>
 
         <form action="/room.html" class="join-form hide" onsubmit="event.preventDefault();joinRoom();">
-          <div class="title">Join Room</div>
+          <div class="title">Join room</div>
           <div class="form-group">
-            <label for="room">Room ID</label>
-            <input type="text" id="room" name="room" class="form-control" placeholder="ID" />
+            <i class="fas fa-chalkboard"></i>
+            <input type="text" id="room" name="room" class="form-control top" placeholder="Room ID" />
           </div>
           <div class="form-group">
-            <label for="joinRoomPassword">Room Password</label>
-            <input type="password" id="joinRoomPassword" name="joinRoomPassword" class="form-control"
-              placeholder="Password" />
+            <i class="fas fa-lock"></i>
+            <input type="password" id="joinRoomPassword" name="joinRoomPassword" class="form-control bottom"
+              placeholder="Room password" />
           </div>
-          <button type="submit" class="btn btn-block join-btn">Join Room</button>
+          <button type="submit" class="btn btn-block join-btn">Join room</button>
         </form>
 
         <form class="signup-form hide" onsubmit="event.preventDefault();signup();">
-          <div class="title">Sign Up</div>
+          <div class="title">Get started free today</div>
           <div class="form-group">
-            <label for="signupEmail">Email</label>
+            <i class="fas fa-user"></i>
+            <input type="text" id="name" name="name" class="form-control top" placeholder="Name" />
+          </div>
+          <div class="form-group">
+            <i class="fas fa-envelope"></i>
             <input type="text" id="signupEmail" name="signupEmail" class="form-control" placeholder="Email" />
           </div>
           <div class="form-group">
-            <label for="name">User Name</label>
-            <input type="text" id="name" name="name" class="form-control" placeholder="Name" />
-          </div>
-          <div class="form-group">
-            <label for="signupPassword">Password</label>
+            <i class="fas fa-lock"></i>
             <input type="password" id="signupPassword" name="signupPassword" class="form-control"
               placeholder="Password" />
           </div>
           <div class="form-group">
-            <label for="signupPassword2">Confirm Password</label>
-            <input type="password" id="signupPassword2" name="signupPassword2" class="form-control"
-              placeholder="Password" />
+            <i class="fas fa-lock"></i>
+            <input type="password" id="signupPassword2" name="signupPassword2" class="form-control bottom"
+              placeholder="Confirm password" />
           </div>
-          <button type="submit" class="btn btn-block signup-btn">Sign Up</button>
+          <button type="submit" class="btn btn-block signup-btn">Get started now</button>
         </form>
 
         <form class="signin-form hide" onsubmit="event.preventDefault();signin();">
-          <div class="title">Sign In</div>
+          <div class="title">Sign in</div>
           <div class="form-group">
-            <label for="signinEmail">Email</label>
-            <input type="text" id="signinEmail" name="signinEmail" class="form-control" placeholder="Email" />
+            <i class="fas fa-envelope"></i>
+            <input type="text" id="signinEmail" name="signinEmail" class="form-control top" placeholder="Email" />
           </div>
           <div class="form-group">
-            <label for="signinPassword">Password</label>
-            <input type="password" id="signinPassword" name="signinPassword" class="form-control"
+            <i class="fas fa-lock"></i>
+            <input type="password" id="signinPassword" name="signinPassword" class="form-control bottom"
               placeholder="Password" />
           </div>
-          <button type="submit" class="btn btn-block signin-btn">Sign In</button>
+          <button type="submit" class="btn btn-block signin-btn">Sign in</button>
         </form>
 
       </div>
@@ -154,6 +154,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
     integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
     crossorigin="anonymous"></script>
+
+  <script src="https://kit.fontawesome.com/f11a2e7131.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
   <script src="/js/config.js"></script>

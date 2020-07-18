@@ -35,45 +35,43 @@ header.index {
   align-items: center;
   padding: 0 100px;
   position: fixed;
-  /* box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1); */
 }
 
 header.index .title-container .title {
   display: block;
   text-align: center;
-  font-size: 3rem;
+  font-size: 2rem;
   color: #000000;
   font-family: 'Kalam', Verdana;
   font-weight: 700;
-  padding-top: 20px;
 }
 
 header.index .member-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: 700;
+  font-size: 18px;
 }
 
 header.index .member-container .item {
-  margin-right: 20px;
+  margin-right: 30px;
 }
 
 header.index .member-container .item:hover {
-  color: #7be0ad;
+  color: #3f53d9;
   cursor: pointer;
 }
 
 header.index .member-container .signup-form-btn {
-  padding: 15px;
-  border-radius: 10px;
-  background-color: #7be0ad;
+  padding: 10px 20px;
+  border-radius: 30px;
+  background-color: #3f53d9;
   transition: linear 0.3s;
+  color: #FFFFFF;
 }
 
 header.index .member-container .signup-form-btn:hover {
-  background-color: #10a8a0;
-  color: #FFFFFF;
+  background-color: #2234AA;
   cursor: pointer;
 }
 
@@ -87,7 +85,8 @@ header.index .member-container .signup-form-btn:hover {
 
 footer.index {
  height: 100px;
- background-color: #7be0ad;
+ background-color: #3f53d9;
+ color: #FFFFFF;
  display: flex;
  justify-content: center;
  align-items: center;
@@ -95,7 +94,6 @@ footer.index {
 
 footer .copyright {
   text-align: center;
-  font-weight: 700;
 }
 
 .index-container {
@@ -124,7 +122,6 @@ footer .copyright {
 .index-container section.bottom {
   height: calc(100vh - 200px);
   min-height: 450px;
-  border-radius: 0px 0px 200px 200px;
 }
 
 .index-container section .narrow {
@@ -160,19 +157,18 @@ footer .copyright {
 }
 
 .index-container section .btn {
-  width: 60%;
-  padding: 15px;
+  width: 75%;
+  padding: 10px 30px;
   text-align: center;
   font-size: 1.5rem;
-  font-weight: 700;
-  border-radius: 10px;
-  background-color: #7be0ad;
+  border-radius: 50px;
+  background-color: #3f53d9;
+  color: #FFFFFF;
   transition: linear 0.3s;
 }
 
 .index-container section .btn:hover {
-  background-color: #10a8a0;
-  color: #FFFFFF;
+  background-color: #2234AA;
   cursor: pointer;
 }
 
@@ -198,29 +194,66 @@ footer .copyright {
 
 .index-container form .title {
   font-size: 2rem;
-  font-weight: 700;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .index-container form .form-group {
-  font-size: 1.2rem;
-  margin: 20px 0;
+  margin: 0;
+  position: relative;
 }
 
-.index-container form .form-group label {
-  margin-left: 12px;
+.index-container form .form-group i {
+  width: 1rem;
+  height: 1rem;
+  position: absolute;
+  top: 45%;
+  left: 20px;
+  transform: translate(0, -50%);
+  color: #a9a9a9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.index-container form .form-group input {
+  height: 60px;
+  font-size: 1.5rem;
+  padding-left: 60px;
+  border-radius: 0;
+}
+
+.index-container form .form-group input.one {
+  border-radius: 5px;
+}
+
+.index-container form .form-group input.top {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.index-container form .form-group input.bottom {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.index-container form .form-group input:not(.bottom):not(.one) {
+  border-bottom: 0;
 }
 
 .index-container form button {
-  font-weight: 700;
-  padding: 15px;
-  border-radius: 10px;
-  background-color: #7be0ad;
+  height: 60px;
+  padding: 10px;
+  margin-top: 20px;
+  border-radius: 5px;
+  background-color: #3f53d9;
+  color: #FFFFFF;
   transition: linear 0.3s;
+  font-size: 1.5rem;
 }
 
 .index-container form button:hover {
-  background-color: #10a8a0;
+  background-color: #2234AA;
   color: #FFFFFF;
   cursor: pointer;
 }

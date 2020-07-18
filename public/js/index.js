@@ -12,14 +12,6 @@ function createRoom() {
   // create room
   const url = HOMEPAGE_URL + '/room';
   const access_JWT = localStorage.getItem('access_JWT');
-  if (!access_JWT) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: 'Please sign in first',
-    });
-    return;
-  }
 
   fetch(url, {
     method: 'POST',
@@ -37,6 +29,9 @@ function createRoom() {
           title: 'Oops...',
           text: 'Please sign in first',
         });
+        localStorage.removeItem('access_JWT');
+        localStorage.removeItem('user');
+        closeFormContainer();
         return;
       }
 
@@ -68,14 +63,6 @@ function joinRoom() {
   // join room, create roomUser
   const url = HOMEPAGE_URL + '/roomUser';
   const access_JWT = localStorage.getItem('access_JWT');
-  if (!access_JWT) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: 'Please sign in first',
-    });
-    return;
-  }
 
   fetch(url, {
     method: 'POST',
@@ -93,6 +80,9 @@ function joinRoom() {
           title: 'Oops...',
           text: 'Please sign in first',
         });
+        localStorage.removeItem('access_JWT');
+        localStorage.removeItem('user');
+        closeFormContainer();
         return;
       }
 
@@ -152,6 +142,7 @@ function signup() {
       }
       localStorage.setItem('access_JWT', access_JWT);
       localStorage.setItem('user', window.atob(access_JWT.split('.')[1]));
+      displaySigninSignoutStatus();
       Swal.fire({
         icon: 'success',
         title: 'sign up successfully',
@@ -194,6 +185,7 @@ function signin() {
       }
       localStorage.setItem('access_JWT', access_JWT);
       localStorage.setItem('user', window.atob(access_JWT.split('.')[1]));
+      displaySigninSignoutStatus();
       Swal.fire({
         icon: 'success',
         title: 'sign in successfully',
@@ -204,6 +196,7 @@ function signin() {
 }
 
 initListener();
+displaySigninSignoutStatus();
 function initListener() {
   // sign up
   get('header .signup-form-btn').addEventListener('click', (e) => {
@@ -226,6 +219,7 @@ function initListener() {
   get('header .signout-btn').addEventListener('click', (e) => {
     localStorage.removeItem('access_JWT');
     localStorage.removeItem('user');
+    displaySigninSignoutStatus();
     Swal.fire({
       icon: 'success',
       title: 'sign out successfully',
@@ -234,18 +228,24 @@ function initListener() {
 
   // create room
   get('section .create-form-btn').addEventListener('click', (e) => {
+    if (!isSignin()) {
+      return;
+    }
     get('.form-container').classList.remove('hide');
     get('.create-form').classList.remove('hide');
   });
 
   // join room
   get('section .join-form-btn').addEventListener('click', (e) => {
+    if (!isSignin()) {
+      return;
+    }
     get('.form-container').classList.remove('hide');
     get('.join-form').classList.remove('hide');
   });
 
   // form container
-  get('.form-container').addEventListener('click', (e) => {
+  get('.form-container').addEventListener('mousedown', (e) => {
     if (e.target.closest('form')) {
       return;
     }
@@ -256,4 +256,35 @@ function initListener() {
 function closeFormContainer() {
   get('.form-container').classList.add('hide');
   get('.form-container form:not(.hide)').classList.add('hide');
+
+  const inputs = getAll('form input');
+  for (let inputIndex = 0; inputIndex < inputs.length; inputIndex++) {
+    const input = inputs[inputIndex];
+    input.value = '';
+  }
+}
+
+function displaySigninSignoutStatus() {
+  const access_JWT = localStorage.getItem('access_JWT');
+  if (access_JWT) {
+    get('.member-container .signin-form-btn').classList.add('hide');
+    get('.member-container .signout-btn').classList.remove('hide');
+  } else {
+    get('.member-container .signin-form-btn').classList.remove('hide');
+    get('.member-container .signout-btn').classList.add('hide');
+  }
+}
+
+function isSignin() {
+  const access_JWT = localStorage.getItem('access_JWT');
+  if (!access_JWT) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Please sign in first',
+    });
+    get('header .signin-form-btn').click();
+    return false;
+  }
+  return true;
 }
