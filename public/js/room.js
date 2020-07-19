@@ -184,7 +184,7 @@ const View = {
           iHTML.innerHTML += `
             <div class="pin-text">
               <textarea name="pin-text">${content}</textarea>
-              <button class="btn btn-secondary remove-btn"><i class="far fa-trash-alt"></i></button>
+              <i class="fas fa-trash-alt remove-btn"></i>
             </div>
           `;
           iHTML.style.left = `${x + preWidth / 2 - pinWidth / 2}px`;
@@ -247,7 +247,7 @@ const View = {
           get('.history-whiteboard-pin-container').innerHTML += `
             <i class="fas fa-thumbtack pin" data-created_at="${created_at}">
               <div class="pin-text">
-                <textarea name="pin-text">${content}</textarea>
+                <textarea name="pin-text" disabled>${content}</textarea>
               </div>
             </i>
           `;
@@ -391,12 +391,17 @@ const View = {
     displayUserList: function (users) {
       let htmlContent = '';
       for (let userIndex = 0; userIndex < users.length; userIndex++) {
-        htmlContent += `<div>${users[userIndex]}</div>`;
+        htmlContent += `
+          <div class="user">
+            <span class="status"></span>
+            <span class="name">${users[userIndex]}</span>
+          </div>
+        `;
       }
       get('.user-list .list-container').innerHTML = htmlContent;
     },
     displayRoomName: function () {
-      get('.user-list .room-name').innerHTML = Model.room.name;
+      get('.room-navbar .header .room-name span').innerHTML = Model.room.name;
     }
   },
 };
@@ -926,12 +931,12 @@ const Controller = {
       get('.whiteboard-toolbox .display-history-whiteboard').addEventListener('click', async (e) => {
         await Controller.whiteboard.loadHistoryWB();
         View.whiteboard.displayHistoryWB();
-        get('.whiteboard .history-whiteboard-container').classList.remove('hide');
+        get('.history-whiteboard-container').classList.remove('hide');
       });
       // hide history whitaboard container
       get('.history-whiteboard-container').addEventListener('click', (e) => {
         if (e.target.closest('.close-btn')) {
-          get('.whiteboard .history-whiteboard-container').classList.add('hide');
+          get('.history-whiteboard-container').classList.add('hide');
         }
 
         if (e.target.closest('.pin')) {
@@ -1047,7 +1052,6 @@ const Controller = {
             return;
           }
           Model.historyWB = resObj.data;
-          console.log(Model.historyWB);
         })
         .catch(error => console.log(error));
     },
@@ -1097,8 +1101,10 @@ const Controller = {
       });
       // send or cancel image
       get('.chatbox .send-msg .option-container').addEventListener('click', async (e) => {
-        if (e.target.tagName === 'I' || e.target.tagName === 'BUTTON') {
-          const btnHTML = e.target.closest('button');
+        if (e.target.tagName === 'I') {
+          get('.chatbox .send-msg .preview-container').classList.add('hide');
+
+          const btnHTML = e.target.closest('i');
           if (btnHTML.classList.contains('send-image-btn')) {
             const imageFilename = await Controller.chatbox.uploadImage();
             const user_id = Model.user.id;
@@ -1120,7 +1126,7 @@ const Controller = {
             View.chatbox.displayNewMsg([{ user_id, sender, type, msg, time }]);
             socket.emit('new chat msg', JSON.stringify(msgObj));
           }
-          get('.chatbox .send-msg .preview-container').classList.add('hide');
+
           get('.chatbox .send-msg input[name="image"]').value = '';
         }
       });
@@ -1219,6 +1225,23 @@ const Controller = {
           e.target.classList.add('fa-video-slash');
           e.target.classList.remove('color-used');
         }
+      });
+
+      // display chatbox toggle
+      get('.chatbox-toolbox i.chat').addEventListener('click', (e) => {
+        get('.room-container .chatbox').classList.toggle('display');
+        get('.chatbox-toolbox i.chat').classList.toggle('color-used');
+      });
+      // close chatbox
+      get('.chatbox .header .close-btn').addEventListener('click', (e) => {
+        get('.room-container .chatbox').classList.remove('display');
+        get('.chatbox-toolbox i.chat').classList.remove('color-used');
+      });
+
+      // display user list
+      get('.chatbox .show-list').addEventListener('click', (e) => {
+        get('.room-container .user-list').classList.toggle('display');
+        get('.chatbox .show-list').classList.toggle('color-used');
       });
     },
     sendMsg: function () {
