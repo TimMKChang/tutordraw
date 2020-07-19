@@ -35,6 +35,18 @@ socket.on('new draw', function (recordStr) {
   const record = JSON.parse(recordStr);
   const records = Model.whiteboard.records;
 
+  if (records.length === 0) {
+    records.push(record);
+    if (record.type === 'line') {
+      View.whiteboard.line.draw(record);
+    } else if (record.type === 'image') {
+      View.whiteboard.image.draw(record);
+    } else if (record.type === 'text') {
+      View.whiteboard.text.draw(record);
+    }
+    return;
+  }
+
   // reorder whiteboard records
   for (let recordIndex = records.length - 1; recordIndex >= 0; recordIndex--) {
     if (record.created_at > records[recordIndex].created_at) {
