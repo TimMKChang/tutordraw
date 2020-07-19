@@ -376,9 +376,9 @@ const View = {
         Model.chatbox.scrollLock = false;
       }
     },
-    scrollToBottom: function (isFirstLoad) {
+    scrollToBottom: function (isForceScrollToBottom) {
       const msgContainerHTML = get('.msg-container');
-      if (isFirstLoad) {
+      if (isForceScrollToBottom) {
         msgContainerHTML.scrollTop = msgContainerHTML.scrollHeight;
         return;
       }
@@ -1265,6 +1265,7 @@ const Controller = {
       View.chatbox.displayNewMsg([{ user_id, sender, type, msg, time }]);
       socket.emit('new chat msg', JSON.stringify(msgObj));
       get('.chatbox .send-msg textarea').value = '';
+      View.chatbox.scrollToBottom(true);
     },
     getTime: function (timestamp) {
       const nowTime = timestamp ? new Date(+timestamp) : new Date();
