@@ -219,6 +219,7 @@ const socketCon = (io) => {
             break;
           }
         }
+        records.unshift(record);
       }
 
       // upload to S3

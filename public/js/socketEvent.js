@@ -55,6 +55,8 @@ socket.on('new draw', async function (recordStr) {
       }
       break;
     }
+    records.unshift(record);
+    View.whiteboard.redraw();
   }
 });
 
