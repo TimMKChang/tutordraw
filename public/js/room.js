@@ -1444,11 +1444,15 @@ const Controller = {
       get('.chatbox-toolbox i.chat').addEventListener('click', (e) => {
         get('.room-container .chatbox').classList.toggle('display');
         get('.chatbox-toolbox i.chat').classList.toggle('color-used');
+        // call container
+        get('.call-container').classList.toggle('narrow');
       });
       // close chatbox
       get('.chatbox .header .close-btn').addEventListener('click', (e) => {
         get('.room-container .chatbox').classList.remove('display');
         get('.chatbox-toolbox i.chat').classList.remove('color-used');
+        // call container
+        get('.call-container').classList.remove('narrow');
       });
 
       // display user list

@@ -441,6 +441,7 @@ footer .copyright {
 }
 
 .room-container .whiteboard {
+  width: 100%;
   height: 100%;
   position: relative;
 }
@@ -1025,9 +1026,15 @@ footer .copyright {
   position: absolute;
   top: 0;
   left: 0;
-  padding: 20px;
   background-color: rgba(0, 0, 0, 0.1);
   padding: 100px;
+  overflow-y: scroll;
+  transition: padding 0.5s;
+}
+
+.call-container.narrow {
+  padding-right: 500px;
+  transition: padding 0.5s;
 }
 
 .call-container video {
