@@ -292,6 +292,7 @@ footer .copyright {
   font-family: 'Kalam', Verdana;
   font-weight: 700;
   color: #000000;
+  margin: 0 0.5rem;
 }
 
 .room-navbar .header .room-name {
