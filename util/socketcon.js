@@ -59,6 +59,31 @@ const closeRoomTimer = {
   // socket_id1: 'setTimeout',
 };
 
+const anonymousUserName = [
+  '狸貓',
+  '狐狸',
+  '刺蝟',
+  '犀牛',
+  '恐龍',
+  '浣熊',
+  '羊駝',
+  '水豚',
+  '海貍',
+  '海豚',
+];
+
+const anonymousUserColor = [
+  '紅色',
+  '橘色',
+  '黃色',
+  '綠色',
+  '藍色',
+  '紫色',
+  '白色',
+  '黑色',
+  '灰色',
+];
+
 const socketCon = (io) => {
   // authentication
   io.use(function (socket, next) {
@@ -74,10 +99,34 @@ const socketCon = (io) => {
         socket.handshake.query.user = verifyJWTResult.data.name;
         next();
       }
-    }
-    else {
+    } else if (socket.handshake.query && socket.handshake.query.room_JWT && socket.handshake.query.room) {
+      const { room_JWT, room } = socket.handshake.query;
+
       const err = new Error();
-      err.data = { type: 'authentication_error', message: 'socket connection error' };
+      if (!rooms[room]) {
+        // check room
+        err.data = { type: 'authentication_error', message: 'The room is not available' };
+        next(err);
+      } else if (room_JWT !== rooms[room].token) {
+        // check token
+        err.data = { type: 'authentication_error', message: 'The token is not available' };
+        next(err);
+      } else {
+        // token verified
+        socket.handshake.query.user_id = Date.now().toString(36) + Math.random().toString(36).substr(-4);
+        const randomName = '匿名' + randomItem(anonymousUserColor) + randomItem(anonymousUserName);
+        socket.handshake.query.user = randomName;
+
+        function randomItem(array) {
+          return array[Math.floor(Math.random() * array.length)];
+        }
+
+        next();
+      }
+
+    } else {
+      const err = new Error();
+      err.data = { type: 'authError', message: 'Please sign in first' };
       next(err);
     }
   });
@@ -87,7 +136,7 @@ const socketCon = (io) => {
     const { room, user_id, user } = socket.handshake.query;
     // check roomUser
     const verifyRoomUserResult = await RoomUser.verifyRoomUser(room, user_id);
-    if (verifyRoomUserResult.error) {
+    if (verifyRoomUserResult.error && !socket.handshake.query.room_JWT) {
       const err = new Error();
       err.data = { type: 'authError', message: 'Please contact the owner of the room to get the password to join the room' };
       next(err);
@@ -108,6 +157,7 @@ const socketCon = (io) => {
           users: {},
           whiteboard: { start_at, records: [] },
           call: {},
+          token: Math.random().toString(36).substr(-8),
           // created_at: Date.now(),
         };
         rooms[room]['users'][socket.id] = user;
@@ -127,6 +177,12 @@ const socketCon = (io) => {
   });
 
   io.on('connection', (socket) => {
+
+    socket.emit('connected', JSON.stringify({
+      user_id: socket.handshake.query.user_id,
+      user: socket.handshake.query.user,
+      token: rooms[socket.handshake.query.room].token,
+    }));
 
     console.log(`new user ${socket.id} has connected`);
 

@@ -1,7 +1,8 @@
 const socket = io({
   query: {
-    access_JWT: localStorage.getItem('access_JWT'),
+    access_JWT: localStorage.getItem('access_JWT') || '',
     room: getQuery().room,
+    room_JWT: getQuery().token || '',
   }
 });
 
@@ -16,6 +17,17 @@ socket.on('error', function (error) {
 });
 
 socket.on('connect', () => {
+  // socket.emit('join room',
+  //   JSON.stringify({ room: Model.room.name, user: Model.user.name }));
+});
+
+socket.on('connected', (dataStr) => {
+  const { user_id, user, token } = JSON.parse(dataStr);
+  Model.user = {
+    name: user,
+    id: user_id,
+  };
+  Model.room.token = token;
   socket.emit('join room',
     JSON.stringify({ room: Model.room.name, user: Model.user.name }));
 });

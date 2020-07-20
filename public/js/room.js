@@ -9,6 +9,7 @@ const Model = {
   user: JSON.parse(localStorage.getItem('user')),
   room: {
     name: getQuery().room,
+    token: '',
   },
   whiteboard: {
     color: '#000000',
@@ -1283,7 +1284,8 @@ const Controller = {
       });
       // click and copy room invite url
       get('.chatbox-toolbox .copy-link').addEventListener('click', (e) => {
-        get('.copy-link input[name="invite-url"]').value = `${HOMEPAGE_URL}/room.html?room=${Model.room.name}`;
+        const link = `${HOMEPAGE_URL}/room.html?room=${Model.room.name}&token=${Model.room.token}`;
+        get('.copy-link input[name="invite-url"]').value = link;
         const copyText = get('.copy-link input[name="invite-url"]');
         copyText.setAttribute('type', 'text');
         copyText.select();
