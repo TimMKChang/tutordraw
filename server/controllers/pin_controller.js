@@ -1,6 +1,11 @@
 const Pin = require('../models/pin_model');
 
 const createPin = async (pin) => {
+  // for all anonymous user
+  if (!Number.isInteger(pin.user_id)) {
+    pin.user_id = 1;
+  }
+
   const { error, message } = await Pin.createPin(pin);
   if (error) {
     console.log(error);
