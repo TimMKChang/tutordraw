@@ -382,6 +382,25 @@ footer .copyright {
   border-color: transparent transparent #5B5B5B transparent;
 }
 
+.whiteboard-toolbox i.shape:hover .shape-container {
+  /* display: block; */
+  visibility: visible;
+}
+
+.whiteboard-toolbox .shape-container {
+  padding: 10px;
+  position: absolute;
+  top: 50%;
+  left: 45px;
+  transform: translate(0, -50%);
+  z-index: 9999;  
+  background-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 0px 6px 3px rgba(0, 0, 0, 0.1);
+  /* display: none; */
+  transition: visibility, linear 0.2s;
+  visibility: hidden;
+}
+
 .whiteboard-toolbox i.add-text:hover .text-container {
   display: block;
 }
@@ -445,6 +464,13 @@ footer .copyright {
 	border-radius: 10px;
 	box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: rgba(123, 224, 173, 0.7);
+}
+
+.whiteboard canvas.main,
+.whiteboard canvas.shape {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .whiteboard .image-whiteboard-preview-container, 

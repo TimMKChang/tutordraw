@@ -31,19 +31,13 @@ socket.on('update user list', function (dataStr) {
   Controller.whiteboard.updateTraceList(users, user, user_id, state);
 });
 
-socket.on('new draw', function (recordStr) {
+socket.on('new draw', async function (recordStr) {
   const record = JSON.parse(recordStr);
   const records = Model.whiteboard.records;
 
   if (records.length === 0) {
     records.push(record);
-    if (record.type === 'line') {
-      View.whiteboard.line.draw(record);
-    } else if (record.type === 'image') {
-      View.whiteboard.image.draw(record);
-    } else if (record.type === 'text') {
-      View.whiteboard.text.draw(record);
-    }
+    await View.whiteboard.draw(record);
     return;
   }
 
@@ -52,13 +46,7 @@ socket.on('new draw', function (recordStr) {
     if (record.created_at > records[recordIndex].created_at) {
       records.splice(recordIndex + 1, 0, record);
       if (recordIndex === records.length - 1) {
-        if (record.type === 'line') {
-          View.whiteboard.line.draw(record);
-        } else if (record.type === 'image') {
-          View.whiteboard.image.draw(record);
-        } else if (record.type === 'text') {
-          View.whiteboard.text.draw(record);
-        }
+        await View.whiteboard.draw(record);
       } else {
         View.whiteboard.redraw();
       }

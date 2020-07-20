@@ -51,6 +51,17 @@
 
           </i>
 
+          <i class="fas fa-shapes shape">
+
+            <div class="shape-container">
+              <i class="fas fa-slash line" style="transform: scale(-1, 1);"></i>
+              <i class="fas fa-square rect"></i>
+              <i class="fas fa-circle cir"></i>
+              <i class="fas fa-play tri" style="transform: rotate(-90deg);"></i>
+            </div>
+
+          </i>
+
           <i class="far fa-image add-image"></i>
           <input type="file" name="image-whiteboard" class="hide" />
 
@@ -87,7 +98,9 @@
 
         <div class="whiteboard">
 
-          <canvas width="1550" height="750"> </canvas>
+          <canvas width="1550" height="750" class="main"></canvas>
+
+          <canvas width="1550" height="750" class="shape hide"></canvas>
 
           <div class="image-whiteboard-preview-container hide">
             <img src="" alt="" class="preview">

@@ -1,7 +1,9 @@
 const roomContainerHTML = get('.room-container');
 const whiteboardHTML = get('.whiteboard');
-const canvas = get('.whiteboard canvas');
+const canvas = get('.whiteboard canvas.main');
 const ctx = canvas.getContext('2d');
+const canvasShape = get('.whiteboard canvas.shape');
+const ctxShape = canvasShape.getContext('2d');
 
 const Model = {
   user: JSON.parse(localStorage.getItem('user')),
@@ -106,6 +108,103 @@ const View = {
       updateTrace: function (record, boundary) {
         const { user_id, path, width } = record;
         const { minX, maxX, minY, maxY } = boundary;
+        const userHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
+        if (userHTML) {
+          userHTML.style.top = `${minY - +width / 2 - 10}px`;
+          userHTML.style.left = `${minX - +width / 2 - 10}px`;
+          userHTML.style.width = `${maxX - minX + +width + 20}px`;
+          userHTML.style.height = `${maxY - minY + +width + 20}px`;
+        }
+      },
+    },
+    shape: {
+      draw: function (record, isPreview) {
+        let canvas_ctx = ctx;
+        if (isPreview) {
+          this.clear();
+          canvas_ctx = ctxShape;
+        }
+
+        const { category, color, width } = record;
+        const { origX, origY, currX, currY, } = record.position;
+
+        if (category === 'line') {
+          canvas_ctx.beginPath();
+          canvas_ctx.lineCap = 'round';
+          canvas_ctx.lineJoin = 'round';
+          canvas_ctx.moveTo(origX, origY);
+          canvas_ctx.lineTo(currX, currY);
+          canvas_ctx.strokeStyle = color;
+          canvas_ctx.lineWidth = width;
+          canvas_ctx.closePath();
+          canvas_ctx.stroke();
+
+        } else if (category === 'rect') {
+          canvas_ctx.beginPath();
+          canvas_ctx.lineCap = 'round';
+          canvas_ctx.lineJoin = 'round';
+          canvas_ctx.strokeStyle = color;
+          canvas_ctx.lineWidth = width;
+
+          const rectWidth = (currX - origX) > 0 ? currX - origX : width;
+          const rectHeight = (currY - origY) > 0 ? currY - origY : width;
+          canvas_ctx.strokeRect(origX, origY, rectWidth, rectHeight);
+          canvas_ctx.closePath();
+
+        } else if (category === 'cir') {
+          canvas_ctx.beginPath();
+          const x = origX;
+          const y = origY;
+          const radius = Math.sqrt(Math.pow((currX - origX), 2) + Math.pow((currY - origY), 2));
+          const startAngle = 0;
+          const endAngle = Math.PI * 2;
+          canvas_ctx.arc(x, y, radius, startAngle, endAngle);
+          canvas_ctx.strokeStyle = color;
+          canvas_ctx.lineWidth = width;
+          canvas_ctx.closePath();
+          canvas_ctx.stroke();
+
+        } else if (category === 'tri') {
+          canvas_ctx.beginPath();
+          canvas_ctx.lineCap = 'round';
+          canvas_ctx.lineJoin = 'round';
+          canvas_ctx.strokeStyle = color;
+          canvas_ctx.lineWidth = width;
+
+          const thirdX = origX;
+          const thirdY = currY;
+
+          canvas_ctx.moveTo(origX, origY);
+          canvas_ctx.lineTo(thirdX, thirdY);
+          canvas_ctx.lineTo(currX, currY);
+
+          canvas_ctx.closePath();
+          canvas_ctx.stroke();
+        }
+
+        // trace
+        this.updateTrace(record);
+      },
+      clear: function () {
+        ctxShape.clearRect(0, 0, canvasShape.width, canvasShape.height);
+      },
+      updateTrace: function (record) {
+        const { user_id, category, width } = record;
+        const { origX, origY, currX, currY, } = record.position;
+
+        let minX = origX < currX ? origX : currX;
+        let maxX = origX > currX ? origX : currX;
+        let minY = origY < currY ? origY : currY;
+        let maxY = origY > currY ? origY : currY;
+
+        if (category === 'cir') {
+          const radius = Math.sqrt(Math.pow((currX - origX), 2) + Math.pow((currY - origY), 2));
+          minX = origX - radius;
+          maxX = origX + radius;
+          minY = origY - radius;
+          maxY = origY + radius;
+        }
+
         const userHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
         if (userHTML) {
           userHTML.style.top = `${minY - +width / 2 - 10}px`;
@@ -258,6 +357,17 @@ const View = {
         }
       },
     },
+    draw: async function (record) {
+      if (record.type === 'line') {
+        View.whiteboard.line.draw(record);
+      } else if (record.type === 'image') {
+        await View.whiteboard.image.draw(record);
+      } else if (record.type === 'text') {
+        View.whiteboard.text.draw(record);
+      } else if (record.type === 'shape') {
+        View.whiteboard.shape.draw(record);
+      }
+    },
     initWhiteboard: function () {
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -267,13 +377,7 @@ const View = {
 
       for (let recordsIndex = 0; recordsIndex < Model.whiteboard.records.length; recordsIndex++) {
         const record = Model.whiteboard.records[recordsIndex];
-        if (record.type === 'line') {
-          View.whiteboard.line.draw(record);
-        } else if (record.type === 'image') {
-          await View.whiteboard.image.draw(record);
-        } else if (record.type === 'text') {
-          View.whiteboard.text.draw(record);
-        }
+        await View.whiteboard.draw(record);
       }
     },
     displayMouseTrace: function (user_id, mouseTrace) {
@@ -512,6 +616,86 @@ const Controller = {
         }
       }
     },
+    shape: {
+      category: 'line',
+      position: {
+        origX: 0,
+        origY: 0,
+        currX: 0,
+        currY: 0,
+      },
+      isDrawing: false,
+      getXY: function (action, e) {
+        if (action === 'down') {
+          this.position.origX = e.clientX - roomContainerHTML.offsetLeft - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
+          this.position.origY = e.clientY - roomContainerHTML.offsetTop - whiteboardHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
+
+          this.position.currX = this.position.origX;
+          this.position.currY = this.position.origY;
+
+          this.isDrawing = true;
+
+        } else if (action === 'move') {
+          if (this.isDrawing) {
+            this.position.currX = e.clientX - roomContainerHTML.offsetLeft - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
+            this.position.currY = e.clientY - roomContainerHTML.offsetTop - whiteboardHTML.offsetTop + whiteboardHTML.scrollTop + window.pageYOffset;
+
+            // preview
+            const category = this.category;
+            const { color, width } = Model.whiteboard;
+            const position = this.position;
+
+            const record = {
+              category: this.category,
+              color,
+              width,
+              position,
+            };
+            const isPreview = true;
+            View.whiteboard.shape.draw(record, isPreview);
+
+            // mouse trace
+            const mouseTrace = {
+              x: this.position.currX,
+              y: this.position.currY,
+            };
+            socket.emit('mouse trace', JSON.stringify({
+              room: Model.room.name,
+              user_id: Model.user.id,
+              mouseTrace
+            }));
+
+          }
+        } else if (action === 'up' || action === 'out') {
+          if (this.isDrawing) {
+            const { color, width } = Model.whiteboard;
+
+            const record = {
+              user_id: Model.user.id,
+              author: Model.user.name,
+              type: 'shape',
+              category: this.category,
+              created_at: Date.now(),
+              color,
+              width,
+              position: this.position,
+            };
+
+            View.whiteboard.shape.draw(record);
+
+            // clear
+            View.whiteboard.shape.clear();
+
+            canvasShape.classList.add('hide');
+            this.isDrawing = false;
+
+            Model.whiteboard.records.push(record);
+            // emit
+            socket.emit('new draw', JSON.stringify({ room: Model.room.name, record }));
+          }
+        }
+      },
+    },
     initListener: function () {
       // canvas
       canvas.addEventListener('mousedown', (e) => {
@@ -533,6 +717,34 @@ const Controller = {
         if (Model.whiteboard.drawType === 'line') {
           Controller.whiteboard.line.getXY('out', e);
         }
+      });
+
+      // shape
+      get('.whiteboard-toolbox .shape-container').addEventListener('click', async (e) => {
+        canvasShape.classList.remove('hide');
+
+        if (e.target.closest('.line')) {
+          Controller.whiteboard.shape.category = 'line';
+        } else if (e.target.closest('.rect')) {
+          Controller.whiteboard.shape.category = 'rect';
+        } else if (e.target.closest('.cir')) {
+          Controller.whiteboard.shape.category = 'cir';
+        } else if (e.target.closest('.tri')) {
+          Controller.whiteboard.shape.category = 'tri';
+        }
+      });
+      // draw shape
+      get('.whiteboard canvas.shape').addEventListener('mousedown', async (e) => {
+        Controller.whiteboard.shape.getXY('down', e);
+      });
+      get('.whiteboard canvas.shape').addEventListener('mousemove', async (e) => {
+        Controller.whiteboard.shape.getXY('move', e);
+      });
+      get('.whiteboard canvas.shape').addEventListener('mouseup', async (e) => {
+        Controller.whiteboard.shape.getXY('up', e);
+      });
+      get('.whiteboard canvas.shape').addEventListener('mouseout', async (e) => {
+        Controller.whiteboard.shape.getXY('out', e);
       });
 
       // toolbox cancel all feature
