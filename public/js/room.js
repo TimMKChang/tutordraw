@@ -889,13 +889,14 @@ const Controller = {
           View.whiteboard.image.updateTrace({ user_id: Model.user.id }, x, y, width, height);
 
           // upload and send new draw
+          const created_at = Date.now();
           const imageFilename = await Controller.whiteboard.uploadImage();
           const link = `${AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`;
           const record = {
             user_id: Model.user.id,
             author: Model.user.name,
             type: 'image',
-            created_at: Date.now(),
+            created_at,
             x,
             y,
             width,
