@@ -44,8 +44,11 @@ socket.on('new draw', async function (recordStr) {
   // reorder whiteboard records
   for (let recordIndex = records.length - 1; recordIndex >= 0; recordIndex--) {
     if (record.created_at > records[recordIndex].created_at) {
+      // avoid splice change original length
+      const lastIndex = records.length - 1;
+
       records.splice(recordIndex + 1, 0, record);
-      if (recordIndex === records.length - 1) {
+      if (recordIndex === lastIndex) {
         await View.whiteboard.draw(record);
       } else {
         View.whiteboard.redraw();
