@@ -17,18 +17,18 @@ const Model = {
     records: [],
     image: {
       imageReferencePosition: [0, 0],
-      imagePosition: [300, 50],
+      imagePosition: [200, 120],
       imageMovable: false,
     },
     text: {
       textReferencePosition: [0, 0],
-      textPosition: [300, 50],
+      textPosition: [200, 120],
       textMovable: false,
     },
     pin: {
       pinOriginalPosition: [0, 0],
       pinReferencePosition: [0, 0],
-      pinPosition: [300, 50],
+      pinPosition: [200, 120],
       pinMovable: false,
       pinClickable: true,
     },
@@ -757,17 +757,17 @@ const Controller = {
         get('.image-whiteboard-preview-container').classList.add('hide');
         // clear input value
         get('.whiteboard-toolbox input[name="image-whiteboard"]').value = '';
-        Model.whiteboard.image.imagePosition = [300, 50];
+        Model.whiteboard.image.imagePosition = [200, 120];
 
         // text
         get('.text-whiteboard-preview-container').classList.add('hide');
         // clear input value
         get('.text-whiteboard-preview-container input').value = '';
-        Model.whiteboard.text.textPosition = [300, 50];
+        Model.whiteboard.text.textPosition = [200, 120];
 
         // pin
         get('.pin-whiteboard-preview-container').classList.add('hide');
-        Model.whiteboard.pin.pinPosition = [300, 50];
+        Model.whiteboard.pin.pinPosition = [200, 120];
       });
 
       // color
@@ -883,7 +883,7 @@ const Controller = {
           // let the user who upload the image no need to wait for the uploading delay
           await View.whiteboard.image.draw({ x, y, width, height, link: URL.createObjectURL(get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0]) });
           get('.image-whiteboard-preview-container').classList.add('hide');
-          Model.whiteboard.image.imagePosition = [300, 50];
+          Model.whiteboard.image.imagePosition = [200, 120];
 
           // trace
           View.whiteboard.image.updateTrace({ user_id: Model.user.id }, x, y, width, height);
@@ -967,7 +967,7 @@ const Controller = {
             Model.whiteboard.records.push(record);
           }
           get('.text-whiteboard-preview-container').classList.add('hide');
-          Model.whiteboard.text.textPosition = [300, 50];
+          Model.whiteboard.text.textPosition = [200, 120];
           get('.text-whiteboard-preview-container input').value = '';
         }
       });
@@ -1025,7 +1025,7 @@ const Controller = {
           socket.emit('new whiteboard pin', JSON.stringify(pin));
 
           get('.pin-whiteboard-preview-container').classList.add('hide');
-          Model.whiteboard.pin.pinPosition = [300, 50];
+          Model.whiteboard.pin.pinPosition = [200, 120];
         }
       });
       // pin container
