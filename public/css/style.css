@@ -668,6 +668,7 @@ footer .copyright {
   transform: translateY(100%);
   display: inline-block;
   background-color: rgba(16, 168, 160, 0.7);
+  white-space: nowrap;
 }
 
 .whiteboard .mouse-trace .author {
@@ -689,6 +690,7 @@ footer .copyright {
   transform: translateY(-100%);
   display: inline-block;
   background-color: rgba(248, 160, 179, 0.7);
+  white-space: nowrap;
 }
 
 .room-container .chatbox {
