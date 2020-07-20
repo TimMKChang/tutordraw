@@ -150,7 +150,7 @@ const socketCon = (io) => {
       user_idUser[user_id] = user;
 
       const { start_at } = await Room.getWhiteboardStart_at(room);
-      if (room in rooms) {
+      if (rooms[room]) {
         rooms[room]['users'][socket.id] = user;
       } else {
         rooms[room] = {
@@ -257,7 +257,7 @@ const socketCon = (io) => {
 
       // check user_id and sender
       const { user_id, author } = record;
-      if (!room in rooms || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== author) {
+      if (!rooms[room] || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== author) {
         return;
       }
 
@@ -289,7 +289,7 @@ const socketCon = (io) => {
     socket.on('new whiteboard', async function (dataStr) {
       const { room, user_id, user, imageFilename } = JSON.parse(dataStr);
       // check user_id and sender
-      if (!room in rooms || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== user) {
+      if (!rooms[room] || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== user) {
         return;
       }
 
@@ -339,7 +339,7 @@ const socketCon = (io) => {
       const msgObj = JSON.parse(msgStr);
       // check user_id and sender
       const { room, user_id, sender } = msgObj;
-      if (!room in rooms || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== sender) {
+      if (!rooms[room] || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== sender) {
         return;
       }
       await createChatmsg(msgObj);
@@ -350,7 +350,7 @@ const socketCon = (io) => {
       const mouseTraceObj = JSON.parse(dataStr);
       // check user_id
       const { room, user_id, mouseTrace } = mouseTraceObj;
-      if (!room in rooms || userClients[user_id] !== socket.id) {
+      if (!rooms[room] || userClients[user_id] !== socket.id) {
         return;
       }
       socket.to(room).emit('mouse trace', dataStr);
@@ -360,7 +360,7 @@ const socketCon = (io) => {
       const pin = JSON.parse(dataStr);
       // check user_id
       const { room, user_id } = pin;
-      if (!room in rooms || userClients[user_id] !== socket.id) {
+      if (!rooms[room] || userClients[user_id] !== socket.id) {
         return;
       }
       // save to DB
@@ -375,7 +375,7 @@ const socketCon = (io) => {
       const pin = JSON.parse(dataStr);
       // check user_id
       const { room, user_id } = pin;
-      if (!room in rooms || userClients[user_id] !== socket.id) {
+      if (!rooms[room] || userClients[user_id] !== socket.id) {
         return;
       }
       // update to DB
@@ -390,7 +390,7 @@ const socketCon = (io) => {
       const pin = JSON.parse(dataStr);
       // check user_id
       const { room, user_id } = pin;
-      if (!room in rooms || userClients[user_id] !== socket.id) {
+      if (!rooms[room] || userClients[user_id] !== socket.id) {
         return;
       }
       // update to DB
@@ -404,7 +404,7 @@ const socketCon = (io) => {
     socket.on('join call room', function (dataStr) {
       const { room, user_id, peer_id } = JSON.parse(dataStr);
       // check user_id
-      if (!room in rooms || userClients[user_id] !== socket.id) {
+      if (!rooms[room] || userClients[user_id] !== socket.id) {
         return;
       }
 
@@ -415,7 +415,7 @@ const socketCon = (io) => {
     socket.on('leave call room', function (dataStr) {
       const { room, user_id, peer_id } = JSON.parse(dataStr);
       // check user_id
-      if (!room in rooms || userClients[user_id] !== socket.id) {
+      if (!rooms[room] || userClients[user_id] !== socket.id) {
         return;
       }
 
@@ -429,7 +429,7 @@ const socketCon = (io) => {
       // delete user, room
       const socket_id = socket.id;
       const room = clientsRoom[socket_id];
-      if (!room in rooms) {
+      if (!rooms[room]) {
         return;
       }
       const user = rooms[room]['users'][socket_id];
