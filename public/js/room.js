@@ -50,7 +50,12 @@ const Model = {
 const View = {
   whiteboard: {
     line: {
-      draw: function (record) {
+      draw: function (record, isPreview) {
+        let canvas_ctx = ctx;
+        if (isPreview) {
+          canvas_ctx = ctxShape;
+        }
+
         const { author, color, width, path } = record;
 
         // get trace boundary
@@ -64,11 +69,11 @@ const View = {
         if (path.length === 1) {
           const currX = path[0][0];
           const currY = path[0][1];
-          ctx.beginPath();
-          ctx.fillStyle = color;
-          ctx.arc(currX, currY, width / 2, 0, 2 * Math.PI);
-          ctx.fill();
-          ctx.closePath();
+          canvas_ctx.beginPath();
+          canvas_ctx.fillStyle = color;
+          canvas_ctx.arc(currX, currY, width / 2, 0, 2 * Math.PI);
+          canvas_ctx.fill();
+          canvas_ctx.closePath();
         }
 
         for (let pathIndex = 1; pathIndex < path.length; pathIndex++) {
@@ -91,15 +96,15 @@ const View = {
             boundary.maxY = currY;
           }
 
-          ctx.beginPath();
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
-          ctx.moveTo(prevX, prevY);
-          ctx.lineTo(currX, currY);
-          ctx.strokeStyle = color;
-          ctx.lineWidth = width;
-          ctx.closePath();
-          ctx.stroke();
+          canvas_ctx.beginPath();
+          canvas_ctx.lineCap = 'round';
+          canvas_ctx.lineJoin = 'round';
+          canvas_ctx.moveTo(prevX, prevY);
+          canvas_ctx.lineTo(currX, currY);
+          canvas_ctx.strokeStyle = color;
+          canvas_ctx.lineWidth = width;
+          canvas_ctx.closePath();
+          canvas_ctx.stroke();
         }
 
         if (author !== 'self') {
@@ -532,6 +537,9 @@ const Controller = {
         const { color, width } = Model.whiteboard;
 
         if (action === 'down') {
+          canvasShape.classList.remove('hide');
+          canvasShape.classList.add('pointer-none');
+
           this.prevX = this.currX;
           this.prevY = this.currY;
           this.currX = e.clientX - roomContainerHTML.offsetLeft - whiteboardHTML.offsetLeft + whiteboardHTML.scrollLeft + window.pageXOffset;
@@ -562,7 +570,7 @@ const Controller = {
             color,
             width,
             path: [[this.currX, this.currY]],
-          });
+          }, isPreview = true);
 
         } else if (action === 'move') {
           if (this.isDrawing) {
@@ -592,7 +600,7 @@ const Controller = {
               color,
               width,
               path: [[this.prevX, this.prevY], [this.currX, this.currY]],
-            });
+            }, isPreview = true);
 
             // mouse trace
             const mouseTrace = {
@@ -608,12 +616,16 @@ const Controller = {
         } else if (action === 'up' || action === 'out') {
           if (this.isDrawing) {
             Model.whiteboard.records.push(this.record);
+            View.whiteboard.line.draw(this.record);
+            View.whiteboard.shape.clear();
             // socket
             socket.emit('new draw', JSON.stringify({ room: Model.room.name, record: this.record }));
             // trace
             View.whiteboard.line.updateTrace(this.record, Model.whiteboard.boundary);
           }
           this.isDrawing = false;
+          canvasShape.classList.add('hide');
+          canvasShape.classList.remove('pointer-none');
         }
       }
     },
