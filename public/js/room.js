@@ -1248,38 +1248,51 @@ const Controller = {
       return filename;
     },
     updateTraceList: function (users, user, user_id, state) {
-      if (state === 'leave') {
-        return;
-      }
-
       const traceHTML = get('.whiteboard .trace');
       const mouseTraceHTML = get('.whiteboard .mouse-trace');
+      const traceUserHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
+      const mouseUserHTML = get(`.whiteboard .mouse-trace [data-user_id="${user_id}"]`);
 
-      if (Model.user.id !== user_id) {
-        const userHTML = get(`.whiteboard .trace [data-user_id="${user_id}"]`);
-        if (!userHTML) {
-          traceHTML.innerHTML += `
-            <div class="author" data-user_id="${user_id}">
-              <span>${user}</span>
-            </div>
-          `;
-          mouseTraceHTML.innerHTML += `
-            <div class="author" data-user_id="${user_id}">
-              <span>${user}</span>
-            </div>
-          `;
+      if (state === 'leave') {
+        if (traceUserHTML) {
+          traceUserHTML.remove();
         }
-      } else {
-        let htmlContent = '';
-        for (const user_id in users) {
-          htmlContent += `
+        if (mouseUserHTML) {
+          mouseUserHTML.remove();
+        }
+
+      } else if (state === 'join') {
+
+        if (Model.user.id === user_id) {
+          let htmlContent = '';
+          for (const user_id in users) {
+            htmlContent += `
             <div class="author" data-user_id="${user_id}">
               <span>${users[user_id]}</span>
             </div>
           `;
+          }
+          traceHTML.innerHTML = htmlContent;
+          mouseTraceHTML.innerHTML = htmlContent;
+
+        } else {
+
+          if (!traceUserHTML) {
+            traceHTML.innerHTML += `
+              <div class="author" data-user_id="${user_id}">
+                <span>${user}</span>
+              </div>
+            `;
+          }
+          if (!mouseUserHTML) {
+            mouseTraceHTML.innerHTML += `
+              <div class="author" data-user_id="${user_id}">
+                <span>${user}</span>
+              </div>
+            `;
+          }
+
         }
-        traceHTML.innerHTML = htmlContent;
-        mouseTraceHTML.innerHTML = htmlContent;
       }
     },
     loadHistoryWB: async function () {
