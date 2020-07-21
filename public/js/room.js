@@ -152,9 +152,29 @@ const View = {
           canvas_ctx.strokeStyle = color;
           canvas_ctx.lineWidth = width;
 
-          const rectWidth = (currX - origX) > 0 ? currX - origX : width;
-          const rectHeight = (currY - origY) > 0 ? currY - origY : width;
-          canvas_ctx.strokeRect(origX, origY, rectWidth, rectHeight);
+          const rectWidth = Math.abs(currX - origX) > 0 ? Math.abs(currX - origX) : width;
+          const rectHeight = Math.abs(currY - origY) > 0 ? Math.abs(currY - origY) : width;
+
+          // draw different directions
+          // canvas y axis is downward
+          // 4 quadrant
+          let drawRefX = origX;
+          let drawRefY = origY;
+          if (currX > origX && currY < origY) {
+            // 1 quadrant
+            drawRefX = origX;
+            drawRefY = currY;
+          } else if (currX < origX && currY < origY) {
+            // 2 quadrant
+            drawRefX = currX;
+            drawRefY = currY;
+          } else if (currX < origX && currY > origY) {
+            // 3 quadrant
+            drawRefX = currX;
+            drawRefY = origY;
+          }
+
+          canvas_ctx.strokeRect(drawRefX, drawRefY, rectWidth, rectHeight);
           canvas_ctx.closePath();
 
         } else if (category === 'cir') {
