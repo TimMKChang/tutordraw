@@ -66,9 +66,13 @@ socket.on('new draw', async function (recordStr) {
         View.whiteboard.redraw();
       }
       break;
+
+    } else if (recordIndex === 0) {
+      records.unshift(record);
+      View.whiteboard.redraw();
+      break;
+
     }
-    records.unshift(record);
-    View.whiteboard.redraw();
   }
 });
 
