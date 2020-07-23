@@ -30,7 +30,31 @@ const verifyRoomUser = async (room, user_id) => {
   return { message: 'roomUser verified' };
 };
 
+const getRoomUser = async (requirement) => {
+  const condition = { query: '', sql: '', binding: [] };
+
+  if (!requirement.user_id) {
+    return { error: 'requirement is necessary' };
+  }
+
+  condition.query = 'SELECT roomUser.room, roomUser.isOwner, lastHistoryWB.link FROM roomUser ';
+  condition.sql = 'LEFT JOIN (SELECT room, MAX(start_at), link FROM historyWB GROUP BY room) lastHistoryWB ';
+  condition.sql += 'ON roomUser.room = lastHistoryWB.room ';
+  condition.sql += 'WHERE roomUser.user_id = ? ORDER BY roomUser.room DESC';
+  condition.binding = [requirement.user_id];
+
+  let roomUsers;
+  try {
+    roomUsers = await query(condition.query + condition.sql, condition.binding);
+  } catch (error) {
+    return { error };
+  }
+
+  return { roomUsers };
+};
+
 module.exports = {
   createRoomUser,
   verifyRoomUser,
+  getRoomUser,
 };

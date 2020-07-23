@@ -28,6 +28,20 @@ const createRoomUser = async (req, res) => {
   return res.status(200).json({ message: 'Join room successfully' });
 };
 
+const getRoomUser = async (req, res) => {
+
+  const user_id = res.locals.userData.id;
+
+  const { error, roomUsers } = await RoomUser.getRoomUser({ user_id });
+
+  if (error) {
+    return res.status(403).json({ error });
+  }
+
+  return res.status(200).json({ data: roomUsers });
+};
+
 module.exports = {
   createRoomUser,
+  getRoomUser,
 };
