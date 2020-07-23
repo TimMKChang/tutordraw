@@ -1056,6 +1056,212 @@ footer .copyright {
   font-size: 2rem;
 }
 
+.dashboard-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  background-color: #f2f2f2;
+}
+
+.dashboard-container .fill-bar {
+  width: 50px;
+  min-width: 50px;
+  background-color: #4860AD;
+}
+
+.dashboard-navbar {
+  width: 200px;
+  min-width: 200px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.dashboard-navbar .title-container {
+  margin-bottom: 50px;
+}
+
+.dashboard-navbar .title-container .title {
+  font-size: 2rem;
+  color: #000000;
+  font-family: 'Kalam', Verdana;
+  font-weight: 700;
+}
+
+.dashboard-navbar .navbar-item {
+  margin-bottom: 20px;
+}
+
+.dashboard-navbar .navbar-item:hover {
+  color: #3f53d9;
+  cursor: pointer;
+}
+
+.dashboard-navbar .navbar-item.bottom {
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-navbar .navbar-item .starred-room i {
+  font-size: 0.8rem;
+}
+
+.dashboard-navbar .signout-btn {
+  margin-top: auto;
+}
+
+.dashboard-container .dashboard {
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.dashboard-container .dashboard .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-container .dashboard .header .title {
+  font-size: 2rem;
+}
+
+.dashboard-container .dashboard .header select {
+  padding: 10px;
+  margin-right: 50px;
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-container .dashboard .header select option {
+  background-color: #f2f2f2;
+}
+
+.dashboard-container .dashboard .create-join-room {
+  padding: 20px 0;
+  display: flex;
+}
+
+.dashboard-container .dashboard .create-join-room .item {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #3f53d9;
+  margin-right: 20px;
+  border-radius: 5px;
+  color: #FFFFFF;
+  padding: 50px 0 10px;
+  box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-container .dashboard .create-join-room .item:hover {  
+  background-color: #2234AA;
+  cursor: pointer;
+}
+
+.dashboard-container .dashboard .create-join-room .item i {
+  width: 40px;
+  height: 40px;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard-container .dashboard .create-join-room .item .title {
+  margin-top: auto;
+}
+
+.dashboard-container .dashboard .dashboard-rooms {
+  padding: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room {
+  width: 320px;
+  height: 200px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.3);
+  background-color: #FFFFFF;
+}
+
+.dashboard-container .dashboard .dashboard-rooms::-webkit-scrollbar
+{
+	width: 6px;
+  background-color: #f2f2f2;
+}
+
+.dashboard-container .dashboard .dashboard-rooms::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: rgba(0,0,0,0.1);
+  
+  border-top: 10px solid #f2f2f2;
+  border-bottom: 20px solid #f2f2f2;
+  background-clip: padding-box;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room:hover {
+  cursor: pointer;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room:hover .cover {
+  background-color: rgba(0, 0, 0, 0.7);
+  transition: 0.3s;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room img {
+  max-width: 100%;
+  display: block;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room .img-container {
+  position: relative;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room .cover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  transition: 0.3s;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room .title-container {
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room .icon-container {
+  display: flex;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room .title-container i {
+  width: 1rem;
+  height: 1rem;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+}
+
 .hide {
   display: none !important;
   z-index: -9999 !important;;
