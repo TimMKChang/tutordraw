@@ -65,6 +65,8 @@ const authenticate = (req, res, next) => {
         status: 403,
         error: verifyJWTResult.error,
       });
+    } else {
+      res.locals.userData = verifyJWTResult.data;
     }
   }
 

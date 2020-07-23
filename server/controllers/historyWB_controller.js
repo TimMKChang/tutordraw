@@ -16,15 +16,8 @@ const getHistoryWB = async (req, res) => {
     return res.status(400).json({ error: 'room is required.' });
   }
 
-  const authHeader = req.headers.authorization;
-  const JWT = authHeader.replace(/Bearer /, '');
-  const verifyJWTResult = verifyJWT(JWT);
-  if (verifyJWTResult.error) {
-    return res.status(403).json({ error: verifyJWTResult.error });
-  }
-
   // check roomUser
-  const user_id = verifyJWTResult.data.id;
+  const user_id = res.locals.userData.id;
   const verifyRoomUserResult = await RoomUser.verifyRoomUser(room, user_id);
   if (verifyRoomUserResult.error) {
     return res.status(403).json({ error: verifyRoomUserResult.error });

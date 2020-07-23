@@ -10,12 +10,7 @@ const createRoom = async (req, res) => {
     return res.status(400).json({ error: 'Password is required.' });
   }
 
-  const authHeader = req.headers.authorization;
-  const JWT = authHeader.replace(/Bearer /, '');
-  const verifyJWTResult = verifyJWT(JWT);
-  if (verifyJWTResult.error) {
-    return res.status(403).json({ authError: verifyJWTResult.error });
-  }
+  const user_id = res.locals.userData.id;
 
   // room id
   const id = Date.now().toString(36) + Math.random().toString(36).split('.')[1].substr(-8);
@@ -32,7 +27,7 @@ const createRoom = async (req, res) => {
 
   const createRoomUserResult = await RoomUser.createRoomUser({
     room: id,
-    user_id: verifyJWTResult.data.id,
+    user_id,
     isOwner: true,
   });
   if (createRoomUserResult.error) {
