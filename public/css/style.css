@@ -1058,7 +1058,9 @@ footer .copyright {
 
 .dashboard-container {
   width: 100vw;
+  min-width: 650px;
   height: 100vh;
+  min-height: 500px;
   display: flex;
   background-color: #f2f2f2;
 }
@@ -1179,6 +1181,7 @@ footer .copyright {
 }
 
 .dashboard-container .dashboard .dashboard-rooms {
+  min-height: 220px;
   padding: 10px 0;
   display: flex;
   flex-wrap: wrap;
