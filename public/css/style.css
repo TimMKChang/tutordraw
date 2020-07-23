@@ -171,7 +171,8 @@ footer .copyright {
   cursor: pointer;
 }
 
-.index-container .form-container {
+.index-container .form-container,
+.dashboard-container .form-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -180,7 +181,8 @@ footer .copyright {
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-.index-container form {
+.index-container form,
+.dashboard-container form {
   width: 90vw;
   max-width: 500px;
   background-color: #FFFFFF;
@@ -191,18 +193,21 @@ footer .copyright {
   box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.3);
 }
 
-.index-container form .title {
+.index-container form .title,
+.dashboard-container form .title {
   font-size: 2rem;
   text-align: center;
   margin-bottom: 20px;
 }
 
-.index-container form .form-group {
+.index-container form .form-group,
+.dashboard-container form .form-group {
   margin: 0;
   position: relative;
 }
 
-.index-container form .form-group i {
+.index-container form .form-group i,
+.dashboard-container form .form-group i {
   width: 1rem;
   height: 1rem;
   position: absolute;
@@ -215,32 +220,38 @@ footer .copyright {
   align-items: center;
 }
 
-.index-container form .form-group input {
+.index-container form .form-group input,
+.dashboard-container form .form-group input {
   height: 60px;
   font-size: 1.5rem;
   padding-left: 60px;
   border-radius: 0;
 }
 
-.index-container form .form-group input.one {
+.index-container form .form-group input.one,
+.dashboard-container form .form-group input.one {
   border-radius: 5px;
 }
 
-.index-container form .form-group input.top {
+.index-container form .form-group input.top,
+.dashboard-container form .form-group input.top {
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
 
-.index-container form .form-group input.bottom {
+.index-container form .form-group input.bottom,
+.dashboard-container form .form-group input.bottom {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 }
 
-.index-container form .form-group input:not(.bottom):not(.one) {
+.index-container form .form-group input:not(.bottom):not(.one),
+.dashboard-container form .form-group input:not(.bottom):not(.one) {
   border-bottom: 0;
 }
 
-.index-container form button {
+.index-container form button,
+.dashboard-container form button {
   height: 60px;
   padding: 10px;
   margin-top: 20px;
@@ -251,7 +262,8 @@ footer .copyright {
   font-size: 1.5rem;
 }
 
-.index-container form button:hover {
+.index-container form button:hover,
+.dashboard-container form button:hover {
   background-color: #2234AA;
   color: #FFFFFF;
   cursor: pointer;
