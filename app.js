@@ -50,7 +50,12 @@ app.use(function (req, res, next) {
 // Error handling
 app.use(function (err, req, res, next) {
   console.log(err);
-  res.status(500).json({ error: 'Internal Server Error' });
+  const { status, error } = err;
+  if (status === 403) {
+    res.status(status).json({ error: 'Authentication Error' });
+  } else {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 server.listen(PORT, () => {
