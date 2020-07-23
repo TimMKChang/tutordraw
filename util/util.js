@@ -50,8 +50,30 @@ const verifyJWT = (JWT) => {
   return { data };
 };
 
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    next({
+      status: 403,
+      error: 'Please sign in first',
+    });
+  } else {
+    const JWT = authHeader.replace(/Bearer /, '');
+    const verifyJWTResult = verifyJWT(JWT);
+    if (verifyJWTResult.error) {
+      next({
+        status: 403,
+        error: verifyJWTResult.error,
+      });
+    }
+  }
+
+  next();
+};
+
 module.exports = {
   upload,
   wrapAsync,
-  verifyJWT
+  verifyJWT,
+  authenticate
 };
