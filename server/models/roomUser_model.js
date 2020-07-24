@@ -61,8 +61,27 @@ const getRoomUser = async (requirement) => {
   return { roomUsers };
 };
 
+const updateRoomUser = async (requirement) => {
+  const condition = { query: '', sql: '', binding: [] };
+  if (requirement.note) {
+    condition.binding = [requirement.note, requirement.room, requirement.user_id];
+    try {
+      await transaction();
+      await query('UPDATE roomUser SET note = ? WHERE room = ? AND user_id = ?', condition.binding);
+      await commit();
+      return { message: 'roomUser note updated' };
+    } catch (error) {
+      await rollback();
+      return { error };
+    }
+  } else if (requirement.starred) {
+
+  }
+};
+
 module.exports = {
   createRoomUser,
   verifyRoomUser,
   getRoomUser,
+  updateRoomUser,
 };

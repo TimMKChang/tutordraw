@@ -41,7 +41,21 @@ const getRoomUser = async (req, res) => {
   return res.status(200).json({ data: roomUsers });
 };
 
+const updateRoomUser = async (req, res) => {
+  const { room, note, starred } = req.body;
+  const user_id = res.locals.userData.id;
+
+  const updateRoomUserResult = await RoomUser.updateRoomUser({ user_id, room, note, starred });
+
+  if (updateRoomUserResult.error) {
+    return res.status(403).json({ error: updateRoomUserResult.error });
+  }
+
+  return res.status(200).json({ message: 'update room successfully' });
+};
+
 module.exports = {
   createRoomUser,
   getRoomUser,
+  updateRoomUser,
 };
