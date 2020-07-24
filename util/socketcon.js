@@ -428,6 +428,17 @@ const socketCon = (io) => {
       delete rooms[room].call[socket.id];
     });
 
+    socket.on('update room title', function (dataStr) {
+      const { room, user_id, title } = JSON.parse(dataStr);
+      // check user_id
+      if (!rooms[room] || userClients[user_id] !== socket.id) {
+        return;
+      }
+      // update to DB
+
+      socket.to(room).emit('update room title', dataStr);
+    });
+
     socket.on('disconnect', async function () {
       console.log(`user ${socket.id} has disconnected`);
 

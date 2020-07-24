@@ -149,3 +149,8 @@ socket.on('users in call', function (dataStr) {
 socket.on('leave call room', function (user_id) {
   PeerjsCall.removeLeave(user_id);
 });
+
+socket.on('update room title', function (dataStr) {
+  const { title } = JSON.parse(dataStr);
+  View.whiteboard.displayRoomTitle(title);
+});

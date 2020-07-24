@@ -425,6 +425,10 @@ const View = {
         `;
       }
     },
+    displayRoomTitle: function (title) {
+      Model.room.title = title;
+      get('.room-navbar .header .room-title span').innerHTML = title;
+    }
   },
   chatbox: {
     displayNewMsg: function (msgObjs, isLoad) {
@@ -531,9 +535,6 @@ const View = {
       }
       get('.user-list .list-container').innerHTML = htmlContent;
     },
-    displayRoomName: function () {
-      get('.room-navbar .header .room-title span').innerHTML = Model.room.title;
-    }
   },
 };
 
@@ -1214,7 +1215,18 @@ const Controller = {
         get('.room-title span').classList.remove('hide');
 
         // emit to modify all rooms
+        if (title !== Model.room.title) {
+          Model.room.title = title;
 
+          const user_id = Model.user.id;
+          const room = Model.room.name;
+          const roomObj = {
+            user_id,
+            room,
+            title,
+          };
+          socket.emit('update room title', JSON.stringify(roomObj));
+        }
       });
     },
     uploadWhiteboardImage: async function () {
@@ -1587,5 +1599,4 @@ View.whiteboard.initWhiteboard();
 Controller.whiteboard.initListener();
 
 // chatbox
-View.chatbox.displayRoomName();
 Controller.chatbox.initListener();
