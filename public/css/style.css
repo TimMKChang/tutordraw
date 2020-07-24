@@ -307,11 +307,27 @@ footer .copyright {
   margin: 0 0.5rem;
 }
 
-.room-navbar .header .room-name {
+.room-navbar .header .room-title {
   font-size: 18px;
-  margin-left: 10px;
+  margin: 0 10px;
   padding-left: 10px;
   border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.room-navbar .header .room-title .edit-btn:hover {
+  color: #3f53d9;
+  cursor: pointer;
+}
+
+.room-navbar .header .room-title input {
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.room-navbar .header .room-title input:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.3);
 }
 
 .whiteboard-toolbox {

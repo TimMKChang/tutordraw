@@ -9,6 +9,7 @@ const Model = {
   user: JSON.parse(localStorage.getItem('user')),
   room: {
     name: getQuery().room,
+    title: 'Untitled',
     token: '',
   },
   whiteboard: {
@@ -531,7 +532,7 @@ const View = {
       get('.user-list .list-container').innerHTML = htmlContent;
     },
     displayRoomName: function () {
-      get('.room-navbar .header .room-name span').innerHTML = Model.room.name;
+      get('.room-navbar .header .room-title span').innerHTML = Model.room.title;
     }
   },
 };
@@ -1195,6 +1196,25 @@ const Controller = {
           get('.history-whiteboard img').src = e.target.src;
           View.whiteboard.pin.createHistoryWB();
         }
+      });
+
+      // edit room title
+      get('.room-title').addEventListener('click', (e) => {
+        const title = get('.room-title span').innerHTML;
+        get('.room-title span').classList.add('hide');
+        get('.room-title input').classList.remove('hide');
+        get('.room-title input').value = title;
+        get('.room-title input').focus();
+      });
+      // modify room title
+      get('.room-title input').addEventListener('focusout', (e) => {
+        const title = get('.room-title input').value;
+        get('.room-title input').classList.add('hide');
+        get('.room-title span').innerHTML = title;
+        get('.room-title span').classList.remove('hide');
+
+        // emit to modify all rooms
+
       });
     },
     uploadWhiteboardImage: async function () {
