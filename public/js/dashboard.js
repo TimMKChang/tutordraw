@@ -23,7 +23,7 @@ const View = {
             <div class="title">${title || 'Untitled'}</div>
             <div class="icon-container">
               <i class="fas fa-edit edit-btn"></i>
-              <i class="far fa-star star-btn"></i>
+              <i class="${starred ? 'fas' : 'far'} fa-star star-btn"></i>
             </div>
           </div>
         </div>
@@ -86,9 +86,11 @@ const Controller = {
 
     // edit room, enter room
     get('.dashboard-rooms').addEventListener('click', (e) => {
+      const editBtnHTML = e.target.closest('.edit-btn');
+      const starBtnHTML = e.target.closest('.star-btn');
       const roomHTML = e.target.closest('.room');
 
-      if (e.target.closest('.edit-btn')) {
+      if (editBtnHTML) {
         const room = roomHTML.dataset.room;
         const note = roomHTML.dataset.note;
         get('.edit-form textarea').value = note;
@@ -98,8 +100,21 @@ const Controller = {
         return;
       }
 
-      if (e.target.closest('.star-btn')) {
-        const starred = roomHTML.dataset.starred;
+      if (starBtnHTML) {
+        const room = roomHTML.dataset.room;
+
+        const updateStarred = +roomHTML.dataset.starred ? 0 : 1;
+        roomHTML.dataset.starred = updateStarred;
+
+        if (updateStarred) {
+          starBtnHTML.classList.remove('far');
+          starBtnHTML.classList.add('fas');
+        } else {
+          starBtnHTML.classList.add('far');
+          starBtnHTML.classList.remove('fas');
+        }
+
+        Controller.starRoom(room, updateStarred);
         return;
       }
 
@@ -246,6 +261,26 @@ const Controller = {
           View.closeFormContainer();
         });
 
+      })
+      .catch(error => console.log(error));
+  },
+  starRoom: function (room, starred) {
+    const url = HOMEPAGE_URL + '/roomUser';
+    const access_JWT = localStorage.getItem('access_JWT');
+
+    fetch(url, {
+      method: 'PATCH',
+      body: JSON.stringify({ room, starred }),
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${access_JWT}`,
+      },
+    }).then(res => res.json())
+      .then(resObj => {
+        if (resObj.error) {
+          return;
+        }
+        return;
       })
       .catch(error => console.log(error));
   },

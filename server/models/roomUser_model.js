@@ -74,9 +74,19 @@ const updateRoomUser = async (requirement) => {
       await rollback();
       return { error };
     }
-  } else if (requirement.starred) {
-
+  } else if (Number.isInteger(requirement.starred)) {
+    condition.binding = [requirement.starred, requirement.room, requirement.user_id];
+    try {
+      await transaction();
+      await query('UPDATE roomUser SET starred = ? WHERE room = ? AND user_id = ?', condition.binding);
+      await commit();
+      return { message: 'roomUser starred updated' };
+    } catch (error) {
+      await rollback();
+      return { error };
+    }
   }
+  return { error: 'requirement is necessary' };
 };
 
 module.exports = {
