@@ -8,7 +8,7 @@ const View = {
     let htmlContent = '';
     for (let roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
       const roomData = rooms[roomIndex];
-      const { room, isOwner, link } = roomData;
+      const { room, title, isOwner, link } = roomData;
       const default_room_snapshot = `${AWS_CLOUDFRONT_DOMAIN}/dashboard/default_room_snapshot.png`;
       const snapshot = link || default_room_snapshot;
       htmlContent += `
@@ -23,7 +23,7 @@ const View = {
           </div>
 
           <div class="title-container">
-            <div class="title">Untitled</div>
+            <div class="title">${title || 'Untitled'}</div>
             <div class="icon-container">
               <i class="fas fa-edit"></i>
               <i class="far fa-star"></i>
