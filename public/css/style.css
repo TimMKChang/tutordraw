@@ -1286,13 +1286,17 @@ footer .copyright {
 }
 
 .dashboard-container .dashboard .dashboard-rooms .room .title-container i {
-  width: 1rem;
-  height: 1rem;
+  width: 2rem;
+  height: 2rem;
   font-size: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 10px;
+}
+
+.dashboard-container .dashboard .dashboard-rooms .room .title-container i:hover {
+  color: #3f53d9;
+  cursor: pointer;
 }
 
 .hide {
