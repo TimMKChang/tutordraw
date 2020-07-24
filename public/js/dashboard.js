@@ -42,6 +42,20 @@ const View = {
       input.value = '';
     }
   },
+  displayRoom: function (type) {
+    const titleHTML = get('.dashboard .header .title');
+    if (type === 'starred') {
+      $('.dashboard-rooms .room:not([data-starred="1"])').addClass('hide');
+      titleHTML.innerHTML = 'Starred';
+    } else if (type === 'all') {
+      $('.dashboard-rooms .room').removeClass('hide');
+      titleHTML.innerHTML = 'All rooms';
+    }
+  },
+  updateRoomDisplay: function () {
+    const type = get('.dashboard-navbar .navbar-item.color-used').dataset.roomType;
+    View.displayRoom(type);
+  },
 };
 
 const Controller = {
@@ -113,6 +127,7 @@ const Controller = {
           starBtnHTML.classList.add('far');
           starBtnHTML.classList.remove('fas');
         }
+        View.updateRoomDisplay();
 
         Controller.starRoom(room, updateStarred);
         return;
@@ -121,6 +136,17 @@ const Controller = {
       if (roomHTML) {
         const room = roomHTML.dataset.room;
         location.href = `/room.html?room=${room}`;
+      }
+    });
+
+    // display starred or all room
+    get('.dashboard-navbar').addEventListener('mousedown', (e) => {
+      const navbarItemHTML = e.target.closest('.navbar-item');
+      if (navbarItemHTML && !navbarItemHTML.classList.contains('color-used')) {
+        const roomType = navbarItemHTML.dataset.roomType;
+        get('.dashboard-navbar .navbar-item.color-used').classList.remove('color-used');
+        navbarItemHTML.classList.add('color-used');
+        View.displayRoom(roomType);
       }
     });
   },
