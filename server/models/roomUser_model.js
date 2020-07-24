@@ -38,7 +38,11 @@ const getRoomUser = async (requirement) => {
   }
 
   condition.query = 'SELECT roomUser.room, roomUser.isOwner, lastHistoryWB.link FROM roomUser ';
-  condition.sql = 'LEFT JOIN (SELECT room, MAX(start_at), link FROM historyWB GROUP BY room) lastHistoryWB ';
+
+  let subquery = '(SELECT id, room, start_at, link FROM historyWB ';
+  subquery += 'WHERE id IN (SELECT MAX(id) FROM (SELECT id, room FROM historyWB ORDER BY room, start_at DESC) ordered GROUP BY room)) lastHistoryWB ';
+
+  condition.sql = 'LEFT JOIN ' + subquery;
   condition.sql += 'ON roomUser.room = lastHistoryWB.room ';
   condition.sql += 'WHERE roomUser.user_id = ? ORDER BY roomUser.room DESC';
   condition.binding = [requirement.user_id];
