@@ -237,8 +237,15 @@ const Controller = {
         if (resObj.error) {
           return;
         }
-        get(`.dashboard-rooms .room[data-room="${room}"]`).dataset.note = note;
-        View.closeFormContainer();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'save note successfully',
+        }).then(async (result) => {
+          get(`.dashboard-rooms .room[data-room="${room}"]`).dataset.note = note;
+          View.closeFormContainer();
+        });
+
       })
       .catch(error => console.log(error));
   },
