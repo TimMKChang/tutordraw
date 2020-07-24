@@ -12,13 +12,9 @@ const View = {
       const default_room_snapshot = `${AWS_CLOUDFRONT_DOMAIN}/dashboard/default_room_snapshot.png`;
       const snapshot = link || default_room_snapshot;
       htmlContent += `
-        <div class="room" data-isOwner="${isOwner}">
+        <div class="room" data-isOwner="${isOwner}" data-room="${room}">
           <div class="img-container">
-            <a href="/room.html?room=${room}">
-              <img
-                src="${snapshot}"
-                alt="">
-            </a>
+            <img src="${snapshot}" alt="">
             <div class="cover"></div>
           </div>
 
@@ -85,6 +81,15 @@ const Controller = {
         return;
       }
       View.closeFormContainer();
+    });
+
+    // enter room
+    get('.dashboard-rooms').addEventListener('click', (e) => {
+      const roomHTML = e.target.closest('.room');
+      if (roomHTML) {
+        const room = roomHTML.dataset.room;
+        location.href = `/room.html?room=${room}`;
+      }
     });
   },
   getRoom: async function () {
