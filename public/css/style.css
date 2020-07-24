@@ -179,6 +179,7 @@ footer .copyright {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.2);
+  z-index: 9999;
 }
 
 .index-container form,
@@ -190,7 +191,7 @@ footer .copyright {
   margin-top: 100px;
   padding: 40px 50px;
   border-radius: 20px;
-  box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.3);
 }
 
 .index-container form .title,

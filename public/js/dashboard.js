@@ -1,5 +1,6 @@
 const Model = {
   rooms: [],
+  editingRoom: '',
 };
 
 const View = {
@@ -8,11 +9,11 @@ const View = {
     let htmlContent = '';
     for (let roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
       const roomData = rooms[roomIndex];
-      const { room, title, isOwner, link } = roomData;
+      const { room, title, isOwner, link, note, starred } = roomData;
       const default_room_snapshot = `${AWS_CLOUDFRONT_DOMAIN}/dashboard/default_room_snapshot.png`;
       const snapshot = link || default_room_snapshot;
       htmlContent += `
-        <div class="room" data-isOwner="${isOwner}" data-room="${room}">
+        <div class="room" data-isOwner="${isOwner}" data-room="${room}" data-note="${note}" data-starred="${starred}">
           <div class="img-container">
             <img src="${snapshot}" alt="">
             <div class="cover"></div>
@@ -21,8 +22,8 @@ const View = {
           <div class="title-container">
             <div class="title">${title || 'Untitled'}</div>
             <div class="icon-container">
-              <i class="fas fa-edit"></i>
-              <i class="far fa-star"></i>
+              <i class="fas fa-edit edit-btn"></i>
+              <i class="far fa-star star-btn"></i>
             </div>
           </div>
         </div>
@@ -83,9 +84,25 @@ const Controller = {
       View.closeFormContainer();
     });
 
-    // enter room
+    // edit room, enter room
     get('.dashboard-rooms').addEventListener('click', (e) => {
       const roomHTML = e.target.closest('.room');
+
+      if (e.target.closest('.edit-btn')) {
+        const room = roomHTML.dataset.room;
+        const note = roomHTML.dataset.note;
+        get('.edit-form textarea').value = note;
+        get('.form-container').classList.remove('hide');
+        get('.edit-form').classList.remove('hide');
+        Model.editingRoom = room;
+        return;
+      }
+
+      if (e.target.closest('.star-btn')) {
+        const starred = roomHTML.dataset.starred;
+        return;
+      }
+
       if (roomHTML) {
         const room = roomHTML.dataset.room;
         location.href = `/room.html?room=${room}`;
@@ -199,6 +216,29 @@ const Controller = {
         } else {
           location.href = `/room.html?room=${room}`;
         }
+      })
+      .catch(error => console.log(error));
+  },
+  editRoom: async function () {
+    const url = HOMEPAGE_URL + '/roomUser';
+    const access_JWT = localStorage.getItem('access_JWT');
+    const room = Model.editingRoom;
+    const note = get('.edit-form textarea').value;
+
+    await fetch(url, {
+      method: 'PATCH',
+      body: JSON.stringify({ room, note }),
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${access_JWT}`,
+      },
+    }).then(res => res.json())
+      .then(resObj => {
+        if (resObj.error) {
+          return;
+        }
+        get(`.dashboard-rooms .room[data-room="${room}"]`).dataset.note = note;
+        View.closeFormContainer();
       })
       .catch(error => console.log(error));
   },
