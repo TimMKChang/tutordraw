@@ -26,14 +26,14 @@ const verifyPassword = async (room_id, password) => {
   return { message: 'room password verified' };
 };
 
-const getWhiteboardStart_at = async (room_id) => {
-  const rooms = await query('SELECT whiteboard_start_at FROM room WHERE id = ?', [room_id]);
+const getRoom = async (room_id) => {
+  const rooms = await query('SELECT whiteboard_start_at, title FROM room WHERE id = ?', [room_id]);
   const room = rooms[0];
   if (!room) {
     return { error: 'room does not exist' };
   }
 
-  return { start_at: room.whiteboard_start_at };
+  return { start_at: room.whiteboard_start_at, title: room.title };
 };
 
 const updateWhiteboardStart_at = async (room, start_at) => {
@@ -48,9 +48,22 @@ const updateWhiteboardStart_at = async (room, start_at) => {
   }
 };
 
+const updateTitle = async (room, title) => {
+  try {
+    await transaction();
+    await query('UPDATE room SET title = ? WHERE id = ?', [title, room]);
+    await commit();
+    return { message: 'room title updated' };
+  } catch (error) {
+    await rollback();
+    return { error };
+  }
+};
+
 module.exports = {
   createRoom,
   verifyPassword,
-  getWhiteboardStart_at,
+  getRoom,
   updateWhiteboardStart_at,
+  updateTitle,
 };

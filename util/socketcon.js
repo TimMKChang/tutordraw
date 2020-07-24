@@ -41,6 +41,7 @@ const user_idUser = {
 
 const rooms = {
   // room: {
+  //   title: 'Untitled',
   //   users: {
   //     socket_id: 'alice',
   //     socket_id: 'bob',
@@ -52,6 +53,7 @@ const rooms = {
   //   call: {
   //     socket.id: user_id
   //   }
+  //   token: '',
   // }
 };
 
@@ -149,11 +151,12 @@ const socketCon = (io) => {
       userClients[user_id] = socket.id;
       user_idUser[user_id] = user;
 
-      const { start_at } = await Room.getWhiteboardStart_at(room);
+      const { start_at, title } = await Room.getRoom(room);
       if (rooms[room]) {
         rooms[room]['users'][socket.id] = user;
       } else {
         rooms[room] = {
+          title,
           users: {},
           whiteboard: { start_at, records: [] },
           call: {},
@@ -239,6 +242,9 @@ const socketCon = (io) => {
           socket.emit('load whiteboard pin', JSON.stringify({ pins }));
         }
       }
+
+      // load room title
+      socket.emit('update room title', JSON.stringify({ title: rooms[room].title }));
     });
 
     socket.on('load chat msg', async function (dataStr) {
@@ -428,14 +434,19 @@ const socketCon = (io) => {
       delete rooms[room].call[socket.id];
     });
 
-    socket.on('update room title', function (dataStr) {
+    socket.on('update room title', async function (dataStr) {
       const { room, user_id, title } = JSON.parse(dataStr);
       // check user_id
       if (!rooms[room] || userClients[user_id] !== socket.id) {
         return;
       }
       // update to DB
+      const updateTitleResult = await Room.updateTitle(room, title);
+      if (updateTitleResult.error) {
+        console.log(updateTitleResult.error);
+      }
 
+      rooms[room].title = title;
       socket.to(room).emit('update room title', dataStr);
     });
 
