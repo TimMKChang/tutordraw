@@ -97,6 +97,7 @@ const socketCon = (io) => {
         err.data = { type: 'authError', message: 'Please sign in first' };
         next(err);
       } else {
+        socket.handshake.query.userVerified = true;
         socket.handshake.query.user_id = verifyJWTResult.data.id;
         socket.handshake.query.user = verifyJWTResult.data.name;
         next();
@@ -135,10 +136,30 @@ const socketCon = (io) => {
 
   // join room
   io.use(async function (socket, next) {
-    const { room, user_id, user } = socket.handshake.query;
+    const { room, user_id, user, room_JWT, userVerified } = socket.handshake.query;
     // check roomUser
     const verifyRoomUserResult = await RoomUser.verifyRoomUser(room, user_id);
-    if (verifyRoomUserResult.error && !socket.handshake.query.room_JWT) {
+    if (verifyRoomUserResult.error && room_JWT && userVerified) {
+      // verify token
+      const verifyTokenResult = await Room.verifyToken(room, room_JWT);
+      if (verifyTokenResult.error) {
+        const err = new Error();
+        err.data = { type: 'authError', message: 'Please contact the owner of the room to get the invite link to join the room' };
+        next(err);
+      }
+      // create roomUser
+      const createRoomUserResult = await RoomUser.createRoomUser({
+        room,
+        user_id,
+      });
+      if (createRoomUserResult.error) {
+        const err = new Error();
+        err.data = { type: 'authError', message: 'Internal Server Error' };
+        next(err);
+      }
+      next();
+
+    } else if (verifyRoomUserResult.error && !socket.handshake.query.room_JWT) {
       const err = new Error();
       err.data = { type: 'authError', message: 'Please contact the owner of the room to get the password to join the room' };
       next(err);

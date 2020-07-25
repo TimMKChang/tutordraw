@@ -13,17 +13,17 @@ const createRoom = async (room) => {
   }
 };
 
-const verifyPassword = async (room_id, password) => {
-  const rooms = await query('SELECT id, password FROM room WHERE id = ?', [room_id]);
+const verifyToken = async (room_id, token) => {
+  const rooms = await query('SELECT id, token FROM room WHERE id = ?', [room_id]);
   const room = rooms[0];
   if (!room) {
     return { error: 'room does not exist' };
   }
-  if (room.password !== password) {
-    return { error: 'Incorrect password. Please contact the owner of the room to get the password' };
+  if (room.token !== token) {
+    return { error: 'Please contact the owner of the room to get the invite link to join the room' };
   }
 
-  return { message: 'room password verified' };
+  return { message: 'room token verified' };
 };
 
 const getRoom = async (room_id) => {
@@ -62,7 +62,7 @@ const updateTitle = async (room, title) => {
 
 module.exports = {
   createRoom,
-  verifyPassword,
+  verifyToken,
   getRoom,
   updateWhiteboardStart_at,
   updateTitle,
