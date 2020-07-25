@@ -5,11 +5,7 @@ const uploadImageS3 = require('../S3/uploadImage').uploadImage;
 const { verifyJWT } = require('../../util/util');
 
 const createRoom = async (req, res) => {
-  const { password } = req.body;
-  if (!password) {
-    return res.status(400).json({ error: 'Password is required.' });
-  }
-
+  const password = Math.random().toString(36).split('.')[1].substr(-8);
   const user_id = res.locals.userData.id;
 
   // room id

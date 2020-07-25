@@ -80,8 +80,7 @@ const Controller = {
 
     // create room
     get('.create-join-room .create-btn').addEventListener('click', (e) => {
-      get('.form-container').classList.remove('hide');
-      get('.create-form').classList.remove('hide');
+      Controller.createRoom();
     });
 
     // join room
@@ -182,23 +181,12 @@ const Controller = {
     Model.rooms = rooms;
   },
   createRoom: function () {
-    const password = get('.create-form input[name="createRoomPassword"]').value;
-    if (!password) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Please setting room password',
-      });
-      return;
-    }
-
     // create room
     const url = HOMEPAGE_URL + '/room';
     const access_JWT = localStorage.getItem('access_JWT');
 
     fetch(url, {
       method: 'POST',
-      body: JSON.stringify({ password }),
       headers: {
         'content-type': 'application/json',
         'Authorization': `Bearer ${access_JWT}`,
