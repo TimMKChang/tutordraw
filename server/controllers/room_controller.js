@@ -5,14 +5,14 @@ const uploadImageS3 = require('../S3/uploadImage').uploadImage;
 const { verifyJWT } = require('../../util/util');
 
 const createRoom = async (req, res) => {
-  const password = Math.random().toString(36).split('.')[1].substr(-8);
+  const token = Math.random().toString(36).split('.')[1].substr(-8);
   const user_id = res.locals.userData.id;
 
   // room id
   const id = Date.now().toString(36) + Math.random().toString(36).split('.')[1].substr(-8);
   const room = {
     id,
-    password,
+    token,
     whiteboard_start_at: Date.now(),
   };
 

@@ -27,13 +27,13 @@ const verifyPassword = async (room_id, password) => {
 };
 
 const getRoom = async (room_id) => {
-  const rooms = await query('SELECT whiteboard_start_at, title, password FROM room WHERE id = ?', [room_id]);
+  const rooms = await query('SELECT whiteboard_start_at, title, token FROM room WHERE id = ?', [room_id]);
   const room = rooms[0];
   if (!room) {
     return { error: 'room does not exist' };
   }
 
-  return { start_at: room.whiteboard_start_at, title: room.title, password: room.password };
+  return { start_at: room.whiteboard_start_at, title: room.title, token: room.token };
 };
 
 const updateWhiteboardStart_at = async (room, start_at) => {
