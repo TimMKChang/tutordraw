@@ -53,10 +53,6 @@
           <i class="fas fa-plus"></i>
           <div class="title">New room</div>
         </div>
-        <div class="join-btn item">
-          <i class="fas fa-sign-in-alt"></i>
-          <div class="title">Join room</div>
-        </div>
       </div>
 
       <div class="dashboard-rooms">
@@ -66,32 +62,6 @@
     </div>
 
     <div class="form-container hide">
-
-      <form action="/room.html" class="create-form hide" onsubmit="event.preventDefault();Controller.createRoom();">
-        <div class="title">Create room</div>
-
-        <div class="form-group">
-          <i class="fas fa-lock"></i>
-          <input type="password" id="createRoomPassword" name="createRoomPassword" class="form-control one"
-            placeholder="Setting room password" />
-        </div>
-
-        <button type="submit" class="btn btn-block create-btn">Create room</button>
-      </form>
-
-      <form action="/room.html" class="join-form hide" onsubmit="event.preventDefault();Controller.joinRoom();">
-        <div class="title">Join room</div>
-        <div class="form-group">
-          <i class="fas fa-chalkboard"></i>
-          <input type="text" id="room" name="room" class="form-control top" placeholder="Room ID" />
-        </div>
-        <div class="form-group">
-          <i class="fas fa-lock"></i>
-          <input type="password" id="joinRoomPassword" name="joinRoomPassword" class="form-control bottom"
-            placeholder="Room password" />
-        </div>
-        <button type="submit" class="btn btn-block join-btn">Join room</button>
-      </form>
 
       <form action="" class="edit-form hide" onsubmit="event.preventDefault();Controller.editRoom();">
         <div class="title">Note</div>

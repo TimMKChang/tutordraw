@@ -83,12 +83,6 @@ const Controller = {
       Controller.createRoom();
     });
 
-    // join room
-    get('.create-join-room .join-btn').addEventListener('click', (e) => {
-      get('.form-container').classList.remove('hide');
-      get('.join-form').classList.remove('hide');
-    });
-
     // form container
     get('.form-container').addEventListener('mousedown', (e) => {
       if (e.target.closest('form')) {
@@ -203,44 +197,6 @@ const Controller = {
             localStorage.removeItem('access_JWT');
             localStorage.removeItem('user');
             location.href = '/';
-          });
-        } else {
-          location.href = `/room.html?room=${room}`;
-        }
-      })
-      .catch(error => console.log(error));
-  },
-  joinRoom: function () {
-    const room = get('.join-form input[name="room"]').value;
-    const password = get('.join-form input[name="joinRoomPassword"]').value;
-    if (!room || !password) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'All fields are required',
-      });
-      return;
-    }
-
-    // join room, create roomUser
-    const url = HOMEPAGE_URL + '/roomUser';
-    const access_JWT = localStorage.getItem('access_JWT');
-
-    fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ room, password }),
-      headers: {
-        'content-type': 'application/json',
-        'Authorization': `Bearer ${access_JWT}`,
-      },
-    }).then(res => res.json())
-      .then(resObj => {
-        const { authError, error, message } = resObj;
-        if (error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: error,
           });
         } else {
           location.href = `/room.html?room=${room}`;
