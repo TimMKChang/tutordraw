@@ -161,7 +161,7 @@ const socketCon = (io) => {
 
     } else if (verifyRoomUserResult.error && !socket.handshake.query.room_JWT) {
       const err = new Error();
-      err.data = { type: 'authError', message: 'Please contact the owner of the room to get the password to join the room' };
+      err.data = { type: 'authError', message: 'Please contact the owner of the room to get the invite link to join the room' };
       next(err);
     } else {
       // avoid connect repeatedly
