@@ -151,7 +151,7 @@ const socketCon = (io) => {
       userClients[user_id] = socket.id;
       user_idUser[user_id] = user;
 
-      const { start_at, title } = await Room.getRoom(room);
+      const { start_at, title, password } = await Room.getRoom(room);
       if (rooms[room]) {
         rooms[room]['users'][socket.id] = user;
       } else {
@@ -160,7 +160,7 @@ const socketCon = (io) => {
           users: {},
           whiteboard: { start_at, records: [] },
           call: {},
-          token: Math.random().toString(36).substr(-8),
+          token: password,
           // created_at: Date.now(),
         };
         rooms[room]['users'][socket.id] = user;
