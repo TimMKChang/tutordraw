@@ -1303,6 +1303,11 @@ footer .copyright {
   cursor: pointer;
 }
 
+.edit-form textarea {
+  resize: vertical;
+  max-height: 250px;
+}
+
 .hide {
   display: none !important;
   z-index: -9999 !important;;
