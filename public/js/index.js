@@ -1,3 +1,7 @@
+const Model = {
+  demoFeatureTimer: undefined,
+};
+
 function signup() {
   const email = get('.signup-form input[name="signupEmail"]').value;
   const name = get('.signup-form input[name="name"]').value;
@@ -122,6 +126,41 @@ function initListener() {
       return;
     }
     closeFormContainer();
+  });
+
+  // demo feature
+  get('.demo-navbar').addEventListener('mousedown', (e) => {
+    const demoItemHTML = e.target.closest('.demo-item');
+    if (demoItemHTML) {
+      const nextItemIndex = demoItemHTML.dataset.index;
+      get('.demo-item.now-display').classList.remove('now-display');
+      get('.image-container img.now-display').classList.remove('now-display');
+      get(`.demo-item[data-index="${nextItemIndex}"]`).classList.add('now-display');
+      get(`.image-container img[data-index="${nextItemIndex}"]`).classList.add('now-display');
+
+      // reset timer
+      clearInterval(Model.demoFeatureTimer);
+      Model.demoFeatureTimer = setInterval(displayNextDemoItem, 5000);
+    }
+  });
+
+  Model.demoFeatureTimer = setInterval(displayNextDemoItem, 5000);
+  function displayNextDemoItem() {
+    const prevItemIndex = get('.demo-item.now-display').dataset.index;
+    const nextItemIndex = (+prevItemIndex + 1) % getAll('.demo-item').length;
+    get(`.demo-item[data-index="${prevItemIndex}"]`).classList.remove('now-display');
+    get(`.image-container img[data-index="${prevItemIndex}"]`).classList.remove('now-display');
+    get(`.demo-item[data-index="${nextItemIndex}"]`).classList.add('now-display');
+    get(`.image-container img[data-index="${nextItemIndex}"]`).classList.add('now-display');
+  }
+
+  // header bottom shadow
+  window.addEventListener('scroll', () => {
+    if (get('html').scrollTop !== 0) {
+      get('header.index').classList.add('bottom-shadow');
+    } else {
+      get('header.index').classList.remove('bottom-shadow');
+    }
   });
 }
 
