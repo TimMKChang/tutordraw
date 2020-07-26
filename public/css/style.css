@@ -173,7 +173,7 @@ footer .copyright {
 .index-container .demo-image {
   width: 80%;
   height: 100%;
-  padding: 10px 30px 10px 0;
+  padding: 10px 25px 10px 0;
 }
 
 .index-container .demo-image .image-container {
@@ -317,10 +317,10 @@ footer .copyright {
   padding: 0 150px;
   margin: 0 auto;
 
-  max-height: 650px;
+  /* max-height: 650px;
   max-width: 1500px;
   min-height: 650px;
-  min-width: 1500px;
+  min-width: 1500px; */
 }
 
 .index-container section.bottom {
