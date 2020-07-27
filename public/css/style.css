@@ -1396,6 +1396,10 @@ footer .copyright {
   cursor: pointer;
 }
 
+.dashboard-container .dashboard .create-join-room .item:hover .spinner {
+  background-color: #2234AA;
+}
+
 .dashboard-container .dashboard .create-join-room .item i {
   width: 40px;
   height: 40px;
@@ -1403,6 +1407,12 @@ footer .copyright {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.dashboard-container .dashboard .create-join-room .spinner {
+  width: 40px;
+  height: 40px;
+  background-color: #3f53d9;
 }
 
 .dashboard-container .dashboard .create-join-room .item .title {

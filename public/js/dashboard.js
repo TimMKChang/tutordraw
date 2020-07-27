@@ -176,6 +176,8 @@ const Controller = {
   },
   createRoom: function () {
     // create room
+    get('.create-join-room .spinner-container').classList.remove('hide');
+
     const url = HOMEPAGE_URL + '/room';
     const access_JWT = localStorage.getItem('access_JWT');
 
@@ -186,7 +188,9 @@ const Controller = {
         'Authorization': `Bearer ${access_JWT}`,
       },
     }).then(res => res.json())
-      .then(resObj => {
+      .then(async (resObj) => {
+        await delay(500);
+
         const { authError, error, room } = resObj;
         if (error) {
           Swal.fire({
