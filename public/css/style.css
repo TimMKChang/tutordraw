@@ -173,7 +173,7 @@ footer .copyright {
 .index-container .demo-image {
   width: 80%;
   height: 100%;
-  padding: 10px 25px 10px 0;
+  padding: 10px 26px 10px 0;
 }
 
 .index-container .demo-image .image-container {
@@ -182,6 +182,8 @@ footer .copyright {
   overflow: hidden;
   border-radius: 10px;
   position: relative;
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1),
+              0 10px 5px -5px rgba(0, 0, 0, 0.3);
 }
 
 .index-container .demo-image .image-container img {
@@ -212,7 +214,8 @@ footer .copyright {
   position: relative;
   display: flex;
   align-items: center;
-  background-color: rgba(150, 150, 150, 0.1);
+  background-color: rgba(150, 150, 150, 0.1);  
+  box-shadow: 0 6px 3px -3px rgba(0, 0, 0, 0.3);
 }
 
 .index-container .demo-navbar .demo-item.now-display {
@@ -236,6 +239,10 @@ footer .copyright {
   width: 100%;
   height: 100%;
   padding-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .index-container .feature-container .title {
@@ -317,15 +324,13 @@ footer .copyright {
   padding: 0 150px;
   margin: 0 auto;
 
-  /* max-height: 650px;
-  max-width: 1500px;
-  min-height: 650px;
-  min-width: 1500px; */
+  max-height: 750px;
+  max-width: 1770px;
 }
 
 .index-container section.bottom {
   height: calc(100vh - 200px);
-  min-height: 450px;
+  min-height: 500px;
 }
 
 .index-container section .btn {
@@ -341,6 +346,29 @@ footer .copyright {
 .index-container section .btn:hover {
   background-color: #2234AA;
   cursor: pointer;
+}
+
+@media screen and (min-width:1600px) {
+  .index-container section.top {
+    padding: 100px 250px 0;
+  }
+  .index-container .feature-container .subtitle {
+    margin: 20px 0 50px;
+  }
+}
+
+@media screen and (max-width:1400px) {
+  .index-container section {
+    min-height: 400px;
+    max-height: calc(100vh - 100px);
+    padding: 0 50px;
+  }
+  .index-container .demo-container {
+    max-width: 1175px;
+    min-width: 1175px;
+    max-height: 600px;
+    min-height: 600px;
+  }
 }
 
 .index-container .form-container,
