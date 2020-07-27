@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 // CORS
 app.use((req, res, next) => {
-  const allowedOrigins = ['https://haboy.xyz', 'https://www.haboy.xyz'];
+  const allowedOrigins = ['https://tutordraw.xyz', 'https://www.tutordraw.xyz'];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
