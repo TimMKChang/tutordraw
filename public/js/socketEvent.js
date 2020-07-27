@@ -57,28 +57,24 @@ socket.on('new draw', async function (recordStr) {
   for (let recordIndex = records.length - 1; recordIndex >= 0; recordIndex--) {
     if (record.created_at > records[recordIndex].created_at) {
       // avoid splice change original length
-      const lastIndex = records.length - 1;
-
       records.splice(recordIndex + 1, 0, record);
-      if (recordIndex === lastIndex) {
-        await View.whiteboard.draw(record);
-      } else {
-        View.whiteboard.redraw();
-      }
       break;
 
     } else if (recordIndex === 0) {
       records.unshift(record);
-      View.whiteboard.redraw();
       break;
 
     }
   }
+
+  await View.whiteboard.draw(record);
 });
 
 socket.on('new whiteboard', function () {
   View.whiteboard.initWhiteboard();
   Model.whiteboard.records = [];
+  Model.whiteboard.recordsTransfered = [];
+  get('.canvas-container').innerHTML = '';
   // clear pin
   View.whiteboard.pin.clear();
 });
@@ -115,7 +111,7 @@ socket.on('load chat msg', function (msgObjsStr) {
 });
 
 socket.on('load whiteboard records', async function (dataStr) {
-  Model.whiteboard.records = [];
+  Model.whiteboard.recordsTransfered = [];
 
   const { links, records } = JSON.parse(dataStr);
   const allRecords = [];
@@ -130,7 +126,7 @@ socket.on('load whiteboard records', async function (dataStr) {
       .catch(error => console.error('Error:', error));
   }
   allRecords.push(...records);
-  Model.whiteboard.records.unshift(...allRecords);
+  Model.whiteboard.recordsTransfered.unshift(...allRecords);
   View.whiteboard.redraw();
 });
 

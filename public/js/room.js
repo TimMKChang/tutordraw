@@ -4,6 +4,8 @@ const canvas = get('.whiteboard canvas.main');
 const ctxMain = canvas.getContext('2d');
 const canvasShape = get('.whiteboard canvas.shape');
 const ctxShape = canvasShape.getContext('2d');
+const canvasAll = get('.whiteboard canvas.all');
+const ctxAll = canvasAll.getContext('2d');
 
 const Model = {
   user: JSON.parse(localStorage.getItem('user')),
@@ -17,6 +19,8 @@ const Model = {
     width: '3',
     drawType: 'line',
     records: [],
+    recordsTransfered: [],
+    ctx: undefined,
     image: {
       imageReferencePosition: [0, 0],
       imagePosition: [200, 120],
@@ -51,13 +55,19 @@ const Model = {
 const View = {
   whiteboard: {
     line: {
-      draw: function (record, isPreview) {
-        let canvas_ctx = ctxMain;
+      draw: function (record, requirement) {
+        const { isPreview, isTransfer } = requirement || {};
+        const { author, color, width, path, created_at } = record;
+
+        let canvas_ctx;
         if (isPreview) {
           canvas_ctx = ctxShape;
+        } else if (isTransfer) {
+          canvas_ctx = ctxAll;
+        } else {
+          Controller.whiteboard.addCanvasLayer(created_at);
+          canvas_ctx = Model.whiteboard.ctx;
         }
-
-        const { author, color, width, path } = record;
 
         // get trace boundary
         const boundary = {
@@ -125,14 +135,21 @@ const View = {
       },
     },
     shape: {
-      draw: function (record, isPreview) {
-        let canvas_ctx = ctxMain;
+      draw: function (record, requirement) {
+        const { isPreview, isTransfer } = requirement || {};
+        const { category, color, width, created_at } = record;
+
+        let canvas_ctx;
         if (isPreview) {
           this.clear();
           canvas_ctx = ctxShape;
+        } else if (isTransfer) {
+          canvas_ctx = ctxAll;
+        } else {
+          Controller.whiteboard.addCanvasLayer(created_at);
+          canvas_ctx = Model.whiteboard.ctx;
         }
 
-        const { category, color, width } = record;
         const { origX, origY, currX, currY, } = record.position;
 
         if (category === 'line') {
@@ -242,13 +259,23 @@ const View = {
       },
     },
     image: {
-      draw: function (record) {
+      draw: function (record, requirement) {
         return new Promise(function (resolve, reject) {
-          const { x, y, width, height, link } = record;
+          const { isTransfer } = requirement || {};
+          const { x, y, width, height, link, created_at } = record;
+
+          let canvas_ctx;
+          if (isTransfer) {
+            canvas_ctx = ctxAll;
+          } else {
+            Controller.whiteboard.addCanvasLayer(created_at);
+            canvas_ctx = Model.whiteboard.ctx;
+          }
+
           const img = new Image();
           img.crossOrigin = "Anonymous";
           img.onload = function () {
-            ctxMain.drawImage(img, x, y, width, height);
+            canvas_ctx.drawImage(img, x, y, width, height);
             resolve();
           };
           img.src = link;
@@ -268,14 +295,24 @@ const View = {
       },
     },
     text: {
-      draw: function (record) {
-        const { content, x, y, size } = record;
-        ctxMain.font = `${size} Josefin Sans, cwTeXYen, Verdana`;
-        ctxMain.fillStyle = '#000000';
-        const width = ctxMain.measureText(content).width;
+      draw: function (record, requirement) {
+        const { isTransfer } = requirement || {};
+        const { content, x, y, size, created_at } = record;
+
+        let canvas_ctx = ctxMain;
+        if (isTransfer) {
+          canvas_ctx = ctxAll;
+        } else {
+          Controller.whiteboard.addCanvasLayer(created_at);
+          canvas_ctx = Model.whiteboard.ctx;
+        }
+
+        canvas_ctx.font = `${size} Josefin Sans, cwTeXYen, Verdana`;
+        canvas_ctx.fillStyle = '#000000';
+        const width = canvas_ctx.measureText(content).width;
         const height = +size.replace('px', '');
         // offset
-        ctxMain.fillText(content, x + 2, y + 0.25 * height);
+        canvas_ctx.fillText(content, x + 2, y + 0.25 * height);
         // trace
         View.whiteboard.text.updateTrace(record, x + 2, y + 0.25 * height, width, height);
       },
@@ -384,27 +421,32 @@ const View = {
         }
       },
     },
-    draw: async function (record) {
+    draw: async function (record, requirement) {
       if (record.type === 'line') {
-        View.whiteboard.line.draw(record);
+        View.whiteboard.line.draw(record, requirement);
       } else if (record.type === 'image') {
-        await View.whiteboard.image.draw(record);
+        await View.whiteboard.image.draw(record, requirement);
       } else if (record.type === 'text') {
-        View.whiteboard.text.draw(record);
+        View.whiteboard.text.draw(record, requirement);
       } else if (record.type === 'shape') {
-        View.whiteboard.shape.draw(record);
+        View.whiteboard.shape.draw(record, requirement);
+      }
+
+      const records = Model.whiteboard.records;
+      if (records.length > 20) {
+        await Controller.whiteboard.transferRecords();
       }
     },
     initWhiteboard: function () {
-      ctxMain.fillStyle = '#FFFFFF';
-      ctxMain.fillRect(0, 0, canvas.width, canvas.height);
+      ctxAll.fillStyle = '#FFFFFF';
+      ctxAll.fillRect(0, 0, canvas.width, canvas.height);
     },
     redraw: async function () {
       View.whiteboard.initWhiteboard();
 
-      for (let recordsIndex = 0; recordsIndex < Model.whiteboard.records.length; recordsIndex++) {
-        const record = Model.whiteboard.records[recordsIndex];
-        await View.whiteboard.draw(record);
+      for (let recordsIndex = 0; recordsIndex < Model.whiteboard.recordsTransfered.length; recordsIndex++) {
+        const record = Model.whiteboard.recordsTransfered[recordsIndex];
+        await View.whiteboard.draw(record, { isTransfer: true });
       }
     },
     displayMouseTrace: function (user_id, mouseTrace) {
@@ -592,7 +634,7 @@ const Controller = {
             color,
             width,
             path: [[this.currX, this.currY]],
-          }, isPreview = true);
+          }, { isPreview: true });
 
         } else if (action === 'move') {
           if (this.isDrawing) {
@@ -622,7 +664,7 @@ const Controller = {
               color,
               width,
               path: [[this.prevX, this.prevY], [this.currX, this.currY]],
-            }, isPreview = true);
+            }, { isPreview: true });
 
             // mouse trace
             const mouseTrace = {
@@ -638,7 +680,7 @@ const Controller = {
         } else if (action === 'up' || action === 'out') {
           if (this.isDrawing) {
             Model.whiteboard.records.push(this.record);
-            View.whiteboard.line.draw(this.record);
+            View.whiteboard.draw(this.record);
             View.whiteboard.shape.clear();
             // socket
             socket.emit('new draw', JSON.stringify({ room: Model.room.name, record: this.record }));
@@ -686,8 +728,7 @@ const Controller = {
               width,
               position,
             };
-            const isPreview = true;
-            View.whiteboard.shape.draw(record, isPreview);
+            View.whiteboard.shape.draw(record, { isPreview: true });
 
             // mouse trace
             const mouseTrace = {
@@ -716,7 +757,7 @@ const Controller = {
               position: this.position,
             };
 
-            View.whiteboard.shape.draw(record);
+            View.whiteboard.draw(record);
 
             // clear
             View.whiteboard.shape.clear();
@@ -827,7 +868,7 @@ const Controller = {
 
       // create new
       get('.whiteboard-toolbox .new').addEventListener('click', async (e) => {
-        if (Model.whiteboard.records.length === 0) {
+        if (Model.whiteboard.records.length === 0 && Model.whiteboard.recordsTransfered.length === 0) {
           return;
         }
 
@@ -847,9 +888,7 @@ const Controller = {
               text: 'Your new whiteboard has been created.'
             });
 
-            const imageFilename = await Controller.whiteboard.uploadWhiteboardImage();
-            View.whiteboard.initWhiteboard();
-            Model.whiteboard.records = [];
+            const imageFilename = await Controller.whiteboard.newWhiteboard();
             socket.emit('new whiteboard', JSON.stringify({
               room: Model.room.name, user_id: Model.user.id, user: Model.user.name, imageFilename
             }));
@@ -861,10 +900,7 @@ const Controller = {
 
       // download
       get('.whiteboard-toolbox .download').addEventListener('click', (e) => {
-        const link = document.createElement('a');
-        link.download = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`;
-        link.href = canvas.toDataURL();
-        link.click();
+        Controller.whiteboard.downloadWhiteboard();
       });
 
       // add image on whiteboard
@@ -915,8 +951,9 @@ const Controller = {
           const room = Model.room.name;
           const { width, height } = get('.image-whiteboard-preview-container img.preview').getBoundingClientRect();
           const [x, y] = Model.whiteboard.image.imagePosition;
+          const created_at = Date.now();
           // let the user who upload the image no need to wait for the uploading delay
-          await View.whiteboard.image.draw({ x, y, width, height, link: URL.createObjectURL(get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0]) });
+          await View.whiteboard.draw({ x, y, width, height, link: URL.createObjectURL(get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0]), created_at, type: 'image' });
           get('.image-whiteboard-preview-container').classList.add('hide');
           Model.whiteboard.image.imagePosition = [200, 120];
 
@@ -924,7 +961,6 @@ const Controller = {
           View.whiteboard.image.updateTrace({ user_id: Model.user.id }, x, y, width, height);
 
           // upload and send new draw
-          const created_at = Date.now();
           const imageFilename = await Controller.whiteboard.uploadImage();
           const link = `${AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`;
           const record = {
@@ -997,7 +1033,7 @@ const Controller = {
               content,
               size,
             };
-            View.whiteboard.text.draw(record);
+            View.whiteboard.draw(record);
             socket.emit('new draw', JSON.stringify({ room, record }));
             Model.whiteboard.records.push(record);
           }
@@ -1230,7 +1266,7 @@ const Controller = {
       });
     },
     uploadWhiteboardImage: async function () {
-      const blob = await getCanvasBlob(canvas);
+      const blob = await getCanvasBlob(canvasAll);
       const formData = new FormData();
       const imageFilename = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`;
       formData.append('image', blob, imageFilename);
@@ -1345,6 +1381,81 @@ const Controller = {
           Model.historyWB = resObj.data;
         })
         .catch(error => console.log(error));
+    },
+    addCanvasLayer: function (created_at) {
+      canvasLayer = document.createElement('canvas');
+      canvasLayer.width = 1550;
+      canvasLayer.height = 750;
+      canvasLayer.dataset.created_at = created_at;
+      canvasLayer.style.zIndex = created_at % 86400000;
+      canvasLayer.classList.add('layer');
+
+      const timestampDay = Math.floor(created_at / 86400000);
+      let canvasContainerDayHTML = get(`.canvas-container .day-container[data-day="${timestampDay}"]`);
+      if (!canvasContainerDayHTML) {
+        const div = document.createElement('div');
+        div.classList.add('day-container');
+        div.dataset.day = timestampDay;
+        div.style.zIndex = timestampDay;
+        get('.canvas-container').appendChild(div);
+        canvasContainerDayHTML = div;
+      }
+
+      canvasContainerDayHTML.appendChild(canvasLayer);
+      const ctxLayer = canvasLayer.getContext('2d');
+      Model.whiteboard.ctx = ctxLayer;
+    },
+    drawToCanvasAll: async function (records) {
+      for (let recordIndex = 0; recordIndex < records.length; recordIndex++) {
+        const record = records[recordIndex];
+        await View.whiteboard.draw(record, { isTransfer: true });
+      }
+    },
+    transferRecords: async function (requirement) {
+      if (Model.whiteboard.records.length === 0) {
+        return;
+      }
+
+      const { isAll } = requirement || {};
+
+      if (isAll) {
+        const records = Model.whiteboard.records;
+        Model.whiteboard.recordsTransfered.push(...records);
+        await Controller.whiteboard.drawToCanvasAll(records);
+        Model.whiteboard.records = [];
+        get('.canvas-container').innerHTML = '';
+      } else {
+        const record = Model.whiteboard.records.shift();
+        Model.whiteboard.recordsTransfered.push(record);
+
+        const { created_at } = record;
+        const timestampDay = Math.floor(+created_at / 86400000);
+        const canvasLayer = get(`.canvas-container .day-container[data-day="${timestampDay}"] [data-created_at="${created_at}"]`);
+        if (canvasLayer) {
+          await Controller.whiteboard.drawToCanvasAll([record]);
+          canvasLayer.remove();
+        }
+      }
+    },
+    newWhiteboard: async function () {
+      await Controller.whiteboard.transferRecords({ isAll: true });
+      Model.whiteboard.recordsTransfered = [];
+      const imageFilename = await Controller.whiteboard.uploadWhiteboardImage();
+      View.whiteboard.initWhiteboard();
+      return imageFilename;
+    },
+    downloadWhiteboard: async function () {
+      // temporarily draw
+      const records = Model.whiteboard.records;
+      await Controller.whiteboard.drawToCanvasAll(records);
+
+      const link = document.createElement('a');
+      link.download = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`;
+      link.href = canvasAll.toDataURL();
+      link.click();
+
+      // return to original state
+      View.whiteboard.redraw();
     },
   },
   chatbox: {

@@ -697,10 +697,26 @@ footer .copyright {
 }
 
 .whiteboard canvas.main,
-.whiteboard canvas.shape {
+.whiteboard canvas.shape,
+.whiteboard canvas.all,
+.canvas-container,
+.canvas-container .day-container,
+.whiteboard canvas.layer {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.whiteboard canvas.shape {
+  z-index: 1;
+}
+
+.canvas-container {
+  z-index: 0;
+}
+
+.canvas-container, .canvas-container-day, .whiteboard canvas.all {
+  pointer-events: none;
 }
 
 .whiteboard .image-whiteboard-preview-container, 
