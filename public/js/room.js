@@ -1,7 +1,7 @@
 const roomContainerHTML = get('.room-container');
 const whiteboardHTML = get('.whiteboard');
 const canvas = get('.whiteboard canvas.main');
-const ctx = canvas.getContext('2d');
+const ctxMain = canvas.getContext('2d');
 const canvasShape = get('.whiteboard canvas.shape');
 const ctxShape = canvasShape.getContext('2d');
 
@@ -52,7 +52,7 @@ const View = {
   whiteboard: {
     line: {
       draw: function (record, isPreview) {
-        let canvas_ctx = ctx;
+        let canvas_ctx = ctxMain;
         if (isPreview) {
           canvas_ctx = ctxShape;
         }
@@ -126,7 +126,7 @@ const View = {
     },
     shape: {
       draw: function (record, isPreview) {
-        let canvas_ctx = ctx;
+        let canvas_ctx = ctxMain;
         if (isPreview) {
           this.clear();
           canvas_ctx = ctxShape;
@@ -248,7 +248,7 @@ const View = {
           const img = new Image();
           img.crossOrigin = "Anonymous";
           img.onload = function () {
-            ctx.drawImage(img, x, y, width, height);
+            ctxMain.drawImage(img, x, y, width, height);
             resolve();
           };
           img.src = link;
@@ -270,12 +270,12 @@ const View = {
     text: {
       draw: function (record) {
         const { content, x, y, size } = record;
-        ctx.font = `${size} Josefin Sans, cwTeXYen, Verdana`;
-        ctx.fillStyle = '#000000';
-        const width = ctx.measureText(content).width;
+        ctxMain.font = `${size} Josefin Sans, cwTeXYen, Verdana`;
+        ctxMain.fillStyle = '#000000';
+        const width = ctxMain.measureText(content).width;
         const height = +size.replace('px', '');
         // offset
-        ctx.fillText(content, x + 2, y + 0.25 * height);
+        ctxMain.fillText(content, x + 2, y + 0.25 * height);
         // trace
         View.whiteboard.text.updateTrace(record, x + 2, y + 0.25 * height, width, height);
       },
@@ -396,8 +396,8 @@ const View = {
       }
     },
     initWhiteboard: function () {
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctxMain.fillStyle = '#FFFFFF';
+      ctxMain.fillRect(0, 0, canvas.width, canvas.height);
     },
     redraw: async function () {
       View.whiteboard.initWhiteboard();
