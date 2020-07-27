@@ -188,7 +188,13 @@
             <input type="password" id="signupPassword2" name="signupPassword2" class="form-control bottom"
               placeholder="Confirm password" />
           </div>
-          <button type="submit" class="btn btn-block signup-btn">Get started now</button>
+          <button type="submit" class="btn btn-block signup-btn">
+            Get started now
+            <div class="spinner-container ml-3 d-inline-block position-absolute hide">
+              <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>
+              <span class="sr-only">Loading...</span>
+            </div>
+          </button>
         </form>
 
         <form class="signin-form hide" onsubmit="event.preventDefault();signin();">
@@ -202,7 +208,13 @@
             <input type="password" id="signinPassword" name="signinPassword" class="form-control bottom"
               placeholder="Password" />
           </div>
-          <button type="submit" class="btn btn-block signin-btn">Sign in</button>
+          <button type="submit" class="btn btn-block signin-btn">
+            Sign in
+            <div class="spinner-container ml-3 d-inline-block position-absolute hide">
+              <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>
+              <span class="sr-only">Loading...</span>
+            </div>
+          </button>
         </form>
 
       </div>

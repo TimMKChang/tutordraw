@@ -24,6 +24,8 @@ function signup() {
     return;
   }
 
+  get('.signup-form .spinner-container').classList.remove('hide');
+
   const url = HOMEPAGE_URL + '/user/signup';
 
   fetch(url, {
@@ -33,7 +35,9 @@ function signup() {
       'content-type': 'application/json',
     },
   }).then(res => res.json())
-    .then(resObj => {
+    .then(async (resObj) => {
+      await delay(500);
+
       const { access_JWT, user, error } = resObj;
       if (error) {
         Swal.fire({
@@ -41,17 +45,12 @@ function signup() {
           title: 'Oops...',
           text: error,
         });
+        get('.signup-form .spinner-container').classList.add('hide');
         return;
       }
       localStorage.setItem('access_JWT', access_JWT);
       localStorage.setItem('user', window.atob(access_JWT.split('.')[1]));
-
-      Swal.fire({
-        icon: 'success',
-        title: 'sign up successfully',
-      }).then(async (result) => {
-        location.href = '/dashboard.html';
-      });
+      location.href = '/dashboard.html';
     })
     .catch(error => console.log(error));
 }
@@ -68,6 +67,8 @@ function signin() {
     return;
   }
 
+  get('.signin-form .spinner-container').classList.remove('hide');
+
   const url = HOMEPAGE_URL + '/user/signin';
 
   fetch(url, {
@@ -77,7 +78,9 @@ function signin() {
       'content-type': 'application/json',
     },
   }).then(res => res.json())
-    .then(resObj => {
+    .then(async (resObj) => {
+      await delay(500);
+
       const { access_JWT, user, error } = resObj;
       if (error) {
         Swal.fire({
@@ -85,17 +88,12 @@ function signin() {
           title: 'Oops...',
           text: error,
         });
+        get('.signin-form .spinner-container').classList.add('hide');
         return;
       }
       localStorage.setItem('access_JWT', access_JWT);
       localStorage.setItem('user', window.atob(access_JWT.split('.')[1]));
-
-      Swal.fire({
-        icon: 'success',
-        title: 'sign in successfully',
-      }).then(async (result) => {
-        location.href = '/dashboard.html';
-      });
+      location.href = '/dashboard.html';
     })
     .catch(error => console.log(error));
 }
