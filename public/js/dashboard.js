@@ -70,7 +70,7 @@ const Controller = {
       localStorage.removeItem('user');
       Swal.fire({
         icon: 'success',
-        title: 'sign out successfully',
+        title: `You've been signed out`,
       }).then(async (result) => {
         localStorage.removeItem('access_JWT');
         localStorage.removeItem('user');
@@ -209,6 +209,8 @@ const Controller = {
       .catch(error => console.log(error));
   },
   editRoom: async function () {
+    get('.edit-form .spinner-container').classList.remove('hide');
+
     const url = HOMEPAGE_URL + '/roomUser';
     const access_JWT = localStorage.getItem('access_JWT');
     const room = Model.editingRoom;
@@ -222,14 +224,17 @@ const Controller = {
         'Authorization': `Bearer ${access_JWT}`,
       },
     }).then(res => res.json())
-      .then(resObj => {
+      .then(async (resObj) => {
+        await delay(500);
+        get('.edit-form .spinner-container').classList.add('hide');
+
         if (resObj.error) {
           return;
         }
 
         Swal.fire({
           icon: 'success',
-          title: 'save note successfully',
+          title: 'Note has been saved',
         }).then(async (result) => {
           get(`.dashboard-rooms .room[data-room="${room}"]`).dataset.note = note;
           View.closeFormContainer();

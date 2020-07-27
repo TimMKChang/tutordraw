@@ -76,7 +76,13 @@
             placeholder="Type your own note for this room"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-block edit-btn">save</button>
+        <button type="submit" class="btn btn-block edit-btn">
+          Save
+          <div class="spinner-container ml-3 d-inline-block position-absolute hide">
+            <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>
+            <span class="sr-only">Loading...</span>
+          </div>
+        </button>
       </form>
 
     </div>
