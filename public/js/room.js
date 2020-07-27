@@ -1209,7 +1209,7 @@ const Controller = {
       });
       // modify room title
       get('.room-title input').addEventListener('focusout', (e) => {
-        const title = get('.room-title input').value;
+        const title = get('.room-title input').value || 'Untitled';
         get('.room-title input').classList.add('hide');
         get('.room-title span').innerHTML = title;
         get('.room-title span').classList.remove('hide');
