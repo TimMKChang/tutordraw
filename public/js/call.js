@@ -9,6 +9,7 @@ const PeerjsCall = {
   allLocalStream: {
 
   },
+  peer_idUser: {},
   init: async function () {
     PeerjsCall.peer = await new Peer({
       host: PEERJS_URL,
@@ -34,11 +35,23 @@ const PeerjsCall = {
         if (videoHTML) {
           video = videoHTML;
         } else {
+          const videoContainer = document.createElement('div');
+          videoContainer.classList.add('video-container');
+          videoContainer.dataset.peer_id = peer_id;
+
           video = document.createElement('video');
           video.dataset.peer_id = peer_id;
           video.width = 200;
           video.height = 150;
-          document.querySelector('.call-container').appendChild(video);
+
+          const title = document.createElement('div');
+          title.classList.add('title');
+          title.innerHTML = PeerjsCall.peer_idUser[peer_id];
+
+          videoContainer.appendChild(video);
+          videoContainer.appendChild(title);
+
+          document.querySelector('.call-container').appendChild(videoContainer);
         }
 
         call.answer(stream); // Answer the call with an A/V stream.
@@ -108,7 +121,10 @@ const PeerjsCall = {
 
     const callContainerHTML = document.querySelector('.call-container');
     callContainerHTML.innerHTML = `
-      <video src="" width="200" height="150" class="self" muted></video>
+      <div class="video-container">
+        <video src="" width="200" height="150" class="self" muted></video>
+        <div class="title">You</div>
+      </div>
     `;
 
     PeerjsCall.isConnected = false;
@@ -127,11 +143,23 @@ const PeerjsCall = {
         if (videoHTML) {
           video = videoHTML;
         } else {
+          const videoContainer = document.createElement('div');
+          videoContainer.classList.add('video-container');
+          videoContainer.dataset.peer_id = peer_id;
+
           video = document.createElement('video');
           video.dataset.peer_id = peer_id;
           video.width = 200;
           video.height = 150;
-          document.querySelector('.call-container').appendChild(video);
+
+          const title = document.createElement('div');
+          title.classList.add('title');
+          title.innerHTML = PeerjsCall.peer_idUser[peer_id];
+
+          videoContainer.appendChild(video);
+          videoContainer.appendChild(title);
+
+          document.querySelector('.call-container').appendChild(videoContainer);
         }
 
         const call = PeerjsCall.peer.call(peer_id, stream);
@@ -147,9 +175,9 @@ const PeerjsCall = {
     }
   },
   removeLeave: function (peer_id) {
-    const videoHTML = document.querySelector(`.call-container video[data-peer_id="${peer_id}"]`);
-    if (videoHTML) {
-      videoHTML.remove();
+    const videoContainer = document.querySelector(`.call-container .video-container[data-peer_id="${peer_id}"]`);
+    if (videoContainer) {
+      videoContainer.remove();
     }
 
     const stream = PeerjsCall.allLocalStream[peer_id];

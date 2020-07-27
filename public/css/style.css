@@ -1278,6 +1278,8 @@ footer .copyright {
   padding: 100px;
   overflow-y: scroll;
   transition: padding 0.5s;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .call-container.narrow {
@@ -1285,8 +1287,20 @@ footer .copyright {
   transition: padding 0.5s;
 }
 
-.call-container video {
-  margin: 0 5px;
+.video-container {
+  width: 200px;
+  height: 150px;
+  margin: 0 10px;
+  position: relative;
+}
+
+.video-container .title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: #000000;
+  color: #FFFFFF;
+  padding: 0px 10px;
 }
 
 .wait-call-spinner-container {

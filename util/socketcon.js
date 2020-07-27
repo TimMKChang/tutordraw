@@ -51,7 +51,7 @@ const rooms = {
   //     records: [],
   //   },
   //   call: {
-  //     socket.id: user_id
+  //     socket.id: peer_id
   //   }
   //   token: '',
   // }
@@ -440,7 +440,14 @@ const socketCon = (io) => {
         return;
       }
 
-      socket.emit('users in call', JSON.stringify(rooms[room].call));
+      socket.to(room).emit('join call room', JSON.stringify({
+        peer_id,
+        user: user_idUser[user_id],
+      }));
+      socket.emit('users in call', JSON.stringify({
+        call: rooms[room].call,
+        users: rooms[room].users,
+      }));
       rooms[room].call[socket.id] = peer_id;
     });
 

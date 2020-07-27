@@ -136,8 +136,16 @@ socket.on('load whiteboard pin', function (dataStr) {
   View.whiteboard.pin.create(pins, isLoad);
 });
 
+socket.on('join call room', function (dataStr) {
+  const { peer_id, user } = JSON.parse(dataStr);
+  PeerjsCall.peer_idUser[peer_id] = user;
+});
+
 socket.on('users in call', function (dataStr) {
-  const call = JSON.parse(dataStr);
+  const { call, users } = JSON.parse(dataStr);
+  Object.keys(call).forEach(socket_id => {
+    PeerjsCall.peer_idUser[call[socket_id]] = users[socket_id];
+  });
   const peer_ids = Object.values(call);
   PeerjsCall.callAll(peer_ids);
 });
