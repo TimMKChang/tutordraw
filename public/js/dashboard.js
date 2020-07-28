@@ -81,7 +81,7 @@ const Controller = {
     // create room
     get('.create-join-room .create-btn').addEventListener('click', (e) => {
       Controller.createRoom();
-    });
+    }, { once: true });
 
     // form container
     get('.form-container').addEventListener('mousedown', (e) => {
