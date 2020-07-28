@@ -563,6 +563,14 @@ footer .copyright {
   color: #3D53D9;
 }
 
+.whiteboard-toolbox i.undo.undo-disabled {
+  opacity: 0.3;
+}
+
+.whiteboard-toolbox i.undo.undo-disabled:hover {
+  cursor: not-allowed;
+}
+
 .whiteboard-toolbox i.pen:hover .pen-container {
   visibility: visible;
 }

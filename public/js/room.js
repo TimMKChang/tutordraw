@@ -65,7 +65,7 @@ const View = {
         } else if (isTransfer) {
           canvas_ctx = ctxAll;
         } else {
-          Controller.whiteboard.addCanvasLayer(created_at);
+          Controller.whiteboard.addCanvasLayer({ created_at });
           canvas_ctx = Model.whiteboard.ctx;
         }
 
@@ -146,7 +146,7 @@ const View = {
         } else if (isTransfer) {
           canvas_ctx = ctxAll;
         } else {
-          Controller.whiteboard.addCanvasLayer(created_at);
+          Controller.whiteboard.addCanvasLayer({ created_at });
           canvas_ctx = Model.whiteboard.ctx;
         }
 
@@ -268,7 +268,7 @@ const View = {
           if (isTransfer) {
             canvas_ctx = ctxAll;
           } else {
-            Controller.whiteboard.addCanvasLayer(created_at);
+            Controller.whiteboard.addCanvasLayer({ created_at });
             canvas_ctx = Model.whiteboard.ctx;
           }
 
@@ -303,7 +303,7 @@ const View = {
         if (isTransfer) {
           canvas_ctx = ctxAll;
         } else {
-          Controller.whiteboard.addCanvasLayer(created_at);
+          Controller.whiteboard.addCanvasLayer({ created_at });
           canvas_ctx = Model.whiteboard.ctx;
         }
 
@@ -422,6 +422,15 @@ const View = {
       },
     },
     draw: async function (record, requirement) {
+      if (record.isRemoved) {
+        return;
+      }
+
+      // cancel ban undo feature
+      if (record.user_id === Model.user.id) {
+        View.whiteboard.toggleUndoBtn(isBan = false);
+      }
+
       if (record.type === 'line') {
         View.whiteboard.line.draw(record, requirement);
       } else if (record.type === 'image') {
@@ -470,7 +479,28 @@ const View = {
     displayRoomTitle: function (title) {
       Model.room.title = title;
       get('.room-navbar .header .room-title span').innerHTML = title;
-    }
+    },
+    undoDraw: function (data) {
+      const { user_id, created_at } = data;
+      const timestampDay = Math.floor(+created_at / 86400000);
+      const canvasLayer = get(`.canvas-container .day-container[data-day="${timestampDay}"] [data-created_at="${created_at}"]`);
+      if (canvasLayer) {
+        canvasLayer.classList.add('hide');
+      }
+
+      // add isRemoved
+      const removedRecord = Model.whiteboard.records.find(record => user_id === record.user_id && created_at === record.created_at);
+      if (removedRecord) {
+        removedRecord.isRemoved = true;
+      }
+    },
+    toggleUndoBtn: function (isBan) {
+      if (isBan) {
+        get('.whiteboard-toolbox .undo').classList.add('undo-disabled');
+      } else {
+        get('.whiteboard-toolbox .undo').classList.remove('undo-disabled');
+      }
+    },
   },
   chatbox: {
     displayNewMsg: function (msgObjs, isLoad) {
@@ -1264,6 +1294,18 @@ const Controller = {
           socket.emit('update room title', JSON.stringify(roomObj));
         }
       });
+
+      // undo draw
+      get('.whiteboard-toolbox .undo').addEventListener('click', (e) => {
+        Controller.whiteboard.undoDraw();
+      });
+      // ctrl + z
+      document.addEventListener('keydown', function (e) {
+        if (e.ctrlKey && e.key === 'z') {
+          Controller.whiteboard.undoDraw();
+        }
+      });
+
     },
     uploadWhiteboardImage: async function () {
       const blob = await getCanvasBlob(canvasAll);
@@ -1382,10 +1424,13 @@ const Controller = {
         })
         .catch(error => console.log(error));
     },
-    addCanvasLayer: function (created_at) {
+    addCanvasLayer: function (data) {
+      const { created_at, user_id } = data;
+
       canvasLayer = document.createElement('canvas');
       canvasLayer.width = 1550;
       canvasLayer.height = 750;
+      canvasLayer.dataset.user_id = user_id;
       canvasLayer.dataset.created_at = created_at;
       canvasLayer.style.zIndex = created_at % 86400000;
       canvasLayer.classList.add('layer');
@@ -1413,6 +1458,7 @@ const Controller = {
     },
     transferRecords: async function (requirement) {
       if (Model.whiteboard.records.length === 0) {
+        View.whiteboard.toggleUndoBtn(isBan = true);
         return;
       }
 
@@ -1436,6 +1482,12 @@ const Controller = {
           canvasLayer.remove();
         }
       }
+
+      // check ban undo feature
+      const ownUnremovedRecord = Model.whiteboard.records.find(record => Model.user.id === record.user_id && !record.isRemoved);
+      if (!ownUnremovedRecord) {
+        View.whiteboard.toggleUndoBtn(isBan = true);
+      }
     },
     newWhiteboard: async function () {
       await Controller.whiteboard.transferRecords({ isAll: true });
@@ -1456,6 +1508,47 @@ const Controller = {
 
       // return to original state
       View.whiteboard.redraw();
+    },
+    undoDraw: function () {
+      // find last draw by self
+      const user_id = Model.user.id;
+      const room = Model.room.name;
+      const records = Model.whiteboard.records;
+      const undoRecords = [];
+      for (let recordIndex = records.length - 1; recordIndex >= 0; recordIndex--) {
+        const record = records[recordIndex];
+        if (user_id === record.user_id && !record.isRemoved) {
+          if (undoRecords.length === 0) {
+            record.isRemoved = true;
+          }
+
+          undoRecords.push(record);
+
+          if (undoRecords.length > 1) {
+            break;
+          }
+        }
+      }
+
+      if (undoRecords.length === 0) {
+        return;
+      }
+
+      if (undoRecords.length > 0) {
+        const created_at = undoRecords[0].created_at;
+        const undoObj = {
+          room,
+          user_id,
+          created_at,
+        };
+        View.whiteboard.undoDraw({ user_id, created_at });
+        socket.emit('undo draw', JSON.stringify(undoObj));
+      }
+
+      // ban undo feature
+      if (undoRecords.length === 1) {
+        View.whiteboard.toggleUndoBtn(isBan = true);
+      }
     },
   },
   chatbox: {

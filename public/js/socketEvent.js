@@ -70,11 +70,17 @@ socket.on('new draw', async function (recordStr) {
   await View.whiteboard.draw(record);
 });
 
+socket.on('undo draw', async function (dataStr) {
+  const { user_id, created_at } = JSON.parse(dataStr);
+  View.whiteboard.undoDraw({ user_id, created_at });
+});
+
 socket.on('new whiteboard', function () {
   View.whiteboard.initWhiteboard();
   Model.whiteboard.records = [];
   Model.whiteboard.recordsTransfered = [];
   get('.canvas-container').innerHTML = '';
+  View.whiteboard.toggleUndoBtn(isBan = true);
   // clear pin
   View.whiteboard.pin.clear();
 });

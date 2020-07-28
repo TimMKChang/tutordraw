@@ -318,6 +318,21 @@ const socketCon = (io) => {
       }
     });
 
+    socket.on('undo draw', function (dataStr) {
+      const { room, user_id, created_at } = JSON.parse(dataStr);
+      // check user_id and sender
+      if (!rooms[room] || userClients[user_id] !== socket.id) {
+        return;
+      }
+
+      const removedRecord = rooms[room].whiteboard.records.find(record => user_id === record.user_id && created_at === record.created_at);
+      if (removedRecord) {
+        removedRecord.isRemoved = true;
+      }
+
+      socket.to(room).emit('undo draw', dataStr);
+    });
+
     socket.on('new whiteboard', async function (dataStr) {
       const { room, user_id, user, imageFilename } = JSON.parse(dataStr);
       // check user_id and sender
