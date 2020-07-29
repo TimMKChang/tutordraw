@@ -35,16 +35,15 @@ const userClients = {
   // user_id: 'socket_id',
 };
 
-const user_idUser = {
-  // user_id: 'alice',
-};
-
 const rooms = {
   // room: {
   //   title: 'Untitled',
   //   users: {
   //     socket_id: 'alice',
   //     socket_id: 'bob',
+  //   },
+  //   user_idUser = {
+  //     user_id: 'alice',
   //   },
   //   whiteboard: {
   //     start_at: timestamp
@@ -170,21 +169,23 @@ const socketCon = (io) => {
         io.sockets.connected[lastConnectSocket_id].disconnect();
       }
       userClients[user_id] = socket.id;
-      user_idUser[user_id] = user;
 
       const { start_at, title, token } = await Room.getRoom(room);
       if (rooms[room]) {
         rooms[room]['users'][socket.id] = user;
+        rooms[room]['user_idUser'][user_id] = user;
       } else {
         rooms[room] = {
           title,
           users: {},
+          user_idUser: {},
           whiteboard: { start_at, records: [] },
           call: {},
           token,
           // created_at: Date.now(),
         };
         rooms[room]['users'][socket.id] = user;
+        rooms[room]['user_idUser'][user_id] = user;
       }
 
       // cancel timer if it exist
@@ -236,7 +237,7 @@ const socketCon = (io) => {
       io.to(room).emit('update user list',
         JSON.stringify({
           state: 'join',
-          users: user_idUser,
+          users: rooms[room].user_idUser,
           user,
           user_id,
         }));
@@ -457,7 +458,7 @@ const socketCon = (io) => {
 
       socket.to(room).emit('join call room', JSON.stringify({
         peer_id,
-        user: user_idUser[user_id],
+        user: rooms[room]['user_idUser'][user_id],
       }));
       socket.emit('users in call', JSON.stringify({
         call: rooms[room].call,
@@ -520,7 +521,7 @@ const socketCon = (io) => {
       delete clientsRoom[socket_id];
       const { user_id } = socket.handshake.query;
       delete userClients[user_id];
-      delete user_idUser[user_id];
+      delete rooms[room]['user_idUser'][user_id];
 
       // user leave message
       const leavemsgObj = {
@@ -535,7 +536,7 @@ const socketCon = (io) => {
       // update user list
       io.to(room).emit('update user list', JSON.stringify({
         state: 'leave',
-        users: user_idUser,
+        users: rooms[room].user_idUser,
         user,
         user_id,
       }));
