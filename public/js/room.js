@@ -801,7 +801,7 @@ const Controller = {
               created_at: Date.now(),
               color,
               width,
-              position: this.position,
+              position: $.extend(true, {}, this.position),
             };
 
             View.whiteboard.draw(record);
