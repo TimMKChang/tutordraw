@@ -1282,31 +1282,32 @@ footer .copyright {
   position: absolute;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 100px;
-  overflow-y: scroll;
+  padding: 50px;
   transition: padding 0.5s;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap-reverse;
+  flex-direction: column;
+  align-content: flex-start;
 }
 
 .call-container.narrow {
-  padding-right: 500px;
+  padding-right: 400px;
   transition: padding 0.5s;
 }
 
 .video-container {
   width: 200px;
   height: 150px;
-  margin: 0 10px;
+  margin: 10px;
   position: relative;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .video-container .title {
   position: absolute;
   bottom: 0;
   left: 0;
-  background-color: #000000;
+  background-color: rgba(0, 0, 0, 0.5);
   color: #FFFFFF;
   padding: 0px 10px;
 }
