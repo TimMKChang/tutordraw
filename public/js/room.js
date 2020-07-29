@@ -921,7 +921,7 @@ const Controller = {
 
         Swal.fire({
           title: 'Oops...',
-          text: 'Sure to create a new whiteboard?',
+          text: 'Are you sure to create a new whiteboard?',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -1280,6 +1280,23 @@ const Controller = {
           get('.history-whiteboard img').src = e.target.src;
           View.whiteboard.pin.createHistoryWB();
         }
+      });
+
+      // leave room
+      get('.leave-room-btn').addEventListener('click', async (e) => {
+        Swal.fire({
+          title: 'Oops...',
+          text: 'Are you sure to leave the classroom?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes'
+        }).then(async (result) => {
+          if (result.value) {
+            location.href = '/dashboard.html';
+          }
+        });
       });
 
       // edit room title
