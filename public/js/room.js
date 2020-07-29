@@ -666,6 +666,17 @@ const Controller = {
             path: [[this.currX, this.currY]],
           }, { isPreview: true });
 
+          // mouse trace
+          const mouseTrace = {
+            x: this.currX,
+            y: this.currY,
+          };
+          socket.emit('mouse trace', JSON.stringify({
+            room: Model.room.name,
+            user_id: this.record.user_id,
+            mouseTrace
+          }));
+
         } else if (action === 'move') {
           if (this.isDrawing) {
             this.prevX = this.currX;
