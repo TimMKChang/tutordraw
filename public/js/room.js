@@ -118,7 +118,7 @@ const View = {
           canvas_ctx.stroke();
         }
 
-        if (author !== 'self') {
+        if (author !== 'self' && !isTransfer) {
           View.whiteboard.line.updateTrace(record, boundary);
         }
       },
@@ -227,7 +227,9 @@ const View = {
         }
 
         // trace
-        this.updateTrace(record);
+        if (!isTransfer) {
+          this.updateTrace(record);
+        }
       },
       clear: function () {
         ctxShape.clearRect(0, 0, canvasShape.width, canvasShape.height);
@@ -280,7 +282,9 @@ const View = {
           };
           img.src = link;
           // trace
-          View.whiteboard.image.updateTrace(record, x, y, width, height);
+          if (!isTransfer) {
+            View.whiteboard.image.updateTrace(record, x, y, width, height);
+          }
         });
       },
       updateTrace: function (record, x, y, width, height) {
@@ -314,7 +318,9 @@ const View = {
         // offset
         canvas_ctx.fillText(content, x + 2, y + 0.25 * height);
         // trace
-        View.whiteboard.text.updateTrace(record, x + 2, y + 0.25 * height, width, height);
+        if (!isTransfer) {
+          View.whiteboard.text.updateTrace(record, x + 2, y + 0.25 * height, width, height);
+        }
       },
       updateTrace: function (record, x, y, width, height) {
         const { user_id } = record;
