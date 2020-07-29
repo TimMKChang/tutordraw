@@ -1401,7 +1401,7 @@ footer .copyright {
 }
 
 .dashboard-navbar .title-container {
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 
 .dashboard-navbar .title-container .title {
@@ -1409,10 +1409,32 @@ footer .copyright {
   color: #000000;
   font-family: 'Kalam', Verdana;
   font-weight: 700;
+  text-align: center;
+}
+
+.dashboard-navbar .user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-navbar .user-info img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
+}
+
+.dashboard-navbar .user-info .name {
+  font-size: 18px;
+  height: 24px;
 }
 
 .dashboard-navbar .navbar-item {
   margin-bottom: 20px;
+  padding-left: 5px;
 }
 
 .dashboard-navbar .navbar-item:hover {

@@ -56,12 +56,19 @@ const View = {
     const type = get('.dashboard-navbar .navbar-item.color-used').dataset.roomType;
     View.displayRoom(type);
   },
+  displayUserInfo: function () {
+    const personImage = `${AWS_CLOUDFRONT_DOMAIN}/dashboard/person.png`;
+    get('.user-info img').src = personImage;
+    const { name } = JSON.parse(localStorage.getItem('user'));
+    get('.user-info .name').innerHTML = name;
+  },
 };
 
 const Controller = {
   init: async function () {
     await this.getRoom();
     View.renderRoom();
+    View.displayUserInfo();
   },
   initListener: function () {
     // sign out
