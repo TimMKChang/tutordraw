@@ -1804,3 +1804,9 @@ Controller.whiteboard.initListener();
 
 // chatbox
 Controller.chatbox.initListener();
+
+// bootstrap
+// tooltip
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});

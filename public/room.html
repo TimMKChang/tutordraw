@@ -31,10 +31,12 @@
 
         <div class="whiteboard-toolbox">
 
-          <i class="fas fa-plus-circle new"></i>
-          <i class="fas fa-arrow-alt-circle-down download"></i>
+          <i class="fas fa-plus-circle new" data-toggle="tooltip" data-placement="right" title="new whiteboard"></i>
+          <i class="fas fa-arrow-alt-circle-down download" data-toggle="tooltip" data-placement="right"
+            title="download whiteboard"></i>
 
-          <i class="fas fa-undo-alt undo undo-disabled"></i>
+          <i class="fas fa-undo-alt undo undo-disabled" data-toggle="tooltip" data-placement="right"
+            title="undo ctrl+z"></i>
 
           <i class="fas fa-pen pen">
 
@@ -68,31 +70,32 @@
 
           </i>
 
-          <i class="far fa-image add-image"></i>
-          <input type="file" name="image-whiteboard" class="hide" />
-
           <i class="fas fa-font add-text">
 
             <div class="text-container">
-              <div class="size">Size: <span class="valur">32</span></div>
+              <div class="size">Font size: <span class="valur">32</span></div>
               <input type="range" min="8" max="64" step="2" value="32">
             </div>
 
           </i>
 
-          <i class="fas fa-thumbtack add-pin"></i>
+          <i class="far fa-image add-image" data-toggle="tooltip" data-placement="right" title="image"></i>
+          <input type="file" name="image-whiteboard" class="hide" />
 
-          <i class="fas fa-clone display-history-whiteboard"></i>
+          <i class="fas fa-thumbtack add-pin" data-toggle="tooltip" data-placement="right" title="pin note"></i>
+
+          <i class="fas fa-clone display-history-whiteboard" data-toggle="tooltip" data-placement="right"
+            title="history whiteboard"></i>
 
         </div>
 
         <div class="chatbox-toolbox">
-          <i class="fas fa-users-slash users"></i>
-          <i class="fas fa-phone-slash call"></i>
-          <i class="fas fa-microphone-slash audio"></i>
-          <i class="fas fa-video-slash video"></i>
-          <i class="fas fa-comments chat color-used"></i>
-          <i class="fas fa-link copy-link">
+          <i class="fas fa-phone-slash call" data-toggle="tooltip" data-placement="top" title="join video call"></i>
+          <i class="fas fa-users-slash users" data-toggle="tooltip" data-placement="top" title="video screen"></i>
+          <i class="fas fa-microphone-slash audio" data-toggle="tooltip" data-placement="top" title="microphone"></i>
+          <i class="fas fa-video-slash video" data-toggle="tooltip" data-placement="top" title="camera"></i>
+          <i class="fas fa-comments chat color-used" data-toggle="tooltip" data-placement="top" title="chatbox"></i>
+          <i class="fas fa-link copy-link" data-toggle="tooltip" data-placement="top" title="copy invite link">
             <input type="hidden" name="invite-url" value="">
             <div class="copy-invite-url-msg hide">Copied</div>
           </i>
