@@ -26,7 +26,7 @@ const signUp = async (name, email, password) => {
     const id = result.insertId;
     // accessToken
     const access_JWT = createJWT({ id, name, email });
-    return { access_JWT };
+    return { access_JWT, user: { id, name, email, } };
 
   } catch (error) {
     await rollback();
@@ -47,8 +47,10 @@ const signIn = async (email, password) => {
   }
 
   // accessToken
-  const access_JWT = createJWT({ id: user.id, name: user.name, email });
-  return { access_JWT };
+  const id = user.id;
+  const name = user.name;
+  const access_JWT = createJWT({ id, name, email });
+  return { access_JWT, user: { id, name, email, } };
 };
 
 module.exports = {

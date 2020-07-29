@@ -49,7 +49,7 @@ function signup() {
         return;
       }
       localStorage.setItem('access_JWT', access_JWT);
-      localStorage.setItem('user', window.atob(access_JWT.split('.')[1]));
+      localStorage.setItem('user', JSON.stringify(user));
       location.href = '/dashboard.html';
     })
     .catch(error => console.log(error));
@@ -92,7 +92,7 @@ function signin() {
         return;
       }
       localStorage.setItem('access_JWT', access_JWT);
-      localStorage.setItem('user', window.atob(access_JWT.split('.')[1]));
+      localStorage.setItem('user', JSON.stringify(user));
       location.href = '/dashboard.html';
     })
     .catch(error => console.log(error));

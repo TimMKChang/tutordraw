@@ -8,12 +8,12 @@ const signUp = async (req, res) => {
     return res.status(400).json({ error: 'All fields are required.' });
   }
 
-  const { access_JWT, error } = await User.signUp(name, email, password);
+  const { access_JWT, user, error } = await User.signUp(name, email, password);
   if (error) {
     return res.status(403).json({ error: 'Email already exists' });
   }
 
-  return res.status(200).json({ access_JWT });
+  return res.status(200).json({ access_JWT, user });
 };
 
 const signIn = async (req, res) => {
@@ -24,12 +24,12 @@ const signIn = async (req, res) => {
     return res.status(400).json({ error: 'All fields are required.' });
   }
 
-  const { access_JWT, error } = await User.signIn(email, password);
+  const { access_JWT, user, error } = await User.signIn(email, password);
   if (error) {
     return res.status(403).json({ error });
   }
 
-  return res.status(200).json({ access_JWT });
+  return res.status(200).json({ access_JWT, user });
 };
 
 module.exports = {
