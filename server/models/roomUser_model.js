@@ -63,7 +63,7 @@ const getRoomUser = async (requirement) => {
 
 const updateRoomUser = async (requirement) => {
   const condition = { query: '', sql: '', binding: [] };
-  if (requirement.note) {
+  if (requirement.note || requirement.note === '') {
     condition.binding = [requirement.note, requirement.room, requirement.user_id];
     try {
       await transaction();
