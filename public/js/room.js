@@ -1086,12 +1086,15 @@ const Controller = {
         Model.whiteboard.text.textMovable = false;
       });
       get('.text-whiteboard-preview-container input').addEventListener('mouseout', (e) => {
+        if (e.relatedTarget.closest('.text-whiteboard-preview-container')) {
+          return;
+        }
         const left = +get('.text-whiteboard-preview-container input').style.left.replace('px', '');
         const top = +get('.text-whiteboard-preview-container input').style.top.replace('px', '');
         Model.whiteboard.text.textPosition = [left, top];
         Model.whiteboard.text.textMovable = false;
       });
-      get('.text-whiteboard-preview-container input').addEventListener('mousemove', (e) => {
+      get('.text-whiteboard-preview-container').addEventListener('mousemove', (e) => {
         if (!Model.whiteboard.text.textMovable) {
           return;
         }

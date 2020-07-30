@@ -816,6 +816,7 @@ footer .copyright {
   border: none;  
   font-size: 32px;
   background-color: rgba(0, 0, 0, 0);
+  cursor: move;
 }
 
 .whiteboard .pin-whiteboard-preview-container i.pin {
