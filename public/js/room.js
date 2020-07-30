@@ -588,6 +588,12 @@ const View = {
         Model.chatbox.lastOldestCreated_at = msgObjs[msgObjs.length - 1].created_at;
         Model.chatbox.scrollLock = false;
       }
+      // display new message tooltip
+      const msgObj = msgObjs[0];
+      const { user_id } = msgObj;
+      if (!isLoad && user_id !== Model.user.id) {
+        View.chatbox.displayNewMsgTooltip();
+      }
     },
     scrollToBottom: function (isForceScrollToBottom) {
       const msgContainerHTML = get('.msg-container');
@@ -612,6 +618,9 @@ const View = {
         `;
       }
       get('.user-list .list-container').innerHTML = htmlContent;
+    },
+    displayNewMsgTooltip: function () {
+      $('.new-msg-tooltip').tooltip('show');
     },
   },
 };
@@ -1776,6 +1785,11 @@ const Controller = {
       get('.chatbox .show-list').addEventListener('click', (e) => {
         get('.room-container .user-list').classList.toggle('display');
         get('.chatbox .show-list').classList.toggle('color-used');
+      });
+
+      // close new message tooltip
+      get('.chatbox-toolbox .chat').addEventListener('mouseover', (e) => {
+        $('.new-msg-tooltip').tooltip('hide');
       });
     },
     sendMsg: function () {

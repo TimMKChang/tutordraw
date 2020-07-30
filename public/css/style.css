@@ -611,6 +611,12 @@ footer .copyright {
   color: #000000;
 }
 
+.new-msg-tooltip {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+}
+
 .whiteboard-toolbox i:hover, .chatbox-toolbox i:hover {
   cursor: pointer;
   color: #3D53D9;
