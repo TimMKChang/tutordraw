@@ -1001,34 +1001,15 @@ const Controller = {
         get('.image-whiteboard-preview-container img.preview').style.left = `${left}px`;
         get('.image-whiteboard-preview-container img.preview').style.top = `${top}px`;
       });
-      // move image
-      get('.image-whiteboard-preview-container img.preview').addEventListener('dragstart', (e) => {
-        e.preventDefault();
-      });
-      get('.image-whiteboard-preview-container img.preview').addEventListener('mousedown', (e) => {
-        Model.whiteboard.image.imageReferencePosition = [e.clientX, e.clientY];
-        Model.whiteboard.image.imageMovable = true;
-      });
-      get('.image-whiteboard-preview-container img.preview').addEventListener('mouseup', (e) => {
-        const left = +get('.image-whiteboard-preview-container img.preview').style.left.replace('px', '');
-        const top = +get('.image-whiteboard-preview-container img.preview').style.top.replace('px', '');
-        Model.whiteboard.image.imagePosition = [left, top];
-        Model.whiteboard.image.imageMovable = false;
-      });
-      get('.image-whiteboard-preview-container img.preview').addEventListener('mouseout', (e) => {
-        const left = +get('.image-whiteboard-preview-container img.preview').style.left.replace('px', '');
-        const top = +get('.image-whiteboard-preview-container img.preview').style.top.replace('px', '');
-        Model.whiteboard.image.imagePosition = [left, top];
-        Model.whiteboard.image.imageMovable = false;
-      });
-      get('.image-whiteboard-preview-container img.preview').addEventListener('mousemove', (e) => {
-        if (!Model.whiteboard.image.imageMovable) {
-          return;
-        }
-        const dx = Model.whiteboard.image.imagePosition[0] + e.clientX - Model.whiteboard.image.imageReferencePosition[0];
-        const dy = Model.whiteboard.image.imagePosition[1] + e.clientY - Model.whiteboard.image.imageReferencePosition[1];
-        get('.image-whiteboard-preview-container img.preview').style.left = `${dx}px`;
-        get('.image-whiteboard-preview-container img.preview').style.top = `${dy}px`;
+
+      // add drag listener
+      $('.image-whiteboard-preview-container img.preview').draggable({
+        containment: 'parent',
+        stop: function (event, ui) {
+          const left = +this.style.left.replace('px', '');
+          const top = +this.style.top.replace('px', '');
+          Model.whiteboard.image.imagePosition = [left, top];
+        },
       });
       // draw image on whiteboard
       get('.image-whiteboard-preview-container').addEventListener('mousedown', async (e) => {
