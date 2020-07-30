@@ -358,6 +358,35 @@ const View = {
           `;
           iHTML.style.left = `${x + preWidth / 2 - pinWidth / 2}px`;
           iHTML.style.top = `${y + preHeight / 2 - pinHeight / 2}px`;
+
+          // add drag listener
+          $(`.pin-container i[data-created_at="${created_at}"]`).draggable({
+            containment: 'parent',
+            stop: function (event, ui) {
+              const left = +this.style.left.replace('px', '');
+              const top = +this.style.top.replace('px', '');
+              const created_at = this.dataset.created_at;
+
+              // offset from preview-container size
+              const preWidth = 100;
+              const preHeight = 100;
+
+              // offset from pin itself size
+              const pinWidth = 40;
+              const pinHeight = 40;
+
+              const pin = {
+                room: Model.room.name,
+                user_id: Model.user.id,
+                author: Model.user.name,
+                created_at,
+                // reverse offset
+                x: left - (+ preWidth / 2 - pinWidth / 2),
+                y: top - (+ preHeight / 2 - pinHeight / 2),
+              };
+              socket.emit('update whiteboard pin', JSON.stringify(pin));
+            },
+          });
         }
 
         if (isLoad) {
@@ -1107,31 +1136,15 @@ const Controller = {
         get('.pin-whiteboard-preview-container i.pin').style.left = `${left}px`;
         get('.pin-whiteboard-preview-container i.pin').style.top = `${top}px`;
       });
-      // move pin
-      get('.pin-whiteboard-preview-container i.pin').addEventListener('mousedown', (e) => {
-        Model.whiteboard.pin.pinReferencePosition = [e.clientX, e.clientY];
-        Model.whiteboard.pin.pinMovable = true;
-      });
-      get('.pin-whiteboard-preview-container i.pin').addEventListener('mouseup', (e) => {
-        const left = +get('.pin-whiteboard-preview-container i.pin').style.left.replace('px', '');
-        const top = +get('.pin-whiteboard-preview-container i.pin').style.top.replace('px', '');
-        Model.whiteboard.pin.pinPosition = [left, top];
-        Model.whiteboard.pin.pinMovable = false;
-      });
-      get('.pin-whiteboard-preview-container i.pin').addEventListener('mouseout', (e) => {
-        const left = +get('.pin-whiteboard-preview-container i.pin').style.left.replace('px', '');
-        const top = +get('.pin-whiteboard-preview-container i.pin').style.top.replace('px', '');
-        Model.whiteboard.pin.pinPosition = [left, top];
-        Model.whiteboard.pin.pinMovable = false;
-      });
-      get('.pin-whiteboard-preview-container i.pin').addEventListener('mousemove', (e) => {
-        if (!Model.whiteboard.pin.pinMovable) {
-          return;
-        }
-        const dx = Model.whiteboard.pin.pinPosition[0] + e.clientX - Model.whiteboard.pin.pinReferencePosition[0];
-        const dy = Model.whiteboard.pin.pinPosition[1] + e.clientY - Model.whiteboard.pin.pinReferencePosition[1];
-        get('.pin-whiteboard-preview-container i.pin').style.left = `${dx}px`;
-        get('.pin-whiteboard-preview-container i.pin').style.top = `${dy}px`;
+
+      // add drag listener
+      $('.pin-whiteboard-preview-container i.pin').draggable({
+        containment: 'parent',
+        stop: function (event, ui) {
+          const left = +this.style.left.replace('px', '');
+          const top = +this.style.top.replace('px', '');
+          Model.whiteboard.pin.pinPosition = [left, top];
+        },
       });
       // draw pin
       get('.pin-whiteboard-preview-container').addEventListener('mousedown', async (e) => {
@@ -1199,72 +1212,6 @@ const Controller = {
         };
 
         socket.emit('update whiteboard pin', JSON.stringify(pin));
-      });
-      // move pin
-      get('.whiteboard .pin-container').addEventListener('mousedown', async (e) => {
-        if (e.target.classList.contains('pin')) {
-          const left = +e.target.closest('.pin').style.left.replace('px', '');
-          const top = +e.target.closest('.pin').style.top.replace('px', '');
-          Model.whiteboard.pin.pinPosition = [left, top];
-          Model.whiteboard.pin.pinMovable = true;
-          Model.whiteboard.pin.pinReferencePosition = [e.clientX, e.clientY];
-          // check moved
-          Model.whiteboard.pin.pinOriginalPosition = [left, top];
-        }
-      });
-      get('.whiteboard .pin-container').addEventListener('mousemove', async (e) => {
-        if (!Model.whiteboard.pin.pinMovable) {
-          return;
-        }
-        if (e.target.closest('.pin')) {
-          const dx = Model.whiteboard.pin.pinPosition[0] + e.clientX - Model.whiteboard.pin.pinReferencePosition[0];
-          const dy = Model.whiteboard.pin.pinPosition[1] + e.clientY - Model.whiteboard.pin.pinReferencePosition[1];
-          e.target.closest('.pin').style.left = `${dx}px`;
-          e.target.closest('.pin').style.top = `${dy}px`;
-        }
-      });
-      $('.whiteboard .pin-container').on('mouseup mouseout', async (e) => {
-        if (!Model.whiteboard.pin.pinMovable) {
-          return;
-        }
-        if (e.target.closest('.pin')) {
-          const left = +e.target.closest('.pin').style.left.replace('px', '');
-          const top = +e.target.closest('.pin').style.top.replace('px', '');
-          Model.whiteboard.pin.pinPosition = [left, top];
-          Model.whiteboard.pin.pinMovable = false;
-
-          // check moved
-          const [originalLeft, originalTop] = Model.whiteboard.pin.pinOriginalPosition;
-          if (left === originalLeft && top === originalTop) {
-            return;
-          }
-
-          Model.whiteboard.pin.pinClickable = false;
-          setTimeout(() => {
-            Model.whiteboard.pin.pinClickable = true;
-          }, 100);
-
-          const created_at = e.target.closest('.pin').dataset.created_at;
-
-          // offset from preview-container size
-          const preWidth = 100;
-          const preHeight = 100;
-
-          // offset from pin itself size
-          const pinWidth = 40;
-          const pinHeight = 40;
-
-          const pin = {
-            room: Model.room.name,
-            user_id: Model.user.id,
-            author: Model.user.name,
-            created_at,
-            // reverse offset
-            x: left - (+ preWidth / 2 - pinWidth / 2),
-            y: top - (+ preHeight / 2 - pinHeight / 2),
-          };
-          socket.emit('update whiteboard pin', JSON.stringify(pin));
-        }
       });
 
       // display history whitaboard container
