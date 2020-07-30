@@ -243,11 +243,12 @@ footer .copyright {
   height: calc(100% + 2px);
   transform: translate(-1px, -1px);
   opacity: 0;
+  transition: opacity 1s;
 }
 
 .index-container .demo-image .image-container img.now-display {
   opacity: 1;
-  transition: all 1s;
+  transition: opacity 1s;
 }
 
 .index-container .demo-navbar {
