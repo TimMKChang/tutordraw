@@ -1722,6 +1722,9 @@ const Controller = {
       get('.chatbox-toolbox .chat').addEventListener('mouseover', (e) => {
         $('.new-msg-tooltip').tooltip('hide');
       });
+      get('.chatbox').addEventListener('mouseover', (e) => {
+        $('.new-msg-tooltip').tooltip('hide');
+      });
     },
     sendMsg: function () {
       const msg = get('.chatbox .send-msg textarea').value;
