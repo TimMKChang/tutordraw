@@ -1842,5 +1842,6 @@ Controller.chatbox.initListener();
 // bootstrap
 // tooltip
 $(function () {
-  $('[data-toggle="tooltip"]').tooltip();
+  $('.whiteboard-toolbox [data-toggle="tooltip"]').tooltip({ offset: '0px, 10px' });
+  $('.chatbox-toolbox [data-toggle="tooltip"]').tooltip({ offset: '0px, 5px' });
 });
