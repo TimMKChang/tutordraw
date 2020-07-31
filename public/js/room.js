@@ -44,6 +44,7 @@ const Model = {
       minY: 0,
       maxY: 0,
     },
+    lastDrawShapeNode: undefined,
   },
   chatbox: {
     lastOldestCreated_at: 0,
@@ -892,7 +893,13 @@ const Controller = {
           Controller.whiteboard.shape.category = 'cir';
         } else if (e.target.closest('.tri')) {
           Controller.whiteboard.shape.category = 'tri';
+        } else {
+          return;
         }
+
+        // save last draw shape for maintaining draw shape feature
+        Model.whiteboard.lastDrawShapeNode = e.target.closest(`.${Controller.whiteboard.shape.category}`);
+        get('.whiteboard-toolbox i.shape').classList.add('color-used');
       });
       // draw shape
       get('.whiteboard canvas.shape').addEventListener('mousedown', async (e) => {
@@ -903,9 +910,19 @@ const Controller = {
       });
       get('.whiteboard canvas.shape').addEventListener('mouseup', async (e) => {
         Controller.whiteboard.shape.getXY('up', e);
+
+        // check last draw is shape
+        if (Model.whiteboard.lastDrawShapeNode) {
+          Model.whiteboard.lastDrawShapeNode.click();
+        }
       });
       get('.whiteboard canvas.shape').addEventListener('mouseout', async (e) => {
         Controller.whiteboard.shape.getXY('out', e);
+
+        // check last draw is shape
+        if (Model.whiteboard.lastDrawShapeNode) {
+          Model.whiteboard.lastDrawShapeNode.click();
+        }
       });
 
       // toolbox cancel all feature
@@ -929,6 +946,13 @@ const Controller = {
         // pin
         get('.pin-whiteboard-preview-container').classList.add('hide');
         Model.whiteboard.pin.pinPosition = [200, 120];
+
+        // cancel maintain draw image
+        canvasShape.classList.add('hide');
+        Model.whiteboard.lastDrawShapeNode = undefined;
+
+        // cancel color-used
+        get('.whiteboard-toolbox i.color-used').classList.remove('color-used');
       });
 
       // color
