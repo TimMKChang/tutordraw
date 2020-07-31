@@ -458,12 +458,14 @@ const View = {
       },
     },
     draw: async function (record, requirement) {
+      const { isTransfer } = requirement || {};
+
       if (record.isRemoved) {
         return;
       }
 
       // cancel ban undo feature
-      if (record.user_id === Model.user.id) {
+      if (record.user_id === Model.user.id && !isTransfer) {
         View.whiteboard.toggleUndoBtn(isBan = false);
       }
 
