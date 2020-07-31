@@ -1,5 +1,6 @@
 const Model = {
   demoFeatureTimer: undefined,
+  demoItemSwitchTime: 5000,
 };
 
 function signup() {
@@ -99,7 +100,13 @@ function signin() {
 }
 
 checkSignin();
+init();
 initListener();
+function init() {
+  displayNextProgressBar();
+  Model.demoFeatureTimer = setInterval(displayNextDemoItem, Model.demoItemSwitchTime);
+}
+
 function initListener() {
   // sign up
   get('header .signup-form-btn').addEventListener('click', (e) => {
@@ -129,7 +136,13 @@ function initListener() {
   // demo feature
   get('.demo-navbar').addEventListener('mousedown', (e) => {
     const demoItemHTML = e.target.closest('.demo-item');
-    if (demoItemHTML) {
+    // avoid click on the same item
+    if (demoItemHTML && !demoItemHTML.classList.contains('now-display')) {
+      // progress bar
+      const progressBarHTML = get('.demo-item.now-display .progress-bar');
+      progressBarHTML.classList.add('hide');
+      progressBarHTML.style.width = '1%';
+
       const nextItemIndex = demoItemHTML.dataset.index;
       get('.demo-item.now-display').classList.remove('now-display');
       get('.image-container img.now-display').classList.remove('now-display');
@@ -138,19 +151,10 @@ function initListener() {
 
       // reset timer
       clearInterval(Model.demoFeatureTimer);
-      Model.demoFeatureTimer = setInterval(displayNextDemoItem, 5000);
+      displayNextProgressBar();
+      Model.demoFeatureTimer = setInterval(displayNextDemoItem, Model.demoItemSwitchTime);
     }
   });
-
-  Model.demoFeatureTimer = setInterval(displayNextDemoItem, 5000);
-  function displayNextDemoItem() {
-    const prevItemIndex = get('.demo-item.now-display').dataset.index;
-    const nextItemIndex = (+prevItemIndex + 1) % getAll('.demo-item').length;
-    get(`.demo-item[data-index="${prevItemIndex}"]`).classList.remove('now-display');
-    get(`.image-container img[data-index="${prevItemIndex}"]`).classList.remove('now-display');
-    get(`.demo-item[data-index="${nextItemIndex}"]`).classList.add('now-display');
-    get(`.image-container img[data-index="${nextItemIndex}"]`).classList.add('now-display');
-  }
 
   // header bottom shadow
   window.addEventListener('scroll', () => {
@@ -177,5 +181,35 @@ function checkSignin() {
   const access_JWT = localStorage.getItem('access_JWT');
   if (access_JWT) {
     location.href = '/dashboard.html';
+  }
+}
+
+function displayNextDemoItem() {
+  const prevItemIndex = get('.demo-item.now-display').dataset.index;
+  const nextItemIndex = (+prevItemIndex + 1) % getAll('.demo-item').length;
+  get(`.demo-item[data-index="${prevItemIndex}"]`).classList.remove('now-display');
+  get(`.image-container img[data-index="${prevItemIndex}"]`).classList.remove('now-display');
+  get(`.demo-item[data-index="${nextItemIndex}"]`).classList.add('now-display');
+  get(`.image-container img[data-index="${nextItemIndex}"]`).classList.add('now-display');
+  // progress bar
+  displayNextProgressBar();
+}
+
+function displayNextProgressBar() {
+  const interval = 500;
+  const increment = 100 / interval;
+  let width = 0;
+  const progressBarHTML = get('.demo-item.now-display .progress-bar');
+  progressBarHTML.classList.remove('hide');
+  const timer = setInterval(moving, Model.demoItemSwitchTime / interval);
+  function moving() {
+    if (width >= 100 || !progressBarHTML.closest('.demo-item').classList.contains('now-display')) {
+      progressBarHTML.classList.add('hide');
+      progressBarHTML.style.width = '0%';
+      clearInterval(timer);
+    } else {
+      width += increment;
+      progressBarHTML.style.width = `${width}%`;
+    }
   }
 }
