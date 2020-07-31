@@ -1037,6 +1037,7 @@ footer .copyright {
   right: -400px;
   border-left: 1px solid rgba(0, 0, 0, 0.1);
   transition: right 0.5s;
+  z-index: 2;
 }
 
 .room-container .chatbox.display {
