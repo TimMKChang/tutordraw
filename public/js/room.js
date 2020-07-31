@@ -952,7 +952,13 @@ const Controller = {
         Model.whiteboard.lastDrawShapeNode = undefined;
 
         // cancel color-used
-        get('.whiteboard-toolbox i.color-used').classList.remove('color-used');
+        if (get('.whiteboard-toolbox i.color-used')) {
+          get('.whiteboard-toolbox i.color-used').classList.remove('color-used');
+        }
+        // add color-used to pen except draw shape
+        if (!e.target.closest('.shape-container')) {
+          get('.whiteboard-toolbox i.pen').classList.add('color-used');
+        }
       });
 
       // color
