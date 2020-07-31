@@ -240,8 +240,9 @@ footer .copyright {
 
 .index-container .demo-image .image-container img {
   position: absolute;
-  height: calc(100% + 2px);
-  transform: translate(-1px, -1px);
+  height: calc(100% + 0px);
+  width: calc(100% + 0px);
+  transform: translate(0px, 0px);
   opacity: 0;
   transition: opacity 1s;
 }
@@ -376,9 +377,11 @@ footer .copyright {
   background-color: #FFFFFF;
   padding: 0 150px;
   margin: 0 auto;
-
   max-height: 750px;
   max-width: 1770px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .index-container section.bottom {
