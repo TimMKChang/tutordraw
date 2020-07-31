@@ -103,6 +103,7 @@ checkSignin();
 init();
 initListener();
 function init() {
+  movingLetters();
   displayNextProgressBar();
   Model.demoFeatureTimer = setInterval(displayNextDemoItem, Model.demoItemSwitchTime);
 }
@@ -212,4 +213,27 @@ function displayNextProgressBar() {
       progressBarHTML.style.width = `${width}%`;
     }
   }
+}
+
+function movingLetters() {
+  // Wrap every letter in a span
+  const textWrapper = document.querySelector('.intro-container .title span');
+  textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+
+  anime.timeline({ loop: true })
+    .add({
+      targets: '.intro-container .title .letter',
+      scale: [4, 1],
+      opacity: [0, 1],
+      translateZ: 0,
+      easing: "easeOutExpo",
+      duration: 950,
+      delay: (el, i) => 70 * i
+    }).add({
+      targets: '.intro-container .title',
+      opacity: 0,
+      duration: 1000,
+      easing: "easeOutExpo",
+      delay: 1000
+    });
 }

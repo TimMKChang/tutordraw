@@ -173,6 +173,10 @@ footer .copyright {
   font-weight: 700;
 }
 
+.index-container .intro-container .title .letter {
+  display: inline-block;
+}
+
 .index-container .intro-container .subtitle {
   text-align: center;
   font-size: 18px;
