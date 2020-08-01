@@ -1482,16 +1482,31 @@ footer .copyright {
   cursor: pointer;
 }
 
-.dashboard-navbar .navbar-item.bottom {
+.dashboard-navbar .navbar-item.bottom-border {
   padding-bottom: 20px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 }
 
-.dashboard-navbar .navbar-item .starred-room i {
-  font-size: 0.8rem;
+.dashboard-navbar .navbar-item .starred-room,
+.dashboard-navbar .navbar-item .all-room,
+.dashboard-navbar .navbar-item .signout-btn {
+  display: flex;
 }
 
-.dashboard-navbar .signout-btn {
+.dashboard-navbar .navbar-item .starred-room i,
+.dashboard-navbar .navbar-item .all-room i,
+.dashboard-navbar .navbar-item .signout-btn i {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  padding-right: 5px;
+  padding-bottom: 3px;
+}
+
+.dashboard-navbar .navbar-item.last {
   margin-top: auto;
 }
 
