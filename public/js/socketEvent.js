@@ -1,7 +1,7 @@
 const socket = io({
   query: {
     access_JWT: localStorage.getItem('access_JWT') || '',
-    room: getQuery().room,
+    room: getQuery().room || '',
     room_JWT: getQuery().token || '',
   }
 });

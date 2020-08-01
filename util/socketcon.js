@@ -88,7 +88,11 @@ const anonymousUserColor = [
 const socketCon = (io) => {
   // authentication
   io.use(function (socket, next) {
-    if (socket.handshake.query && socket.handshake.query.access_JWT && socket.handshake.query.room) {
+    if (socket.handshake.query && !socket.handshake.query.room) {
+      const err = new Error();
+      err.data = { type: 'authError', message: 'Room id is required.' };
+      next(err);
+    } else if (socket.handshake.query && socket.handshake.query.access_JWT && socket.handshake.query.room) {
       const { access_JWT, room } = socket.handshake.query;
       const verifyJWTResult = verifyJWT(access_JWT);
       if (verifyJWTResult.error) {
