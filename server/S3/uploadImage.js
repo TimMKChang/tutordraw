@@ -43,13 +43,14 @@ const uploadWhiteboard = async (room, start_at, records) => {
 const uploadImage = async (room, filePath, imageFilename) => {
   return new Promise((resolve, reject) => {
     const extension = imageFilename.split('.')[1];
+    const ContentType = `image/${extension === 'svg' ? 'svg+xml' : extension}`;
     const fileContent = fs.readFileSync(filePath);
     const params = {
       Bucket: 'drawnow',
       Key: `images/${room}/${imageFilename}`,
       Body: fileContent,
       ACL: 'public-read',
-      ContentType: `image/${extension}`,
+      ContentType,
     };
 
     // Uploading files to the bucket

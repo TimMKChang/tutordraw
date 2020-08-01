@@ -1026,7 +1026,20 @@ const Controller = {
       });
       // preview upload image on whiteboard
       get('.whiteboard-toolbox input[name="image-whiteboard"]').addEventListener('change', (e) => {
-        const image = URL.createObjectURL(get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0]);
+        const file = get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0];
+        const image = URL.createObjectURL(file);
+
+        // check file extension
+        const extension = file.name.split('.').pop();
+        if (!extension.match(/^(jpg|jpeg|png|svg)$/i)) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Only image files are available',
+          });
+          return;
+        }
+
         get('.image-whiteboard-preview-container img.preview').src = image;
         get('.image-whiteboard-preview-container').classList.remove('hide');
         const [left, top] = Model.whiteboard.image.imagePosition;
@@ -1597,7 +1610,20 @@ const Controller = {
       });
       // preview upload image
       get('.chatbox .send-msg input[name="image"]').addEventListener('change', (e) => {
-        const image = URL.createObjectURL(get('.chatbox .send-msg input[name="image"]').files[0]);
+        const file = get('.chatbox .send-msg input[name="image"]').files[0];
+        const image = URL.createObjectURL(file);
+
+        // check file extension
+        const extension = file.name.split('.').pop();
+        if (!extension.match(/^(jpg|jpeg|png|svg)$/i)) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Only image files are available',
+          });
+          return;
+        }
+
         get('.chatbox .send-msg img.preview').src = image;
         get('.chatbox .send-msg .preview-container').classList.remove('hide');
       });

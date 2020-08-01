@@ -15,7 +15,7 @@ const upload = multer({
     fileSize: 1024 * 1024 * 2
   },
   fileFilter: (req, file, cb) => {
-    if (file.originalname.match(/\.(jpg|jpeg|png)$/i)) {
+    if (file.originalname.match(/\.(jpg|jpeg|png|svg)$/i)) {
       return cb(null, true);
     }
     cb(null, false);
