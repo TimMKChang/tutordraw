@@ -12,7 +12,7 @@ function signup() {
     Swal.fire({
       icon: 'error',
       title: 'Oops...',
-      text: 'All fields are required',
+      text: 'All fields are required.',
     });
     return;
   }
@@ -20,7 +20,7 @@ function signup() {
     Swal.fire({
       icon: 'error',
       title: 'Oops...',
-      text: 'Password and Confirm Password do not match',
+      text: 'Password and confirm password do not match.',
     });
     return;
   }
@@ -63,7 +63,7 @@ function signin() {
     Swal.fire({
       icon: 'error',
       title: 'Oops...',
-      text: 'All fields are required',
+      text: 'All fields are required.',
     });
     return;
   }

@@ -77,7 +77,7 @@ const Controller = {
       localStorage.removeItem('user');
       Swal.fire({
         icon: 'success',
-        title: `You've been signed out`,
+        title: `You've been signed out.`,
       }).then(async (result) => {
         localStorage.removeItem('access_JWT');
         localStorage.removeItem('user');
@@ -166,7 +166,7 @@ const Controller = {
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Please sign in first',
+            text: 'Please sign in first.',
           }).then(async (result) => {
             localStorage.removeItem('access_JWT');
             localStorage.removeItem('user');
@@ -203,7 +203,7 @@ const Controller = {
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Please sign in first',
+            text: 'Please sign in first.',
           }).then(async (result) => {
             localStorage.removeItem('access_JWT');
             localStorage.removeItem('user');
@@ -241,7 +241,7 @@ const Controller = {
 
         Swal.fire({
           icon: 'success',
-          title: 'Note has been saved',
+          title: 'Note has been saved.',
         }).then(async (result) => {
           get(`.dashboard-rooms .room[data-room="${room}"]`).dataset.note = note;
           View.closeFormContainer();

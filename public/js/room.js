@@ -1035,7 +1035,7 @@ const Controller = {
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Only image files are available',
+            text: 'Only image files are available.',
           });
           return;
         }
@@ -1619,7 +1619,7 @@ const Controller = {
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Only image files are available',
+            text: 'Only image files are available.',
           });
           return;
         }
