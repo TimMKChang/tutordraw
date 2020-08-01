@@ -1076,9 +1076,9 @@ footer .copyright {
 
 .chatbox-toolbox .copy-link .copy-invite-url-msg {
   position: absolute;
-  top: -40px;
+  top: -75px;
   left: 50%;
-  font-size: 1.2rem;
+  font-size: 1rem;
   transform: translateX(-50%);
   text-align: center;
   z-index: 9999;
