@@ -97,7 +97,7 @@ const socketCon = (io) => {
       const verifyJWTResult = verifyJWT(access_JWT);
       if (verifyJWTResult.error) {
         const err = new Error();
-        err.data = { type: 'authError', message: 'Please sign in first' };
+        err.data = { type: 'authError', message: 'Please sign in first.' };
         next(err);
       } else {
         socket.handshake.query.userVerified = true;
@@ -111,11 +111,11 @@ const socketCon = (io) => {
       const err = new Error();
       if (!rooms[room]) {
         // check room
-        err.data = { type: 'authentication_error', message: 'The room is not available' };
+        err.data = { type: 'authentication_error', message: 'The room is not available.' };
         next(err);
       } else if (room_JWT !== rooms[room].token) {
         // check token
-        err.data = { type: 'authentication_error', message: 'The token is not available' };
+        err.data = { type: 'authentication_error', message: 'The token is not available.' };
         next(err);
       } else {
         // token verified
@@ -132,7 +132,7 @@ const socketCon = (io) => {
 
     } else {
       const err = new Error();
-      err.data = { type: 'authError', message: 'Please sign in first' };
+      err.data = { type: 'authError', message: 'Please sign in first.' };
       next(err);
     }
   });
@@ -147,7 +147,7 @@ const socketCon = (io) => {
       const verifyTokenResult = await Room.verifyToken(room, room_JWT);
       if (verifyTokenResult.error) {
         const err = new Error();
-        err.data = { type: 'authError', message: 'Please contact the owner of the room to get the invite link to join the room' };
+        err.data = { type: 'authError', message: 'Please contact the owner of the room to get the invite link to join the room.' };
         next(err);
       }
       // create roomUser
@@ -164,7 +164,7 @@ const socketCon = (io) => {
 
     } else if (verifyRoomUserResult.error && !socket.handshake.query.room_JWT) {
       const err = new Error();
-      err.data = { type: 'authError', message: 'Please contact the owner of the room to get the invite link to join the room' };
+      err.data = { type: 'authError', message: 'Please contact the owner of the room to get the invite link to join the room.' };
       next(err);
     } else {
       // avoid connect repeatedly

@@ -41,11 +41,11 @@ const uploadImage = async (req, res) => {
     await uploadImageS3(room, filePath, imageFilename);
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: 'Uploaded to S3 unsuccessfully' });
+    return res.status(500).json({ error: 'Uploaded to S3 unsuccessfully.' });
   }
   // remove image in images_temp
   fs.unlinkSync(filePath);
-  return res.status(200).json({ message: 'Uploaded successfully' });
+  return res.status(200).json({ message: 'Uploaded successfully.' });
 };
 
 module.exports = {

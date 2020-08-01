@@ -13,7 +13,7 @@ const getHistoryWB = async (req, res) => {
   const { room } = req.params;
 
   if (!room) {
-    return res.status(400).json({ error: 'room is required.' });
+    return res.status(400).json({ error: 'Room id is required.' });
   }
 
   // check roomUser

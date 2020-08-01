@@ -25,7 +25,7 @@ const updateRoomUser = async (req, res) => {
     return res.status(403).json({ error: updateRoomUserResult.error });
   }
 
-  return res.status(200).json({ message: 'update room successfully' });
+  return res.status(200).json({ message: 'Update room successfully.' });
 };
 
 module.exports = {

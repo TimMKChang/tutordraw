@@ -9,7 +9,7 @@ const signUp = async (name, email, password) => {
     const emails = await query('SELECT email FROM user WHERE email = ?', email);
     if (emails.length > 0) {
       await commit();
-      return { error: 'Email Already Exists' };
+      return { error: 'Email already exists.' };
     }
 
     // hash password
@@ -38,12 +38,12 @@ const signIn = async (email, password) => {
   const users = await query('SELECT id, name, email, password FROM user WHERE email = ?', email);
   const user = users[0];
   if (!user) {
-    return { error: 'Email Does Not Exist' };
+    return { error: 'Email does not exist.' };
   }
 
   const salt = user.password.split('.')[0];
   if (user.password !== hashPassword(password, salt)) {
-    return { error: 'Password is wrong' };
+    return { error: 'Password is incorrect.' };
   }
 
   // accessToken

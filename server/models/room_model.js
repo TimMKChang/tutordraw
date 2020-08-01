@@ -17,20 +17,20 @@ const verifyToken = async (room_id, token) => {
   const rooms = await query('SELECT id, token FROM room WHERE id = ?', [room_id]);
   const room = rooms[0];
   if (!room) {
-    return { error: 'room does not exist' };
+    return { error: 'Room does not exist.' };
   }
   if (room.token !== token) {
     return { error: 'Please contact the owner of the room to get the invite link to join the room' };
   }
 
-  return { message: 'room token verified' };
+  return { message: 'Room token verified.' };
 };
 
 const getRoom = async (room_id) => {
   const rooms = await query('SELECT whiteboard_start_at, title, token FROM room WHERE id = ?', [room_id]);
   const room = rooms[0];
   if (!room) {
-    return { error: 'room does not exist' };
+    return { error: 'Room does not exist.' };
   }
 
   return { start_at: room.whiteboard_start_at, title: room.title, token: room.token };

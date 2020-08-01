@@ -10,7 +10,7 @@ const signUp = async (req, res) => {
 
   const { access_JWT, user, error } = await User.signUp(name, email, password);
   if (error) {
-    return res.status(403).json({ error: 'Email already exists' });
+    return res.status(403).json({ error: 'Email already exists.' });
   }
 
   return res.status(200).json({ access_JWT, user });
