@@ -10,7 +10,7 @@ const View = {
     for (let roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
       const roomData = rooms[roomIndex];
       const { room, title, isOwner, link, note, starred } = roomData;
-      const default_room_snapshot = `${AWS_CLOUDFRONT_DOMAIN}/dashboard/default_room_snapshot.png`;
+      const default_room_snapshot = `${AWS_CLOUDFRONT_DOMAIN}/dashboard/default_snapshot.png`;
       const snapshot = link || default_room_snapshot;
       htmlContent += `
         <div class="room" data-isOwner="${isOwner}" data-room="${room}" data-note="${note}" data-starred="${starred}">
