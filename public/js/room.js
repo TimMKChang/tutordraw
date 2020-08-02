@@ -1063,8 +1063,9 @@ const Controller = {
           const { width, height } = get('.image-whiteboard-preview-container img.preview').getBoundingClientRect();
           const [x, y] = Model.whiteboard.image.imagePosition;
           const created_at = Date.now();
+          const user_id = Model.user.id;
           // let the user who upload the image no need to wait for the uploading delay
-          await View.whiteboard.draw({ x, y, width, height, link: URL.createObjectURL(get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0]), created_at, type: 'image' });
+          await View.whiteboard.draw({ user_id, x, y, width, height, link: URL.createObjectURL(get('.whiteboard-toolbox input[name="image-whiteboard"]').files[0]), created_at, type: 'image' });
           get('.image-whiteboard-preview-container').classList.add('hide');
           Model.whiteboard.image.imagePosition = [200, 120];
 
@@ -1075,7 +1076,7 @@ const Controller = {
           const imageFilename = await Controller.whiteboard.uploadImage();
           const link = `${AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`;
           const record = {
-            user_id: Model.user.id,
+            user_id,
             author: Model.user.name,
             type: 'image',
             created_at,
