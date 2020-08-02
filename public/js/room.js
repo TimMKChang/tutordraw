@@ -1286,6 +1286,9 @@ const Controller = {
 
       // edit room title
       get('.room-title').addEventListener('click', (e) => {
+        if (e.target === document.activeElement) {
+          return;
+        }
         const title = get('.room-title span').innerHTML;
         get('.room-title span').classList.add('hide');
         get('.room-title input').classList.remove('hide');
