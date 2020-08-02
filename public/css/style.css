@@ -832,8 +832,8 @@ footer .copyright {
   position: absolute;
   border: 1px solid rgba(0, 0, 0, 0.3);
   border: 3px dashed #000000;
-  max-width: 800px;
-  max-height: 600px;
+  max-width: 70%;
+  max-height: 80%;
 }
 
 .whiteboard .image-whiteboard-preview-container img:hover {
