@@ -137,7 +137,7 @@ const socketCon = (io) => {
     }
   });
 
-  // join room
+  // check roomUser and room_JWT
   io.use(async function (socket, next) {
     const { room, user_id, user, room_JWT, userVerified } = socket.handshake.query;
     // check roomUser
@@ -166,43 +166,51 @@ const socketCon = (io) => {
       const err = new Error();
       err.data = { type: 'authError', message: 'Please contact the owner of the room to get the invite link to join the room.' };
       next(err);
+
     } else {
-      // avoid connect repeatedly
-      const lastConnectSocket_id = userClients[user_id];
-      if (io.sockets.connected[lastConnectSocket_id]) {
-        io.sockets.connected[lastConnectSocket_id].disconnect();
-      }
-      userClients[user_id] = socket.id;
-
-      const { start_at, title, token } = await Room.getRoom(room);
-      if (rooms[room]) {
-        rooms[room]['users'][socket.id] = user;
-        rooms[room]['user_idUser'][user_id] = user;
-      } else {
-        rooms[room] = {
-          title,
-          users: {},
-          user_idUser: {},
-          whiteboard: { start_at, records: [] },
-          call: {},
-          token,
-          // created_at: Date.now(),
-        };
-        rooms[room]['users'][socket.id] = user;
-        rooms[room]['user_idUser'][user_id] = user;
-      }
-
-      // cancel timer if it exist
-      if (closeRoomTimer[room]) {
-        clearTimeout(closeRoomTimer[room]);
-      }
-
-      // room
-      socket.join(room);
-      clientsRoom[socket.id] = room;
-
       next();
     }
+  });
+
+  // join room
+  io.use(async function (socket, next) {
+    const { room, user_id, user, room_JWT, userVerified } = socket.handshake.query;
+
+    // avoid connect repeatedly
+    const lastConnectSocket_id = userClients[user_id];
+    if (io.sockets.connected[lastConnectSocket_id]) {
+      io.sockets.connected[lastConnectSocket_id].disconnect();
+    }
+    userClients[user_id] = socket.id;
+
+    const { start_at, title, token } = await Room.getRoom(room);
+    if (rooms[room]) {
+      rooms[room]['users'][socket.id] = user;
+      rooms[room]['user_idUser'][user_id] = user;
+    } else {
+      rooms[room] = {
+        title,
+        users: {},
+        user_idUser: {},
+        whiteboard: { start_at, records: [] },
+        call: {},
+        token,
+        // created_at: Date.now(),
+      };
+      rooms[room]['users'][socket.id] = user;
+      rooms[room]['user_idUser'][user_id] = user;
+    }
+
+    // cancel timer if it exist
+    if (closeRoomTimer[room]) {
+      clearTimeout(closeRoomTimer[room]);
+    }
+
+    // room
+    socket.join(room);
+    clientsRoom[socket.id] = room;
+
+    next();
   });
 
   io.on('connection', (socket) => {
