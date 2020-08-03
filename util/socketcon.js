@@ -1,7 +1,7 @@
 const {
-  createChatmsg,
-  getChatmsg,
-} = require('../server/controllers/chatmsg_controller');
+  createChat,
+  getChat,
+} = require('../server/controllers/chat_controller');
 
 const {
   getWhiteboard,
@@ -227,12 +227,12 @@ const socketCon = (io) => {
       const { room, user_id, user } = socket.handshake.query;
 
       // load message
-      const { error, chatmsgs } = await getChatmsg({ room });
+      const { error, chats } = await getChat({ room });
       if (error) {
         console.log(error);
       } else {
         // send to self
-        socket.emit('load chat msg', JSON.stringify(chatmsgs));
+        socket.emit('load chat msg', JSON.stringify(chats));
       }
 
       // user join message
@@ -242,7 +242,7 @@ const socketCon = (io) => {
         msg: `歡迎 ${user} 加入聊天室`,
         created_at: Date.now(),
       };
-      await createChatmsg(joinmsgObj);
+      await createChat(joinmsgObj);
       io.to(room).emit('notification msg', JSON.stringify(joinmsgObj));
 
       // update user list
@@ -284,11 +284,11 @@ const socketCon = (io) => {
     socket.on('load chat msg', async function (dataStr) {
       const { room, lastOldestCreated_at } = JSON.parse(dataStr);
       // load message
-      const { error, chatmsgs } = await getChatmsg({ room, lastOldestCreated_at });
+      const { error, chats } = await getChat({ room, lastOldestCreated_at });
       if (error) {
         console.log(error);
       } else {
-        socket.emit('load chat msg', JSON.stringify(chatmsgs));
+        socket.emit('load chat msg', JSON.stringify(chats));
       }
     });
 
@@ -361,7 +361,7 @@ const socketCon = (io) => {
         msg: `${user} 重新開了一張畫布`,
         created_at: Date.now(),
       };
-      await createChatmsg(msgObj);
+      await createChat(msgObj);
       io.to(room).emit('notification msg', JSON.stringify(msgObj));
       // save whiteboard image message to DB and then send message back
       const link = `${process.env.AWS_CLOUDFRONT_DOMAIN}/images/${room}/${imageFilename}`;
@@ -371,7 +371,7 @@ const socketCon = (io) => {
         msg: link,
         created_at: Date.now(),
       };
-      await createChatmsg(whiteboardmsgObj);
+      await createChat(whiteboardmsgObj);
       io.to(room).emit('notification msg', JSON.stringify(whiteboardmsgObj));
       // upload remain records to S3
       const { start_at } = rooms[room].whiteboard;
@@ -402,7 +402,7 @@ const socketCon = (io) => {
       if (!rooms[room] || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== sender) {
         return;
       }
-      await createChatmsg(msgObj);
+      await createChat(msgObj);
       socket.to(room).emit('new chat msg', msgStr);
     });
 
@@ -542,7 +542,7 @@ const socketCon = (io) => {
         msg: `${user} 已離開聊天室`,
         created_at: Date.now(),
       };
-      await createChatmsg(leavemsgObj);
+      await createChat(leavemsgObj);
       socket.to(room).emit('notification msg', JSON.stringify(leavemsgObj));
 
       // update user list
