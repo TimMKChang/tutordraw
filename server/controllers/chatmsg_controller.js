@@ -1,24 +1,40 @@
-const Chatmsg = require('../models/chatmsg_model');
+const Chat = require('../models/chat_model');
 
-const createChatmsg = async (chatmsgObj) => {
-  const { user_id, room, sender, type, msg, time, created_at } = chatmsgObj;
-  const chatmsg = {
+const createChatmsg = async (chatObj) => {
+  // from socket
+  const { user_id, room, sender, type, msg, time, created_at } = chatObj;
+
+  // to DB
+  const chat = {
     user_id,
-    room,
+    room_id: room,
     sender,
     type,
-    msg,
+    message: msg,
     time,
     created_at,
   };
-  const { error, message } = await Chatmsg.createChatmsg(chatmsg);
+
+  const { error, message } = await Chat.createChat(chat);
   if (error) {
     console.log(error);
   }
 };
 
 const getChatmsg = async (requirement) => {
-  return await Chatmsg.getChatmsg(requirement);
+  const { room, lastOldestCreated_at } = requirement;
+  const { error, chats } = await Chat.getChat({ room_id: room, lastOldestCreated_at });
+  if (error) {
+    console.log(error);
+  }
+
+  const chatsAdjust = chats.map((chat) => {
+    chat.msg = chat.message;
+    delete chat.message;
+    return chat;
+  });
+
+  return { error, chatmsgs: chatsAdjust };
 };
 
 module.exports = {
