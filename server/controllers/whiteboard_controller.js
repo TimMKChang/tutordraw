@@ -2,7 +2,7 @@ const Whiteboard = require('../models/whiteboard_model');
 const RoomUser = require('../models/roomUser_model');
 const { verifyJWT } = require('../../util/util');
 
-const createHistoryWB = async (whiteboardObj) => {
+const createWhiteboard = async (whiteboardObj) => {
   // from socket
   const { room, start_at, link } = whiteboardObj;
 
@@ -19,7 +19,7 @@ const createHistoryWB = async (whiteboardObj) => {
   }
 };
 
-const getHistoryWB = async (req, res) => {
+const getWhiteboard = async (req, res) => {
   const { room } = req.params;
 
   if (!room) {
@@ -43,6 +43,6 @@ const getHistoryWB = async (req, res) => {
 };
 
 module.exports = {
-  createHistoryWB,
-  getHistoryWB,
+  createWhiteboard,
+  getWhiteboard,
 };

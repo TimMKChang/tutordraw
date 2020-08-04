@@ -15,8 +15,8 @@ const {
 } = require('../server/controllers/pin_controller');
 
 const {
-  createHistoryWB,
-} = require('../server/controllers/historyWB_controller');
+  createWhiteboard,
+} = require('../server/controllers/whiteboard_controller');
 
 const {
   uploadWhiteboard,
@@ -392,7 +392,7 @@ const socketCon = (io) => {
         start_at,
         link,
       };
-      await createHistoryWB(historyWB);
+      await createWhiteboard(historyWB);
     });
 
     socket.on('new chat msg', async function (msgStr) {
