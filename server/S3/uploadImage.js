@@ -8,8 +8,8 @@ const s3 = new aws.S3({
 });
 
 const {
-  createWhiteboard,
-} = require('../controllers/whiteboard_controller');
+  createDraw,
+} = require('../controllers/draw_controller');
 
 const uploadWhiteboard = async (room, start_at, records) => {
   if (records.length === 0) {
@@ -36,7 +36,7 @@ const uploadWhiteboard = async (room, start_at, records) => {
       start_at,
       link: `${process.env.AWS_CLOUDFRONT_DOMAIN}/${Key}`,
     };
-    createWhiteboard(whiteboardObj);
+    createDraw(whiteboardObj);
   });
 };
 

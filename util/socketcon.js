@@ -4,8 +4,8 @@ const {
 } = require('../server/controllers/chat_controller');
 
 const {
-  getWhiteboard,
-} = require('../server/controllers/whiteboard_controller');
+  getDraw,
+} = require('../server/controllers/draw_controller');
 
 const {
   createPin,
@@ -257,7 +257,7 @@ const socketCon = (io) => {
       // load whiteboard records
       await loadWhiteboardRecords(room, rooms[room].whiteboard.start_at);
       async function loadWhiteboardRecords(room, start_at) {
-        const { error, links } = await getWhiteboard({ room, start_at });
+        const { error, links } = await getDraw({ room, start_at });
         const records = rooms[room].whiteboard.records;
         if (error) {
           console.log(error);

@@ -1,6 +1,6 @@
 const Draw = require('../models/draw_model');
 
-const createWhiteboard = async (drawObj) => {
+const createDraw = async (drawObj) => {
   // from socket
   const { room, start_at, link } = drawObj;
 
@@ -17,13 +17,13 @@ const createWhiteboard = async (drawObj) => {
   }
 };
 
-const getWhiteboard = async (requirement) => {
+const getDraw = async (requirement) => {
   const { room, start_at } = requirement;
   const { error, draws } = await Draw.getDraw({ room_id: room, start_at });
   return { error, links: draws };
 };
 
 module.exports = {
-  createWhiteboard,
-  getWhiteboard,
+  createDraw,
+  getDraw,
 };
