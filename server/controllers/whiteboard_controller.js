@@ -4,6 +4,22 @@ const { verifyJWT } = require('../../util/util');
 
 const createWhiteboard = async (whiteboardObj) => {
   // from socket
+  const { room, start_at } = whiteboardObj;
+
+  // to DB
+  const whiteboard = {
+    room_id: room,
+    start_at,
+  };
+
+  const { error, message } = await Whiteboard.createWhiteboard(whiteboard);
+  if (error) {
+    console.log(error);
+  }
+};
+
+const updateWhiteboard = async (whiteboardObj) => {
+  // from socket
   const { room, start_at, link } = whiteboardObj;
 
   // to DB
@@ -13,7 +29,7 @@ const createWhiteboard = async (whiteboardObj) => {
     link,
   };
 
-  const { error, message } = await Whiteboard.createWhiteboard(whiteboard);
+  const { error, message } = await Whiteboard.updateWhiteboard(whiteboard);
   if (error) {
     console.log(error);
   }
@@ -45,4 +61,5 @@ const getWhiteboard = async (req, res) => {
 module.exports = {
   createWhiteboard,
   getWhiteboard,
+  updateWhiteboard,
 };

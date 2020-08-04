@@ -13,6 +13,24 @@ const createWhiteboard = async (whiteboard) => {
   }
 };
 
+const updateWhiteboard = async (whiteboard) => {
+  const { room_id, start_at, link, } = whiteboard;
+  const condition = { query: '', sql: '', binding: [] };
+
+  condition.binding = [link, room_id, start_at];
+
+  try {
+    await transaction();
+    await query('UPDATE whiteboard SET link = ? WHERE room_id = ? AND start_at = ?', condition.binding);
+    await commit();
+    return { message: 'whiteboard link updated' };
+
+  } catch (error) {
+    await rollback();
+    return { error };
+  }
+};
+
 const getWhiteboard = async (requirement) => {
   const condition = { query: '', sql: '', binding: [] };
 
@@ -58,4 +76,5 @@ const getWhiteboard = async (requirement) => {
 module.exports = {
   createWhiteboard,
   getWhiteboard,
+  updateWhiteboard,
 };

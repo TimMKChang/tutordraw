@@ -16,6 +16,7 @@ const {
 
 const {
   createWhiteboard,
+  updateWhiteboard,
 } = require('../server/controllers/whiteboard_controller');
 
 const {
@@ -183,11 +184,12 @@ const socketCon = (io) => {
     }
     userClients[user_id] = socket.id;
 
-    const { start_at, title, token } = await Room.getRoom(room);
     if (rooms[room]) {
       rooms[room]['users'][socket.id] = user;
       rooms[room]['user_idUser'][user_id] = user;
     } else {
+      const { start_at, title, token } = await Room.getRoom(room);
+
       rooms[room] = {
         title,
         users: {},
@@ -382,17 +384,18 @@ const socketCon = (io) => {
       const new_start_at = Date.now();
       rooms[room].whiteboard = { start_at: new_start_at, records: [] };
       // update whiteboard start_at
-      const updateWhiteboardStart_atResult = await Room.updateWhiteboardStart_at(room, new_start_at);
-      if (updateWhiteboardStart_atResult.error) {
-        console.log(updateWhiteboardStart_atResult.error);
-      }
+      const whiteboard = {
+        room,
+        start_at: new_start_at,
+      };
+      await createWhiteboard(whiteboard);
       // add history whiteboard
       const historyWB = {
         room,
         start_at,
         link,
       };
-      await createWhiteboard(historyWB);
+      await updateWhiteboard(historyWB);
     });
 
     socket.on('new chat msg', async function (msgStr) {

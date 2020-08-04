@@ -27,31 +27,25 @@ const verifyToken = async (room_id, token) => {
 };
 
 const getRoom = async (room_id) => {
-  const rooms = await query('SELECT whiteboard_start_at, title, token FROM room WHERE id = ?', [room_id]);
+  const rooms = await query('SELECT title, token FROM room WHERE id = ?', [room_id]);
   const room = rooms[0];
   if (!room) {
     return { error: 'Room does not exist.' };
   }
 
-  return { start_at: room.whiteboard_start_at, title: room.title, token: room.token };
-};
-
-const updateWhiteboardStart_at = async (room, start_at) => {
-  try {
-    await transaction();
-    await query('UPDATE room SET whiteboard_start_at = ? WHERE id = ?', [start_at, room]);
-    await commit();
-    return { message: 'room whiteboard_start_at updated' };
-  } catch (error) {
-    await rollback();
-    return { error };
+  const whiteboards = await query('SELECT start_at FROM whiteboard WHERE room_id = ? AND link IS NULL', [room_id]);
+  const whiteboard = whiteboards[0];
+  if (!whiteboard) {
+    return { error: 'Whiteboard does not exist.' };
   }
+
+  return { start_at: whiteboard.start_at, title: room.title, token: room.token };
 };
 
-const updateTitle = async (room, title) => {
+const updateTitle = async (room_id, title) => {
   try {
     await transaction();
-    await query('UPDATE room SET title = ? WHERE id = ?', [title, room]);
+    await query('UPDATE room SET title = ? WHERE id = ?', [title, room_id]);
     await commit();
     return { message: 'room title updated' };
   } catch (error) {
@@ -64,6 +58,5 @@ module.exports = {
   createRoom,
   verifyToken,
   getRoom,
-  updateWhiteboardStart_at,
   updateTitle,
 };

@@ -37,13 +37,13 @@ const getRoomUser = async (requirement) => {
     return { error: 'requirement is necessary' };
   }
 
-  condition.query = 'SELECT roomUser.room, room.title, roomUser.isOwner, lastHistoryWB.link, roomUser.note, roomUser.starred FROM roomUser ';
+  condition.query = 'SELECT roomUser.room, room.title, roomUser.isOwner, lastWhiteboard.link, roomUser.note, roomUser.starred FROM roomUser ';
 
-  let subquery = '(SELECT id, room, start_at, link FROM historyWB ';
-  subquery += 'WHERE id IN (SELECT MAX(id) FROM (SELECT id, room FROM historyWB ORDER BY room, start_at DESC) ordered GROUP BY room)) lastHistoryWB ';
+  let subquery = '(SELECT id, room_id, start_at, link FROM whiteboard ';
+  subquery += 'WHERE id IN (SELECT MAX(id) FROM (SELECT id, room_id FROM whiteboard ORDER BY room_id, start_at DESC) ordered GROUP BY room_id)) lastWhiteboard ';
 
   condition.sql = 'LEFT JOIN ' + subquery;
-  condition.sql += 'ON roomUser.room = lastHistoryWB.room ';
+  condition.sql += 'ON roomUser.room = lastWhiteboard.room_id ';
 
   condition.sql += 'LEFT JOIN room ';
   condition.sql += 'ON roomUser.room = room.id ';

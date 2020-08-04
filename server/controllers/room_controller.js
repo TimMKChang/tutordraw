@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Room = require('../models/room_model');
 const RoomUser = require('../models/roomUser_model');
+const Whiteboard = require('../models/whiteboard_model');
 const uploadImageS3 = require('../S3/uploadImage').uploadImage;
 const { verifyJWT } = require('../../util/util');
 
@@ -13,12 +14,21 @@ const createRoom = async (req, res) => {
   const room = {
     id,
     token,
-    whiteboard_start_at: Date.now(),
   };
 
   const createRoomResult = await Room.createRoom(room);
   if (createRoomResult.error) {
     return res.status(403).json({ error: createRoomResult.error });
+  }
+
+  const whiteboard = {
+    room_id: id,
+    start_at: Date.now(),
+  };
+
+  const createWhiteboardResult = await Whiteboard.createWhiteboard(whiteboard);
+  if (createWhiteboardResult.error) {
+    return res.status(403).json({ error: createWhiteboardResult.error });
   }
 
   const createRoomUserResult = await RoomUser.createRoomUser({
