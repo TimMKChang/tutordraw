@@ -1,9 +1,19 @@
-const HistoryWB = require('../models/historyWB_model');
+const Whiteboard = require('../models/whiteboard_model');
 const RoomUser = require('../models/roomUser_model');
 const { verifyJWT } = require('../../util/util');
 
-const createHistoryWB = async (whiteboard) => {
-  const { error, message } = await HistoryWB.createHistoryWB(whiteboard);
+const createHistoryWB = async (whiteboardObj) => {
+  // from socket
+  const { room, start_at, link } = whiteboardObj;
+
+  // to DB
+  const whiteboard = {
+    room_id: room,
+    start_at,
+    link,
+  };
+
+  const { error, message } = await Whiteboard.createWhiteboard(whiteboard);
   if (error) {
     console.log(error);
   }
@@ -23,12 +33,12 @@ const getHistoryWB = async (req, res) => {
     return res.status(403).json({ error: verifyRoomUserResult.error });
   }
 
-  const { error, historyWBs } = await HistoryWB.getHistoryWB({ room });
+  const { error, whiteboards } = await Whiteboard.getWhiteboard({ room_id: room });
   if (error) {
     return res.status(403).json({ error });
   }
 
-  return res.status(200).json({ data: historyWBs });
+  return res.status(200).json({ data: whiteboards });
 
 };
 

@@ -1,11 +1,11 @@
 const { query, transaction, commit, rollback } = require('../../util/mysqlcon');
 
-const createHistoryWB = async (whiteboard) => {
+const createWhiteboard = async (whiteboard) => {
   try {
     await transaction();
-    await query('INSERT INTO historyWB SET ?', whiteboard);
+    await query('INSERT INTO whiteboard SET ?', whiteboard);
     await commit();
-    return { message: 'historyWB created' };
+    return { message: 'whiteboard created' };
 
   } catch (error) {
     await rollback();
@@ -13,27 +13,27 @@ const createHistoryWB = async (whiteboard) => {
   }
 };
 
-const getHistoryWB = async (requirement) => {
+const getWhiteboard = async (requirement) => {
   const condition = { query: '', sql: '', binding: [] };
 
-  if (!requirement.room) {
+  if (!requirement.room_id) {
     return { error: 'requirement is necessary' };
   }
 
-  condition.query = 'SELECT start_at, link FROM historyWB ';
-  condition.sql = 'WHERE room = ? ORDER BY start_at DESC';
-  condition.binding = [requirement.room];
+  condition.query = 'SELECT start_at, link FROM whiteboard ';
+  condition.sql = 'WHERE room_id = ? ORDER BY start_at DESC';
+  condition.binding = [requirement.room_id];
 
-  let historyWBs;
+  let whiteboards;
   try {
-    historyWBs = await query(condition.query + condition.sql, condition.binding);
+    whiteboards = await query(condition.query + condition.sql, condition.binding);
   } catch (error) {
     return { error };
   }
 
   condition.query = 'SELECT whiteboard_start_at, x, y, content, created_at FROM pin ';
   condition.sql = 'WHERE room = ? AND removed_at IS NULL';
-  condition.binding = [requirement.room];
+  condition.binding = [requirement.room_id];
 
   let pins;
   try {
@@ -42,20 +42,20 @@ const getHistoryWB = async (requirement) => {
     return { error };
   }
 
-  for (let wbIndex = 0; wbIndex < historyWBs.length; wbIndex++) {
-    const historyWB = historyWBs[wbIndex];
-    const { start_at } = historyWB;
+  for (let wbIndex = 0; wbIndex < whiteboards.length; wbIndex++) {
+    const whiteboard = whiteboards[wbIndex];
+    const { start_at } = whiteboard;
     const pinsFound = pins.filter((pin) => pin.whiteboard_start_at === start_at);
     pinsFound.forEach((pin) => { delete pin.whiteboard_start_at; });
-    historyWB.pins = pinsFound;
-    delete historyWB.start_at;
+    whiteboard.pins = pinsFound;
+    delete whiteboard.start_at;
   }
 
-  return { historyWBs };
+  return { whiteboards };
 
 };
 
 module.exports = {
-  createHistoryWB,
-  getHistoryWB,
+  createWhiteboard,
+  getWhiteboard,
 };
