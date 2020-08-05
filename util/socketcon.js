@@ -327,7 +327,7 @@ const socketCon = (io) => {
       }
 
       // upload to S3
-      if (records.length > 30) {
+      if (records.length > 60) {
         const { start_at } = rooms[room].whiteboard;
         const uploadRecords = records.splice(0, 30);
         S3Upload.uploadWhiteboard(room, start_at, uploadRecords);
