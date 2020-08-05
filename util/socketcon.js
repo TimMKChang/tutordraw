@@ -242,7 +242,7 @@ const socketCon = (io) => {
       const joinmsgObj = {
         room,
         type: 'notification',
-        msg: `歡迎 ${user} 加入聊天室`,
+        msg: `${user} join the room.`,
         created_at: Date.now(),
       };
       await createChat(joinmsgObj);
@@ -361,7 +361,7 @@ const socketCon = (io) => {
       const msgObj = {
         room,
         type: 'notification',
-        msg: `${user} 重新開了一張畫布`,
+        msg: `${user} create a new whiteboard`,
         created_at: Date.now(),
       };
       await createChat(msgObj);
@@ -545,7 +545,7 @@ const socketCon = (io) => {
       const leavemsgObj = {
         room,
         type: 'notification',
-        msg: `${user} 已離開聊天室`,
+        msg: `${user} had left the room.`,
         created_at: Date.now(),
       };
       await createChat(leavemsgObj);
