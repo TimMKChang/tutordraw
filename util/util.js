@@ -55,7 +55,7 @@ const authenticate = (req, res, next) => {
   if (!authHeader) {
     next({
       status: 403,
-      error: 'Please sign in first',
+      error: 'Please sign in first.',
     });
   } else {
     const JWT = authHeader.replace(/Bearer /, '');
@@ -63,7 +63,7 @@ const authenticate = (req, res, next) => {
     if (verifyJWTResult.error) {
       next({
         status: 403,
-        error: verifyJWTResult.error,
+        error: 'Please sign in first.',
       });
     } else {
       res.locals.userData = verifyJWTResult.data;

@@ -54,8 +54,8 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   console.log(err);
   const { status, error } = err;
-  if (status === 403) {
-    res.status(status).json({ error: 'Authentication Error' });
+  if (status && error) {
+    res.status(status).json({ error });
   } else {
     res.status(500).json({ error: 'Internal Server Error' });
   }
