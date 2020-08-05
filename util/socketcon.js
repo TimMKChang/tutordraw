@@ -19,9 +19,7 @@ const {
   updateWhiteboard,
 } = require('../server/controllers/whiteboard_controller');
 
-const {
-  uploadWhiteboard,
-} = require('../server/S3/uploadImage');
+const S3Upload = require('../server/S3/S3Upload');
 
 const { verifyJWT } = require('./util');
 const Room = require('../server/models/room_model');
@@ -332,7 +330,7 @@ const socketCon = (io) => {
       if (records.length > 30) {
         const { start_at } = rooms[room].whiteboard;
         const uploadRecords = records.splice(0, 30);
-        uploadWhiteboard(room, start_at, uploadRecords);
+        S3Upload.uploadWhiteboard(room, start_at, uploadRecords);
       }
     });
 
@@ -382,7 +380,7 @@ const socketCon = (io) => {
       const { start_at } = rooms[room].whiteboard;
       const { records } = rooms[room].whiteboard;
       const uploadRecords = records.splice(0, records.length);
-      uploadWhiteboard(room, start_at, uploadRecords);
+      S3Upload.uploadWhiteboard(room, start_at, uploadRecords);
       // create new whiteboard
       const new_start_at = Date.now();
       rooms[room].whiteboard = { start_at: new_start_at, records: [] };
@@ -531,7 +529,7 @@ const socketCon = (io) => {
         // upload remain records to S3
         const { start_at, records } = rooms[room].whiteboard;
         const uploadRecords = records.splice(0, records.length);
-        uploadWhiteboard(room, start_at, uploadRecords);
+        S3Upload.uploadWhiteboard(room, start_at, uploadRecords);
 
         // set timer to delay close room
         closeRoomTimer[room] = setTimeout(function () {
