@@ -36,15 +36,15 @@ const updateWhiteboard = async (whiteboardObj) => {
 };
 
 const getWhiteboard = async (req, res) => {
-  const { room } = req.params;
+  const { room_id } = req.params;
 
-  if (!room) {
+  if (!room_id) {
     return res.status(400).json({ error: 'Room id is required.' });
   }
 
   // check roomUser
   const roomUser = {
-    room_id: room,
+    room_id,
     user_id: res.locals.userData.id,
   };
   const verifyRoomUserResult = await RoomUser.verifyRoomUser(roomUser);
@@ -52,7 +52,7 @@ const getWhiteboard = async (req, res) => {
     return res.status(403).json({ error: verifyRoomUserResult.error });
   }
 
-  const { error, whiteboards } = await Whiteboard.getWhiteboard({ room_id: room });
+  const { error, whiteboards } = await Whiteboard.getWhiteboard({ room_id });
   if (error) {
     return res.status(403).json({ error });
   }

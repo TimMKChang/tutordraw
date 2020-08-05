@@ -5,7 +5,7 @@ const {
   getWhiteboard,
 } = require('../controllers/whiteboard_controller');
 
-router.route('/whiteboard/:room')
+router.route('/whiteboard/:room_id')
   .get(authenticate, wrapAsync(getWhiteboard));
 
 module.exports = router;
