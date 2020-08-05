@@ -1,5 +1,5 @@
 const Room = require('../models/room_model');
-const RoomUser = require('../models/roomUser_model');
+const RoomUser = require('../models/room_user_model');
 const { verifyJWT } = require('../../util/util');
 
 const getRoomUser = async (req, res) => {
@@ -7,19 +7,30 @@ const getRoomUser = async (req, res) => {
   const user_id = res.locals.userData.id;
 
   const { error, roomUsers } = await RoomUser.getRoomUser({ user_id });
-
   if (error) {
     return res.status(403).json({ error });
   }
+  const roomUsersAdjust = roomUsers.map((roomUser) => {
+    roomUser.isOwner = roomUser.is_owner;
+    roomUser.room = roomUser.room_id;
+    delete roomUser.is_owner;
+    delete roomUser.room_id;
+    return roomUser;
+  });
 
-  return res.status(200).json({ data: roomUsers });
+  return res.status(200).json({ data: roomUsersAdjust });
 };
 
 const updateRoomUser = async (req, res) => {
   const { room, note, starred } = req.body;
-  const user_id = res.locals.userData.id;
+  const roomUser = {
+    room_id: room,
+    user_id: res.locals.userData.id,
+    note,
+    starred,
+  };
 
-  const updateRoomUserResult = await RoomUser.updateRoomUser({ user_id, room, note, starred });
+  const updateRoomUserResult = await RoomUser.updateRoomUser(roomUser);
 
   if (updateRoomUserResult.error) {
     return res.status(403).json({ error: updateRoomUserResult.error });

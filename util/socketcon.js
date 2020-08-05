@@ -25,7 +25,7 @@ const {
 
 const { verifyJWT } = require('./util');
 const Room = require('../server/models/room_model');
-const RoomUser = require('../server/models/roomUser_model');
+const RoomUser = require('../server/models/room_user_model');
 
 // users connection data
 const clientsRoom = {
@@ -142,7 +142,10 @@ const socketCon = (io) => {
   io.use(async function (socket, next) {
     const { room, user_id, user, room_JWT, userVerified } = socket.handshake.query;
     // check roomUser
-    const verifyRoomUserResult = await RoomUser.verifyRoomUser(room, user_id);
+    const verifyRoomUserResult = await RoomUser.verifyRoomUser({
+      room_id: room,
+      user_id,
+    });
     if (verifyRoomUserResult.error && room_JWT && userVerified) {
       // verify token
       const verifyTokenResult = await Room.verifyToken(room, room_JWT);
@@ -153,7 +156,7 @@ const socketCon = (io) => {
       }
       // create roomUser
       const createRoomUserResult = await RoomUser.createRoomUser({
-        room,
+        room_id: room,
         user_id,
       });
       if (createRoomUserResult.error) {

@@ -4,7 +4,7 @@ const { wrapAsync, authenticate } = require('../../util/util');
 const {
   getRoomUser,
   updateRoomUser,
-} = require('../controllers/roomUser_controller');
+} = require('../controllers/room_user_controller');
 
 router.route('/roomUser')
   .get(authenticate, wrapAsync(getRoomUser))

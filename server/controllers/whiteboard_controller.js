@@ -1,5 +1,5 @@
 const Whiteboard = require('../models/whiteboard_model');
-const RoomUser = require('../models/roomUser_model');
+const RoomUser = require('../models/room_user_model');
 const { verifyJWT } = require('../../util/util');
 
 const createWhiteboard = async (whiteboardObj) => {
@@ -43,8 +43,11 @@ const getWhiteboard = async (req, res) => {
   }
 
   // check roomUser
-  const user_id = res.locals.userData.id;
-  const verifyRoomUserResult = await RoomUser.verifyRoomUser(room, user_id);
+  const roomUser = {
+    room_id: room,
+    user_id: res.locals.userData.id,
+  };
+  const verifyRoomUserResult = await RoomUser.verifyRoomUser(roomUser);
   if (verifyRoomUserResult.error) {
     return res.status(403).json({ error: verifyRoomUserResult.error });
   }
