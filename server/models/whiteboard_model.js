@@ -38,8 +38,8 @@ const getWhiteboard = async (requirement) => {
     return { error: 'requirement is necessary' };
   }
 
-  condition.query = 'SELECT start_at, link FROM whiteboard ';
-  condition.sql = 'WHERE room_id = ? ORDER BY start_at DESC';
+  condition.query = 'SELECT id, link FROM whiteboard ';
+  condition.sql = 'WHERE room_id = ? ORDER BY id DESC';
   condition.binding = [requirement.room_id];
 
   let whiteboards;
@@ -49,9 +49,13 @@ const getWhiteboard = async (requirement) => {
     return { error };
   }
 
-  condition.query = 'SELECT start_at, x, y, content, created_at FROM pin ';
-  condition.sql = 'WHERE room_id = ? AND removed_at IS NULL';
-  condition.binding = [requirement.room_id];
+  const whiteboardIds = whiteboards.map((whiteboard) => {
+    return whiteboard.id;
+  });
+
+  condition.query = 'SELECT whiteboard_id, x, y, content, created_at FROM pin ';
+  condition.sql = 'WHERE whiteboard_id IN (?) AND removed_at IS NULL';
+  condition.binding = [[...whiteboardIds]];
 
   let pins;
   try {
@@ -62,11 +66,10 @@ const getWhiteboard = async (requirement) => {
 
   for (let wbIndex = 0; wbIndex < whiteboards.length; wbIndex++) {
     const whiteboard = whiteboards[wbIndex];
-    const { start_at } = whiteboard;
-    const pinsFound = pins.filter((pin) => pin.start_at === start_at);
-    pinsFound.forEach((pin) => { delete pin.start_at; });
+    const pinsFound = pins.filter((pin) => pin.whiteboard_id === whiteboard.id);
+    pinsFound.forEach((pin) => { delete pin.whiteboard_id; });
     whiteboard.pins = pinsFound;
-    delete whiteboard.start_at;
+    delete whiteboard.id;
   }
 
   return { whiteboards };

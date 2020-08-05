@@ -447,6 +447,7 @@ const socketCon = (io) => {
       // update to DB
       const { start_at } = rooms[room].whiteboard;
       pin.start_at = start_at;
+      pin.room_id = room;
       await updatePin(pin);
 
       socket.to(room).emit('update whiteboard pin', dataStr);
@@ -462,6 +463,7 @@ const socketCon = (io) => {
       // update to DB
       const { start_at } = rooms[room].whiteboard;
       pin.start_at = start_at;
+      pin.room_id = room;
       await removePin(pin);
 
       socket.to(room).emit('remove whiteboard pin', dataStr);
