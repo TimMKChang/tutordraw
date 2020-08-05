@@ -14,17 +14,17 @@ const createPin = async (pin) => {
 };
 
 const updatePin = async (pin) => {
-  const { content, x, y, whiteboard_start_at, created_at } = pin;
+  const { content, x, y, start_at, created_at } = pin;
   const condition = { query: '', sql: '', binding: [] };
 
   if (content) {
     condition.query = 'UPDATE pin SET content = ? ';
-    condition.sql = 'WHERE whiteboard_start_at = ? AND created_at = ?';
-    condition.binding = [content, whiteboard_start_at, created_at];
+    condition.sql = 'WHERE start_at = ? AND created_at = ?';
+    condition.binding = [content, start_at, created_at];
   } else if (x && y) {
     condition.query = 'UPDATE pin SET x = ?, y = ? ';
-    condition.sql = 'WHERE whiteboard_start_at = ? AND created_at = ?';
-    condition.binding = [x, y, whiteboard_start_at, created_at];
+    condition.sql = 'WHERE start_at = ? AND created_at = ?';
+    condition.binding = [x, y, start_at, created_at];
   }
 
   try {
@@ -42,8 +42,8 @@ const updatePin = async (pin) => {
 const getPin = async (requirement) => {
   const condition = { query: '', sql: '', binding: [] };
   condition.query = 'SELECT user_id, author, x, y, content, created_at FROM pin ';
-  condition.sql = 'WHERE room = ? AND whiteboard_start_at = ? AND removed_at IS NULL';
-  condition.binding = [requirement.room, requirement.start_at];
+  condition.sql = 'WHERE room_id = ? AND start_at = ? AND removed_at IS NULL';
+  condition.binding = [requirement.room_id, requirement.start_at];
 
   try {
     const pins = await query(condition.query + condition.sql, condition.binding);
@@ -54,12 +54,12 @@ const getPin = async (requirement) => {
 };
 
 const removePin = async (pin) => {
-  const { whiteboard_start_at, created_at } = pin;
+  const { start_at, created_at } = pin;
   const condition = { query: '', sql: '', binding: [] };
 
   condition.query = 'UPDATE pin SET removed_at = ? ';
-  condition.sql = 'WHERE whiteboard_start_at = ? AND created_at = ?';
-  condition.binding = [Date.now(), whiteboard_start_at, created_at];
+  condition.sql = 'WHERE start_at = ? AND created_at = ?';
+  condition.binding = [Date.now(), start_at, created_at];
 
   try {
     await transaction();

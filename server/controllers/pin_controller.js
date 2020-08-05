@@ -6,6 +6,9 @@ const createPin = async (pin) => {
     pin.user_id = 1;
   }
 
+  pin.room_id = pin.room;
+  delete pin.room;
+
   const { error, message } = await Pin.createPin(pin);
   if (error) {
     console.log(error);
