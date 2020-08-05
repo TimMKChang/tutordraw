@@ -8,7 +8,8 @@ const getRoomUser = async (req, res) => {
 
   const { error, roomUsers } = await RoomUser.getRoomUser({ user_id });
   if (error) {
-    return res.status(403).json({ error });
+    console.log(error);
+    return res.status(500).json({ error: 'getRoomUser error' });
   }
   const roomUsersAdjust = roomUsers.map((roomUser) => {
     roomUser.isOwner = roomUser.is_owner;
@@ -33,10 +34,11 @@ const updateRoomUser = async (req, res) => {
   const updateRoomUserResult = await RoomUser.updateRoomUser(roomUser);
 
   if (updateRoomUserResult.error) {
-    return res.status(403).json({ error: updateRoomUserResult.error });
+    console.log(updateRoomUserResult.error);
+    return res.status(500).json({ error: 'updateRoomUser error' });
   }
 
-  return res.status(200).json({ message: 'Update room successfully.' });
+  return res.status(200).json({ message: 'roomUser updated' });
 };
 
 module.exports = {

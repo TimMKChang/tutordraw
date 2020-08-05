@@ -18,7 +18,8 @@ const createRoom = async (req, res) => {
 
   const createRoomResult = await Room.createRoom(room);
   if (createRoomResult.error) {
-    return res.status(403).json({ error: createRoomResult.error });
+    console.log(createRoomResult.error);
+    return res.status(500).json({ error: 'createRoom error' });
   }
 
   const whiteboard = {
@@ -28,7 +29,8 @@ const createRoom = async (req, res) => {
 
   const createWhiteboardResult = await Whiteboard.createWhiteboard(whiteboard);
   if (createWhiteboardResult.error) {
-    return res.status(403).json({ error: createWhiteboardResult.error });
+    console.log(createWhiteboardResult.error);
+    return res.status(500).json({ error: 'createWhiteboard error' });
   }
 
   const createRoomUserResult = await RoomUser.createRoomUser({
@@ -37,7 +39,8 @@ const createRoom = async (req, res) => {
     is_owner: true,
   });
   if (createRoomUserResult.error) {
-    return res.status(403).json({ error: createRoomUserResult.error });
+    console.log(createRoomUserResult.error);
+    return res.status(500).json({ error: 'createRoomUser error' });
   }
 
   return res.status(200).json({ room: id });
@@ -51,11 +54,11 @@ const uploadImage = async (req, res) => {
     await S3Upload.uploadImage(room, filePath, imageFilename);
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: 'Uploaded to S3 unsuccessfully.' });
+    return res.status(500).json({ error: 'S3Upload uploadImage error' });
   }
   // remove image in images_temp
   fs.unlinkSync(filePath);
-  return res.status(200).json({ message: 'Uploaded successfully.' });
+  return res.status(200).json({ message: 'image uploaded' });
 };
 
 module.exports = {

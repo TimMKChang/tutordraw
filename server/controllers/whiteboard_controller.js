@@ -54,7 +54,8 @@ const getWhiteboard = async (req, res) => {
 
   const { error, whiteboards } = await Whiteboard.getWhiteboard({ room_id });
   if (error) {
-    return res.status(403).json({ error });
+    console.log(error);
+    return res.status(403).json({ error: 'getWhiteboar error' });
   }
 
   return res.status(200).json({ data: whiteboards });
