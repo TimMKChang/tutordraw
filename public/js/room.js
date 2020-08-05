@@ -60,14 +60,14 @@ const View = {
         const { isPreview, isTransfer } = requirement || {};
         const { author, color, width, path, created_at } = record;
 
-        let canvas_ctx;
+        let canvasCtx;
         if (isPreview) {
-          canvas_ctx = ctxShape;
+          canvasCtx = ctxShape;
         } else if (isTransfer) {
-          canvas_ctx = ctxAll;
+          canvasCtx = ctxAll;
         } else {
           Controller.whiteboard.addCanvasLayer({ created_at });
-          canvas_ctx = Model.whiteboard.ctx;
+          canvasCtx = Model.whiteboard.ctx;
         }
 
         // get trace boundary
@@ -81,11 +81,11 @@ const View = {
         if (path.length === 1) {
           const currX = path[0][0];
           const currY = path[0][1];
-          canvas_ctx.beginPath();
-          canvas_ctx.fillStyle = color;
-          canvas_ctx.arc(currX, currY, width / 2, 0, 2 * Math.PI);
-          canvas_ctx.fill();
-          canvas_ctx.closePath();
+          canvasCtx.beginPath();
+          canvasCtx.fillStyle = color;
+          canvasCtx.arc(currX, currY, width / 2, 0, 2 * Math.PI);
+          canvasCtx.fill();
+          canvasCtx.closePath();
         }
 
         for (let pathIndex = 1; pathIndex < path.length; pathIndex++) {
@@ -108,15 +108,15 @@ const View = {
             boundary.maxY = currY;
           }
 
-          canvas_ctx.beginPath();
-          canvas_ctx.lineCap = 'round';
-          canvas_ctx.lineJoin = 'round';
-          canvas_ctx.moveTo(prevX, prevY);
-          canvas_ctx.lineTo(currX, currY);
-          canvas_ctx.strokeStyle = color;
-          canvas_ctx.lineWidth = width;
-          canvas_ctx.closePath();
-          canvas_ctx.stroke();
+          canvasCtx.beginPath();
+          canvasCtx.lineCap = 'round';
+          canvasCtx.lineJoin = 'round';
+          canvasCtx.moveTo(prevX, prevY);
+          canvasCtx.lineTo(currX, currY);
+          canvasCtx.strokeStyle = color;
+          canvasCtx.lineWidth = width;
+          canvasCtx.closePath();
+          canvasCtx.stroke();
         }
 
         if (author !== 'self' && !isTransfer) {
@@ -140,36 +140,36 @@ const View = {
         const { isPreview, isTransfer } = requirement || {};
         const { category, color, width, created_at } = record;
 
-        let canvas_ctx;
+        let canvasCtx;
         if (isPreview) {
           this.clear();
-          canvas_ctx = ctxShape;
+          canvasCtx = ctxShape;
         } else if (isTransfer) {
-          canvas_ctx = ctxAll;
+          canvasCtx = ctxAll;
         } else {
           Controller.whiteboard.addCanvasLayer({ created_at });
-          canvas_ctx = Model.whiteboard.ctx;
+          canvasCtx = Model.whiteboard.ctx;
         }
 
         const { origX, origY, currX, currY, } = record.position;
 
         if (category === 'line') {
-          canvas_ctx.beginPath();
-          canvas_ctx.lineCap = 'round';
-          canvas_ctx.lineJoin = 'round';
-          canvas_ctx.moveTo(origX, origY);
-          canvas_ctx.lineTo(currX, currY);
-          canvas_ctx.strokeStyle = color;
-          canvas_ctx.lineWidth = width;
-          canvas_ctx.closePath();
-          canvas_ctx.stroke();
+          canvasCtx.beginPath();
+          canvasCtx.lineCap = 'round';
+          canvasCtx.lineJoin = 'round';
+          canvasCtx.moveTo(origX, origY);
+          canvasCtx.lineTo(currX, currY);
+          canvasCtx.strokeStyle = color;
+          canvasCtx.lineWidth = width;
+          canvasCtx.closePath();
+          canvasCtx.stroke();
 
         } else if (category === 'rect') {
-          canvas_ctx.beginPath();
-          canvas_ctx.lineCap = 'round';
-          canvas_ctx.lineJoin = 'round';
-          canvas_ctx.strokeStyle = color;
-          canvas_ctx.lineWidth = width;
+          canvasCtx.beginPath();
+          canvasCtx.lineCap = 'round';
+          canvasCtx.lineJoin = 'round';
+          canvasCtx.strokeStyle = color;
+          canvasCtx.lineWidth = width;
 
           const rectWidth = Math.abs(currX - origX) > 0 ? Math.abs(currX - origX) : width;
           const rectHeight = Math.abs(currY - origY) > 0 ? Math.abs(currY - origY) : width;
@@ -193,38 +193,38 @@ const View = {
             drawRefY = origY;
           }
 
-          canvas_ctx.strokeRect(drawRefX, drawRefY, rectWidth, rectHeight);
-          canvas_ctx.closePath();
+          canvasCtx.strokeRect(drawRefX, drawRefY, rectWidth, rectHeight);
+          canvasCtx.closePath();
 
         } else if (category === 'cir') {
-          canvas_ctx.beginPath();
+          canvasCtx.beginPath();
           const x = origX;
           const y = origY;
           const radius = Math.sqrt(Math.pow((currX - origX), 2) + Math.pow((currY - origY), 2));
           const startAngle = 0;
           const endAngle = Math.PI * 2;
-          canvas_ctx.arc(x, y, radius, startAngle, endAngle);
-          canvas_ctx.strokeStyle = color;
-          canvas_ctx.lineWidth = width;
-          canvas_ctx.closePath();
-          canvas_ctx.stroke();
+          canvasCtx.arc(x, y, radius, startAngle, endAngle);
+          canvasCtx.strokeStyle = color;
+          canvasCtx.lineWidth = width;
+          canvasCtx.closePath();
+          canvasCtx.stroke();
 
         } else if (category === 'tri') {
-          canvas_ctx.beginPath();
-          canvas_ctx.lineCap = 'round';
-          canvas_ctx.lineJoin = 'round';
-          canvas_ctx.strokeStyle = color;
-          canvas_ctx.lineWidth = width;
+          canvasCtx.beginPath();
+          canvasCtx.lineCap = 'round';
+          canvasCtx.lineJoin = 'round';
+          canvasCtx.strokeStyle = color;
+          canvasCtx.lineWidth = width;
 
           const thirdX = origX;
           const thirdY = currY;
 
-          canvas_ctx.moveTo(origX, origY);
-          canvas_ctx.lineTo(thirdX, thirdY);
-          canvas_ctx.lineTo(currX, currY);
+          canvasCtx.moveTo(origX, origY);
+          canvasCtx.lineTo(thirdX, thirdY);
+          canvasCtx.lineTo(currX, currY);
 
-          canvas_ctx.closePath();
-          canvas_ctx.stroke();
+          canvasCtx.closePath();
+          canvasCtx.stroke();
         }
 
         // trace
@@ -267,18 +267,18 @@ const View = {
           const { isTransfer } = requirement || {};
           const { x, y, width, height, link, created_at } = record;
 
-          let canvas_ctx;
+          let canvasCtx;
           if (isTransfer) {
-            canvas_ctx = ctxAll;
+            canvasCtx = ctxAll;
           } else {
             Controller.whiteboard.addCanvasLayer({ created_at });
-            canvas_ctx = Model.whiteboard.ctx;
+            canvasCtx = Model.whiteboard.ctx;
           }
 
           const img = new Image();
           img.crossOrigin = "Anonymous";
           img.onload = function () {
-            canvas_ctx.drawImage(img, x, y, width, height);
+            canvasCtx.drawImage(img, x, y, width, height);
             resolve();
           };
           img.src = link;
@@ -304,20 +304,20 @@ const View = {
         const { isTransfer } = requirement || {};
         const { content, x, y, size, created_at } = record;
 
-        let canvas_ctx = ctxMain;
+        let canvasCtx = ctxMain;
         if (isTransfer) {
-          canvas_ctx = ctxAll;
+          canvasCtx = ctxAll;
         } else {
           Controller.whiteboard.addCanvasLayer({ created_at });
-          canvas_ctx = Model.whiteboard.ctx;
+          canvasCtx = Model.whiteboard.ctx;
         }
 
-        canvas_ctx.font = `${size} Josefin Sans, cwTeXYen, Verdana`;
-        canvas_ctx.fillStyle = '#000000';
-        const width = canvas_ctx.measureText(content).width;
+        canvasCtx.font = `${size} Josefin Sans, cwTeXYen, Verdana`;
+        canvasCtx.fillStyle = '#000000';
+        const width = canvasCtx.measureText(content).width;
         const height = +size.replace('px', '');
         // offset
-        canvas_ctx.fillText(content, x + 2, y + 0.25 * height);
+        canvasCtx.fillText(content, x + 2, y + 0.25 * height);
         // trace
         if (!isTransfer) {
           View.whiteboard.text.updateTrace(record, x + 2, y + 0.25 * height, width, height);
