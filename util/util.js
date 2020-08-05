@@ -76,7 +76,7 @@ const authenticate = (req, res, next) => {
 const checkInjection = (req, res, next) => {
   // remove <script> </script>
   // check nested <script> ex: <script<script>>
-  function remove_script_tag(str) {
+  function removeScriptTag(str) {
     let str_old = '';
     let str_new = str;
     while (str_new !== str_old) {
@@ -87,9 +87,9 @@ const checkInjection = (req, res, next) => {
   }
 
   const query_str = JSON.stringify(req.query);
-  req.query = JSON.parse(remove_script_tag(query_str));
+  req.query = JSON.parse(removeScriptTag(query_str));
   const body_str = JSON.stringify(req.body);
-  req.body = JSON.parse(remove_script_tag(body_str));
+  req.body = JSON.parse(removeScriptTag(body_str));
   next();
 };
 
