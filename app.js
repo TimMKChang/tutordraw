@@ -39,9 +39,9 @@ const peerServer = PeerServer({ port: 9000, path: '/call' });
 app.use('/',
   [
     require('./server/routes/room_route'),
-    require('./server/routes/roomUser_route'),
+    require('./server/routes/room_user_route'),
     require('./server/routes/user_route'),
-    require('./server/routes/historyWB_route'),
+    require('./server/routes/whiteboard_route'),
   ]
 );
 
