@@ -21,7 +21,11 @@ const {
 
 const S3Upload = require('../server/S3/S3Upload');
 
-const { verifyJWT } = require('./util');
+const {
+  verifyJWT,
+  replaceToPureText,
+} = require('./util');
+
 const Room = require('../server/models/room_model');
 const RoomUser = require('../server/models/room_user_model');
 
@@ -406,8 +410,13 @@ const socketCon = (io) => {
       if (!rooms[room] || userClients[user_id] !== socket.id || rooms[room].users[socket.id] !== sender) {
         return;
       }
+      // check injection
+      if (msgObj.msg.match(/<.+>/)) {
+        msgObj.msg = replaceToPureText(msgObj.msg);
+      }
+
       await createChat(msgObj);
-      socket.to(room).emit('new chat msg', msgStr);
+      socket.to(room).emit('new chat msg', JSON.stringify(msgObj));
     });
 
     socket.on('mouse trace', async function (dataStr) {
@@ -497,10 +506,16 @@ const socketCon = (io) => {
     });
 
     socket.on('update room title', async function (dataStr) {
-      const { room, user_id, title } = JSON.parse(dataStr);
+      const dataObj = JSON.parse(dataStr);
+      const { room, user_id } = dataObj;
+      let { title } = dataObj;
       // check user_id
       if (!rooms[room] || userClients[user_id] !== socket.id) {
         return;
+      }
+      // check injection
+      if (title.match(/<.+>/)) {
+        title = replaceToPureText(title);
       }
       // update to DB
       const updateTitleResult = await Room.updateTitle(room, title);
@@ -509,7 +524,8 @@ const socketCon = (io) => {
       }
 
       rooms[room].title = title;
-      socket.to(room).emit('update room title', dataStr);
+      dataObj.title = title;
+      socket.to(room).emit('update room title', JSON.stringify(dataObj));
     });
 
     socket.on('disconnect', async function () {
