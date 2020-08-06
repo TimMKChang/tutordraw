@@ -145,6 +145,10 @@ socket.on('load whiteboard pin', function (dataStr) {
 socket.on('join call room', function (dataStr) {
   const { peer_id, user } = JSON.parse(dataStr);
   PeerjsCall.peer_idUser[peer_id] = user;
+  // check is not on call
+  if (Object.keys(PeerjsCall.allLocalStream).length === 0) {
+    View.chatbox.displayNewCallTooltip();
+  }
 });
 
 socket.on('users in call', function (dataStr) {

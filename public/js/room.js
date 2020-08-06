@@ -654,6 +654,9 @@ const View = {
     displayNewMsgTooltip: function () {
       $('.new-msg-tooltip').tooltip('show');
     },
+    displayNewCallTooltip: function () {
+      $('.new-call-tooltip').tooltip('show');
+    },
   },
 };
 
@@ -1786,6 +1789,11 @@ const Controller = {
       });
       get('.chatbox').addEventListener('mouseover', (e) => {
         $('.new-msg-tooltip').tooltip('hide');
+      });
+
+      // close new call tooltip
+      get('.chatbox-toolbox .call').addEventListener('click', (e) => {
+        $('.new-call-tooltip').tooltip('hide');
       });
     },
     sendMsg: function () {
