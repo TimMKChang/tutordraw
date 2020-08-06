@@ -1,5 +1,6 @@
 const User = require('../models/user_model');
 const { replaceToPureText } = require('../../util/util');
+const validator = require('validator');
 
 const signUp = async (req, res) => {
 
@@ -13,6 +14,16 @@ const signUp = async (req, res) => {
   // check injection
   if (name.match(/<.+>/)) {
     name = replaceToPureText(name);
+  }
+
+  // check email format
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ error: 'Invalid email address' });
+  }
+
+  // check password strength
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
   }
 
   const { access_JWT, user, error } = await User.signUp(name, email, password);
