@@ -73,9 +73,23 @@ const authenticate = (req, res, next) => {
   next();
 };
 
+const replaceToPureText = (str) => {
+  // <
+  str = str.replace(/</ig, '&lt;');
+  // >
+  str = str.replace(/>/ig, '&gt;');
+  // "
+  str = str.replace(/"/ig, '&quot;');
+  // '
+  str = str.replace(/'/ig, '&#x27;');
+
+  return str;
+};
+
 module.exports = {
   upload,
   wrapAsync,
   verifyJWT,
   authenticate,
+  replaceToPureText,
 };
