@@ -1,11 +1,18 @@
 const User = require('../models/user_model');
+const { replaceToPureText } = require('../../util/util');
 
 const signUp = async (req, res) => {
 
-  const { name, email, password } = req.body;
+  const { email, password } = req.body;
+  let { name } = req.body;
   // avoid empty
   if (!name || !email || !password) {
     return res.status(400).json({ error: 'All fields are required.' });
+  }
+
+  // check injection
+  if (name.match(/<.+>/)) {
+    name = replaceToPureText(name);
   }
 
   const { access_JWT, user, error } = await User.signUp(name, email, password);
