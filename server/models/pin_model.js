@@ -13,13 +13,9 @@ const createPin = async (pin) => {
   delete pin.start_at;
 
   try {
-    await transaction();
     await query('INSERT INTO pin SET ?', pin);
-    await commit();
     return { message: 'pin created' };
-
   } catch (error) {
-    await rollback();
     return { error };
   }
 };
@@ -46,13 +42,9 @@ const updatePin = async (pin) => {
   }
 
   try {
-    await transaction();
     await query(condition.query + condition.sql, condition.binding);
-    await commit();
     return { message: 'pin content updated' };
-
   } catch (error) {
-    await rollback();
     return { error };
   }
 };
@@ -88,13 +80,9 @@ const removePin = async (pin) => {
   condition.binding = [Date.now(), whiteboard.id, created_at];
 
   try {
-    await transaction();
     await query(condition.query + condition.sql, condition.binding);
-    await commit();
     return { message: 'pin removed' };
-
   } catch (error) {
-    await rollback();
     return { error };
   }
 };

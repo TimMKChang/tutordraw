@@ -2,13 +2,9 @@ const { query, transaction, commit, rollback } = require('../../util/mysqlcon');
 
 const createRoom = async (room) => {
   try {
-    await transaction();
     await query('INSERT INTO room SET ?', room);
-    await commit();
     return { message: 'room created' };
-
   } catch (error) {
-    await rollback();
     return { error };
   }
 };
@@ -44,12 +40,9 @@ const getRoom = async (room_id) => {
 
 const updateTitle = async (room_id, title) => {
   try {
-    await transaction();
     await query('UPDATE room SET title = ? WHERE id = ?', [title, room_id]);
-    await commit();
     return { message: 'room title updated' };
   } catch (error) {
-    await rollback();
     return { error };
   }
 };

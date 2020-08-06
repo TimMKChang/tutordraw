@@ -13,13 +13,9 @@ const createDraw = async (_draw) => {
   };
 
   try {
-    await transaction();
     await query('INSERT INTO draw SET ?', draw);
-    await commit();
     return { message: 'draw created' };
-
   } catch (error) {
-    await rollback();
     return { error };
   }
 };

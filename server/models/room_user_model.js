@@ -10,13 +10,9 @@ const createRoomUser = async (roomUser) => {
   }
 
   try {
-    await transaction();
     await query('INSERT INTO room_user SET ?', roomUser);
-    await commit();
     return { message: 'roomUser created' };
-
   } catch (error) {
-    await rollback();
     return { error };
   }
 };
@@ -67,23 +63,17 @@ const updateRoomUser = async (requirement) => {
   if (requirement.note || requirement.note === '') {
     condition.binding = [requirement.note, requirement.room_id, requirement.user_id];
     try {
-      await transaction();
       await query('UPDATE room_user SET note = ? WHERE room_id = ? AND user_id = ?', condition.binding);
-      await commit();
       return { message: 'roomUser note updated' };
     } catch (error) {
-      await rollback();
       return { error };
     }
   } else if (Number.isInteger(requirement.starred)) {
     condition.binding = [requirement.starred, requirement.room_id, requirement.user_id];
     try {
-      await transaction();
       await query('UPDATE room_user SET starred = ? WHERE room_id = ? AND user_id = ?', condition.binding);
-      await commit();
       return { message: 'roomUser starred updated' };
     } catch (error) {
-      await rollback();
       return { error };
     }
   }

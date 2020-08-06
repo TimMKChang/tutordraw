@@ -2,13 +2,9 @@ const { query, transaction, commit, rollback } = require('../../util/mysqlcon');
 
 const createChat = async (chat) => {
   try {
-    await transaction();
     await query('INSERT INTO chat SET ?', chat);
-    await commit();
     return { message: 'chat created' };
-
   } catch (error) {
-    await rollback();
     return { error };
   }
 };

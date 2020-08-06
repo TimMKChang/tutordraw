@@ -2,13 +2,9 @@ const { query, transaction, commit, rollback } = require('../../util/mysqlcon');
 
 const createWhiteboard = async (whiteboard) => {
   try {
-    await transaction();
     await query('INSERT INTO whiteboard SET ?', whiteboard);
-    await commit();
     return { message: 'whiteboard created' };
-
   } catch (error) {
-    await rollback();
     return { error };
   }
 };
@@ -20,13 +16,9 @@ const updateWhiteboard = async (whiteboard) => {
   condition.binding = [link, room_id, start_at];
 
   try {
-    await transaction();
     await query('UPDATE whiteboard SET link = ? WHERE room_id = ? AND start_at = ?', condition.binding);
-    await commit();
     return { message: 'whiteboard link updated' };
-
   } catch (error) {
-    await rollback();
     return { error };
   }
 };
