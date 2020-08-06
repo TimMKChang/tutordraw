@@ -73,30 +73,9 @@ const authenticate = (req, res, next) => {
   next();
 };
 
-const checkInjection = (req, res, next) => {
-  // remove <script> </script>
-  // check nested <script> ex: <script<script>>
-  function removeScriptTag(str) {
-    let str_old = '';
-    let str_new = str;
-    while (str_new !== str_old) {
-      str_old = str_new;
-      str_new = str_old.replace(/(<|&lt;)\/?script(>|&gt;)/ig, '');
-    }
-    return str_new;
-  }
-
-  const query_str = JSON.stringify(req.query);
-  req.query = JSON.parse(removeScriptTag(query_str));
-  const body_str = JSON.stringify(req.body);
-  req.body = JSON.parse(removeScriptTag(body_str));
-  next();
-};
-
 module.exports = {
   upload,
   wrapAsync,
   verifyJWT,
   authenticate,
-  checkInjection
 };

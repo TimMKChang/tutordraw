@@ -10,9 +10,6 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// check js injection middleware
-app.use(require('./util/util').checkInjection);
-
 // CORS
 app.use((req, res, next) => {
   const allowedOrigins = ['https://tutordraw.xyz', 'https://www.tutordraw.xyz'];
