@@ -983,6 +983,14 @@ footer .copyright {
   margin: 100px 50px 50px;
   position: relative;
   background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.history-whiteboard-container .history-whiteboard .no-whiteboard-title {
+  font-size: 2rem;
+  color: #FFFFFF;
 }
 
 .whiteboard .trace, .whiteboard .mouse-trace {

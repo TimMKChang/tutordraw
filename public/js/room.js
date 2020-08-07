@@ -1447,6 +1447,10 @@ const Controller = {
             return;
           }
           Model.historyWB = resObj.data;
+
+          if (Model.historyWB.length > 0) {
+            get('.history-whiteboard .no-whiteboard-title').classList.add('hide');
+          }
         })
         .catch(error => console.log(error));
     },
