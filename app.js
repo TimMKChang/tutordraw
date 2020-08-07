@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { PORT } = process.env;
+const { PORT, API_VERSION } = process.env;
 
 const express = require('express');
 const app = express();
@@ -33,7 +33,7 @@ const { PeerServer } = require('peer');
 const peerServer = PeerServer({ port: 9000, path: '/call' });
 
 // API routes
-app.use('/',
+app.use('/api/' + API_VERSION,
   [
     require('./server/routes/room_route'),
     require('./server/routes/room_user_route'),

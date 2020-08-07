@@ -1339,7 +1339,7 @@ const Controller = {
       const imageFilename = `whiteboard-${getNowTimeString()}-${getRandomString(8)}.png`;
       formData.append('image', blob, imageFilename);
       formData.append('room', getQuery().room);
-      const url = HOMEPAGE_URL + '/room/image';
+      const url = API_HOST + '/room/image';
 
       await fetch(url, {
         method: 'POST',
@@ -1368,7 +1368,7 @@ const Controller = {
       const filename = `image-${getNowTimeString()}-${getRandomString(8)}.${file.name.split('.').pop()}`;
       formData.append('image', file, filename);
       formData.append('room', getQuery().room);
-      const url = HOMEPAGE_URL + '/room/image';
+      const url = API_HOST + '/room/image';
 
       await fetch(url, {
         method: 'POST',
@@ -1433,7 +1433,7 @@ const Controller = {
     },
     loadHistoryWB: async function () {
       const access_JWT = localStorage.getItem('access_JWT');
-      const url = HOMEPAGE_URL + `/whiteboard/${Model.room.name}`;
+      const url = API_HOST + `/whiteboard/${Model.room.name}`;
       await fetch(url, {
         method: 'GET',
         headers: {
@@ -1832,7 +1832,7 @@ const Controller = {
       const filename = `image-${getNowTimeString()}-${getRandomString(8)}.${file.name.split('.').pop()}`;
       formData.append('image', file, filename);
       formData.append('room', getQuery().room);
-      const url = HOMEPAGE_URL + '/room/image';
+      const url = API_HOST + '/room/image';
 
       await fetch(url, {
         method: 'POST',

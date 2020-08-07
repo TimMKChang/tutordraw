@@ -151,7 +151,7 @@ const Controller = {
     });
   },
   getRoom: async function () {
-    const url = HOMEPAGE_URL + '/roomUser';
+    const url = API_HOST + '/roomUser';
     const access_JWT = localStorage.getItem('access_JWT');
 
     const rooms = await fetch(url, {
@@ -185,7 +185,7 @@ const Controller = {
     // create room
     get('.create-join-room .spinner-container').classList.remove('hide');
 
-    const url = HOMEPAGE_URL + '/room';
+    const url = API_HOST + '/room';
     const access_JWT = localStorage.getItem('access_JWT');
 
     fetch(url, {
@@ -218,7 +218,7 @@ const Controller = {
   editRoom: async function () {
     get('.edit-form .spinner-container').classList.remove('hide');
 
-    const url = HOMEPAGE_URL + '/roomUser';
+    const url = API_HOST + '/roomUser';
     const access_JWT = localStorage.getItem('access_JWT');
     const room = Model.editingRoom;
     const note = get('.edit-form textarea').value;
@@ -251,7 +251,7 @@ const Controller = {
       .catch(error => console.log(error));
   },
   starRoom: function (room, starred) {
-    const url = HOMEPAGE_URL + '/roomUser';
+    const url = API_HOST + '/roomUser';
     const access_JWT = localStorage.getItem('access_JWT');
 
     fetch(url, {

@@ -27,7 +27,7 @@ function signup() {
 
   get('.signup-form .spinner-container').classList.remove('hide');
 
-  const url = HOMEPAGE_URL + '/user/signup';
+  const url = API_HOST + '/user/signup';
 
   fetch(url, {
     method: 'POST',
@@ -70,7 +70,7 @@ function signin() {
 
   get('.signin-form .spinner-container').classList.remove('hide');
 
-  const url = HOMEPAGE_URL + '/user/signin';
+  const url = API_HOST + '/user/signin';
 
   fetch(url, {
     method: 'POST',
