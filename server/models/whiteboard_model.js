@@ -31,7 +31,7 @@ const getWhiteboard = async (requirement) => {
   }
 
   condition.query = 'SELECT id, link FROM whiteboard ';
-  condition.sql = 'WHERE room_id = ? ORDER BY id DESC';
+  condition.sql = 'WHERE room_id = ? AND link IS NOT NULL ORDER BY id DESC';
   condition.binding = [requirement.room_id];
 
   let whiteboards;
