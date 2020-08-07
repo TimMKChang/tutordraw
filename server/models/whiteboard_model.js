@@ -41,6 +41,10 @@ const getWhiteboard = async (requirement) => {
     return { error };
   }
 
+  if (whiteboards.length === 0) {
+    return { whiteboards };
+  }
+
   const whiteboardIds = whiteboards.map((whiteboard) => {
     return whiteboard.id;
   });
