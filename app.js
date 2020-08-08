@@ -1,5 +1,6 @@
 require('dotenv').config();
-const { PORT, API_VERSION } = process.env;
+const { NODE_ENV, PORT, PORT_TEST, API_VERSION } = process.env;
+const port = NODE_ENV === 'test' ? PORT_TEST : PORT;
 
 const express = require('express');
 const app = express();
@@ -58,6 +59,6 @@ app.use(function (err, req, res, next) {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`App is now running on port: ${PORT}`);
+server.listen(port, () => {
+  console.log(`App is now running on port: ${port}`);
 });

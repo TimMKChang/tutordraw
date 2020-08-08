@@ -1,14 +1,31 @@
 require('dotenv').config();
 const mysql = require('mysql');
 const { promisify } = require('util');
-const { SQL_USER, SQL_PASSWORD, SQL_DB, SQL_HOST } = process.env;
+const { NODE_ENV, SQL_USER, SQL_PASSWORD, SQL_DB, SQL_DB_TEST, SQL_HOST } = process.env;
+const env = NODE_ENV || 'production';
 
-const mysqlCon = mysql.createConnection({
-  host: SQL_HOST,
-  user: SQL_USER,
-  password: SQL_PASSWORD,
-  database: SQL_DB
-});
+const mysqlConfig = {
+  production: {
+    host: SQL_HOST,
+    user: SQL_USER,
+    password: SQL_PASSWORD,
+    database: SQL_DB
+  },
+  development: {
+    host: SQL_HOST,
+    user: SQL_USER,
+    password: SQL_PASSWORD,
+    database: SQL_DB
+  },
+  test: {
+    host: SQL_HOST,
+    user: SQL_USER,
+    password: SQL_PASSWORD,
+    database: SQL_DB_TEST
+  }
+};
+
+const mysqlCon = mysql.createConnection(mysqlConfig[env]);
 
 const promiseQuery = (query, bindings) => {
   return promisify(mysqlCon.query).bind(mysqlCon)(query, bindings);
