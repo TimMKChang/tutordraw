@@ -69,6 +69,12 @@ async function truncateFakeData() {
   try {
     await setForeignKey(0);
     await truncateTable('user');
+    await truncateTable('room');
+    await truncateTable('room_user');
+    await truncateTable('chat');
+    await truncateTable('whiteboard');
+    await truncateTable('draw');
+    await truncateTable('pin');
   } catch (error) {
     console.log(error);
     return;
