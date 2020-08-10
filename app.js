@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { NODE_ENV, PORT, PORT_TEST, PORT_PEER_SERVER, API_VERSION } = process.env;
 const port = NODE_ENV === 'test' ? PORT_TEST : PORT;
+const { writeLog } = require('./util/util');
 
 const express = require('express');
 const app = express();
@@ -50,8 +51,8 @@ app.use(function (req, res, next) {
 
 // Error handling
 app.use(function (err, req, res, next) {
-  console.log(err);
   const { status, error } = err;
+  writeLog({ error });
   if (status && error) {
     res.status(status).json({ error });
   } else {

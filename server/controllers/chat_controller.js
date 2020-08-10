@@ -1,4 +1,5 @@
 const Chat = require('../models/chat_model');
+const { writeLog } = require('../../util/util');
 
 const createChat = async (chatObj) => {
   // from socket
@@ -17,7 +18,7 @@ const createChat = async (chatObj) => {
 
   const { error, message } = await Chat.createChat(chat);
   if (error) {
-    console.log(error);
+    writeLog({ error });
   }
 };
 

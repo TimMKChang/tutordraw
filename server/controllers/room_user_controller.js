@@ -1,6 +1,6 @@
 const Room = require('../models/room_model');
 const RoomUser = require('../models/room_user_model');
-const { verifyJWT } = require('../../util/util');
+const { verifyJWT, writeLog } = require('../../util/util');
 
 const getRoomUser = async (req, res) => {
 
@@ -8,7 +8,7 @@ const getRoomUser = async (req, res) => {
 
   const { error, roomUsers } = await RoomUser.getRoomUser({ user_id });
   if (error) {
-    console.log(error);
+    writeLog({ error });
     return res.status(500).json({ error: 'getRoomUser error' });
   }
   const roomUsersAdjust = roomUsers.map((roomUser) => {
@@ -34,7 +34,7 @@ const updateRoomUser = async (req, res) => {
   const updateRoomUserResult = await RoomUser.updateRoomUser(roomUser);
 
   if (updateRoomUserResult.error) {
-    console.log(updateRoomUserResult.error);
+    writeLog({ error: updateRoomUserResult.error });
     return res.status(500).json({ error: 'updateRoomUser error' });
   }
 

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const aws = require('aws-sdk');
 const fs = require('fs');
+const { writeLog } = require('../../util/util');
 
 const s3 = new aws.S3({
   accessKeyId: process.env.AWS_SECRET_ACCESS,
@@ -29,7 +30,7 @@ const uploadWhiteboard = async (room, start_at, records) => {
   // Uploading files to the bucket
   s3.upload(params, function (err, data) {
     if (err) {
-      console.log(err);
+      writeLog({ error: err });
     }
     const whiteboardObj = {
       room,

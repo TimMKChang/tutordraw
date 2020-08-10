@@ -1,4 +1,5 @@
 const Draw = require('../models/draw_model');
+const { writeLog } = require('../../util/util');
 
 const createDraw = async (drawObj) => {
   // from socket
@@ -13,7 +14,7 @@ const createDraw = async (drawObj) => {
 
   const { error, message } = await Draw.createDraw(draw);
   if (error) {
-    console.log(error);
+    writeLog({ error });
   }
 };
 

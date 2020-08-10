@@ -1,6 +1,6 @@
 const Whiteboard = require('../models/whiteboard_model');
 const RoomUser = require('../models/room_user_model');
-const { verifyJWT } = require('../../util/util');
+const { verifyJWT, writeLog } = require('../../util/util');
 
 const createWhiteboard = async (whiteboardObj) => {
   // from socket
@@ -14,7 +14,7 @@ const createWhiteboard = async (whiteboardObj) => {
 
   const { error, message } = await Whiteboard.createWhiteboard(whiteboard);
   if (error) {
-    console.log(error);
+    writeLog({ error });
   }
 };
 
@@ -31,7 +31,7 @@ const updateWhiteboard = async (whiteboardObj) => {
 
   const { error, message } = await Whiteboard.updateWhiteboard(whiteboard);
   if (error) {
-    console.log(error);
+    writeLog({ error });
   }
 };
 
@@ -54,7 +54,7 @@ const getWhiteboard = async (req, res) => {
 
   const { error, whiteboards } = await Whiteboard.getWhiteboard({ room_id });
   if (error) {
-    console.log(error);
+    writeLog({ error });
     return res.status(403).json({ error: 'getWhiteboar error' });
   }
 

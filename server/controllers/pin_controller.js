@@ -1,4 +1,5 @@
 const Pin = require('../models/pin_model');
+const { writeLog } = require('../../util/util');
 
 const createPin = async (pin) => {
   // for all anonymous user
@@ -11,21 +12,21 @@ const createPin = async (pin) => {
 
   const { error, message } = await Pin.createPin(pin);
   if (error) {
-    console.log(error);
+    writeLog({ error });
   }
 };
 
 const updatePin = async (pin) => {
   const { error, message } = await Pin.updatePin(pin);
   if (error) {
-    console.log(error);
+    writeLog({ error });
   }
 };
 
 const getPin = async (requirement) => {
   const { error, pins } = await Pin.getPin(requirement);
   if (error) {
-    console.log(error);
+    writeLog({ error });
     return { error };
   }
   return { pins };
@@ -34,7 +35,7 @@ const getPin = async (requirement) => {
 const removePin = async (pin) => {
   const { error, message } = await Pin.removePin(pin);
   if (error) {
-    console.log(error);
+    writeLog({ error });
   }
 };
 

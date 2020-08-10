@@ -3,7 +3,7 @@ const Room = require('../models/room_model');
 const RoomUser = require('../models/room_user_model');
 const Whiteboard = require('../models/whiteboard_model');
 const S3Upload = require('../S3/S3Upload');
-const { verifyJWT } = require('../../util/util');
+const { verifyJWT, writeLog } = require('../../util/util');
 
 const createRoom = async (req, res) => {
   const token = Math.random().toString(36).split('.')[1].substr(-8);
@@ -18,7 +18,7 @@ const createRoom = async (req, res) => {
 
   const createRoomResult = await Room.createRoom(room);
   if (createRoomResult.error) {
-    console.log(createRoomResult.error);
+    writeLog({ error: createRoomResult.error });
     return res.status(500).json({ error: 'createRoom error' });
   }
 
@@ -29,7 +29,7 @@ const createRoom = async (req, res) => {
 
   const createWhiteboardResult = await Whiteboard.createWhiteboard(whiteboard);
   if (createWhiteboardResult.error) {
-    console.log(createWhiteboardResult.error);
+    writeLog({ error: createWhiteboardResult.error });
     return res.status(500).json({ error: 'createWhiteboard error' });
   }
 
@@ -39,7 +39,7 @@ const createRoom = async (req, res) => {
     is_owner: true,
   });
   if (createRoomUserResult.error) {
-    console.log(createRoomUserResult.error);
+    writeLog({ error: createRoomUserResult.error });
     return res.status(500).json({ error: 'createRoomUser error' });
   }
 
@@ -53,7 +53,7 @@ const uploadImage = async (req, res) => {
   try {
     await S3Upload.uploadImage(room, filePath, imageFilename);
   } catch (err) {
-    console.log(err);
+    writeLog({ error: err });
     return res.status(500).json({ error: 'S3Upload uploadImage error' });
   }
   // remove image in images_temp

@@ -24,6 +24,7 @@ const S3Upload = require('../server/S3/S3Upload');
 const {
   verifyJWT,
   replaceToPureText,
+  writeLog,
 } = require('./util');
 
 const Room = require('../server/models/room_model');
@@ -228,7 +229,7 @@ const socketCon = (io) => {
       token: rooms[socket.handshake.query.room].token,
     }));
 
-    console.log(`new user ${socket.id} has connected`);
+    writeLog({ message: `new user ${socket.id} has connected` });
 
     socket.on('join room', async function (data) {
       const { room, user_id, user } = socket.handshake.query;
@@ -236,7 +237,7 @@ const socketCon = (io) => {
       // load message
       const { error, chats } = await getChat({ room });
       if (error) {
-        console.log(error);
+        writeLog({ error });
       } else {
         // send to self
         socket.emit('load chat msg', JSON.stringify(chats));
@@ -267,7 +268,7 @@ const socketCon = (io) => {
         const { error, links } = await getDraw({ room, start_at });
         const records = rooms[room].whiteboard.records;
         if (error) {
-          console.log(error);
+          writeLog({ error });
         } else {
           socket.emit('load whiteboard records', JSON.stringify({ links, records }));
         }
@@ -278,7 +279,7 @@ const socketCon = (io) => {
       async function loadWhiteboardPin(room, start_at) {
         const { error, pins } = await getPin({ room_id: room, start_at });
         if (error) {
-          console.log(error);
+          writeLog({ error });
         } else {
           socket.emit('load whiteboard pin', JSON.stringify({ pins }));
         }
@@ -293,7 +294,7 @@ const socketCon = (io) => {
       // load message
       const { error, chats } = await getChat({ room, lastOldestCreated_at });
       if (error) {
-        console.log(error);
+        writeLog({ error });
       } else {
         socket.emit('load chat msg', JSON.stringify(chats));
       }
@@ -520,7 +521,7 @@ const socketCon = (io) => {
       // update to DB
       const updateTitleResult = await Room.updateTitle(room, title);
       if (updateTitleResult.error) {
-        console.log(updateTitleResult.error);
+        writeLog({ error: updateTitleResult.error });
       }
 
       rooms[room].title = title;
@@ -529,7 +530,7 @@ const socketCon = (io) => {
     });
 
     socket.on('disconnect', async function () {
-      console.log(`user ${socket.id} has disconnected`);
+      writeLog({ message: `user ${socket.id} has disconnected` });
 
       // delete user, room
       const socket_id = socket.id;
