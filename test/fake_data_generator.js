@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { NODE_ENV } = process.env;
-const { query } = require('../util/mysqlcon');
+const { query, end } = require('../util/mysqlcon');
 const {
   users,
   rooms,
@@ -104,13 +104,19 @@ async function truncateFakeData() {
     await truncateTable('whiteboard');
     await truncateTable('draw');
     await truncateTable('pin');
+    await setForeignKey(1);
   } catch (error) {
     console.log(error);
     return;
   }
 }
 
+const closeConnection = () => {
+  return end();
+};
+
 module.exports = {
   createFakeData,
   truncateFakeData,
+  closeConnection,
 };
