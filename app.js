@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { NODE_ENV, PORT, PORT_TEST, API_VERSION } = process.env;
+const { NODE_ENV, PORT, PORT_TEST, PORT_PEER_SERVER, API_VERSION } = process.env;
 const port = NODE_ENV === 'test' ? PORT_TEST : PORT;
 
 const express = require('express');
@@ -31,7 +31,7 @@ socketCon(io);
 
 // peerjs
 const { PeerServer } = require('peer');
-const peerServer = PeerServer({ port: 9000, path: '/call' });
+const peerServer = PeerServer({ port: PORT_PEER_SERVER, path: '/call' });
 
 // API routes
 app.use('/api/' + API_VERSION,
