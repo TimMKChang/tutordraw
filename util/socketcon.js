@@ -229,10 +229,11 @@ const socketCon = (io) => {
       token: rooms[socket.handshake.query.room].token,
     }));
 
-    writeLog({ message: `new user ${socket.id} has connected` });
-
     socket.on('join room', async function (data) {
       const { room, user_id, user } = socket.handshake.query;
+
+      // connected message
+      writeLog({ message: `user: ${user} (id: ${user_id}) has connected to room: ${room}` });
 
       // load message
       const { error, chats } = await getChat({ room });
@@ -530,8 +531,6 @@ const socketCon = (io) => {
     });
 
     socket.on('disconnect', async function () {
-      writeLog({ message: `user ${socket.id} has disconnected` });
-
       // delete user, room
       const socket_id = socket.id;
       const room = clientsRoom[socket_id];
@@ -579,6 +578,9 @@ const socketCon = (io) => {
       // call
       io.to(room).emit('leave call room', rooms[room].call[socket.id]);
       delete rooms[room].call[socket.id];
+
+      // disconnected message
+      writeLog({ message: `user: ${user} (id: ${user_id}) has disconnected from room: ${room}` });
     });
 
   });
