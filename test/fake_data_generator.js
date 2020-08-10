@@ -3,6 +3,10 @@ const { NODE_ENV } = process.env;
 const { query } = require('../util/mysqlcon');
 const {
   users,
+  rooms,
+  roomUsers,
+  whiteboards,
+  pins,
 } = require('./fake_data');
 
 async function createFakeUser() {
@@ -23,6 +27,7 @@ async function createFakeUser() {
 
   const hashed_users = users.map(user => {
     const hashed_user = [
+      user.id,
       user.name,
       user.email,
       hashPassword(user.password),
@@ -30,7 +35,27 @@ async function createFakeUser() {
     ];
     return hashed_user;
   });
-  await query('INSERT INTO user (name, email, password, created_at) VALUES ?', [hashed_users]);
+  await query('INSERT INTO user (id, name, email, password, created_at) VALUES ?', [hashed_users]);
+  return;
+}
+
+async function createFakeRoom() {
+  await query('INSERT INTO room (id, token, title) VALUES ?', [rooms.map(x => Object.values(x))]);
+  return;
+}
+
+async function createFakeRoomUser() {
+  await query('INSERT INTO room_user (room_id, user_id, is_owner, note, starred) VALUES ?', [roomUsers.map(x => Object.values(x))]);
+  return;
+}
+
+async function createFakeWhiteboard() {
+  await query('INSERT INTO whiteboard (id, room_id, start_at, link) VALUES ?', [whiteboards.map(x => Object.values(x))]);
+  return;
+}
+
+async function createFakePin() {
+  await query('INSERT INTO pin (whiteboard_id, user_id, author, x, y, content, created_at, removed_at) VALUES ?', [pins.map(x => Object.values(x))]);
   return;
 }
 
@@ -43,11 +68,15 @@ async function createFakeData() {
 
   try {
     await createFakeUser();
+    await createFakeRoom();
+    await createFakeRoomUser();
+    await createFakeWhiteboard();
+    await createFakePin();
   } catch (error) {
     console.log(error);
     return;
   }
-}
+};
 
 async function truncateFakeData() {
   if (NODE_ENV !== 'test') {
