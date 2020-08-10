@@ -1,6 +1,8 @@
 require('dotenv').config();
 const multer = require('multer');
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -86,10 +88,17 @@ const replaceToPureText = (str) => {
   return str;
 };
 
+const writeLog = (content) => {
+  const timeTaipei = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false });
+  let record = `Timestamp: ${Date.now()} Time: ${timeTaipei}\n${JSON.stringify(content)}\n`;
+  fs.appendFile(path.join(__dirname, '../log.txt'), record + '\n', function (err) { });
+};
+
 module.exports = {
   upload,
   wrapAsync,
   verifyJWT,
   authenticate,
   replaceToPureText,
+  writeLog,
 };

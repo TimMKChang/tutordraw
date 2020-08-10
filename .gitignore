@@ -9,3 +9,6 @@ public/js/config.js
 
 # save upload image temporarily folder
 images_temp/
+
+# log file
+log.txt
