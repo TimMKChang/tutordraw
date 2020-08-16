@@ -124,6 +124,9 @@ function initListener() {
   get('header .signin-form-btn').addEventListener('click', (e) => {
     get('.form-container').classList.remove('hide');
     get('.signin-form').classList.remove('hide');
+
+    // one click sign in
+    oneClickSignIn();
   });
 
   // form container
@@ -236,4 +239,30 @@ function movingLetters() {
       easing: "easeOutExpo",
       delay: 1000
     });
+}
+
+async function oneClickSignIn() {
+  const testAccount = getQuery().test;
+  if (testAccount !== 'teacher' && testAccount !== 'student') {
+    return;
+  }
+  const emailInput = get('.signin-form input[name="signinEmail"]');
+  const passwordInput = get('.signin-form input[name="signinPassword"]');
+  let email;
+  let password;
+
+  if (testAccount === 'teacher') {
+    email = 'teacher@mail.com';
+    password = 'aaaa1234';
+  } else if (testAccount === 'student') {
+    email = 'student@mail.com';
+    password = 'aaaa1234';
+  }
+
+  await delay(500);
+  emailInput.value = email;
+  await delay(500);
+  passwordInput.value = password;
+  await delay(500);
+  get('.signin-btn').click();
 }
