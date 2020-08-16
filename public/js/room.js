@@ -1826,9 +1826,9 @@ const Controller = {
     getTime: function (timestamp) {
       const nowTime = timestamp ? new Date(+timestamp) : new Date();
       const hour24 = nowTime.getHours();
-      const hour12 = hour24 > 12 ? `下午 ${('0' + hour24 % 12).substr(-2)}` : `上午 ${('0' + hour24).substr(-2)}`;
+      const hour12 = ('0' + hour24 % 12).substr(-2);
       const minute = ('0' + nowTime.getMinutes()).substr(-2);
-      return `${hour12}:${minute}`;
+      return `${hour12}:${minute} ${hour24 > 12 ? 'p.m.' : 'a.m.'}`;
     },
     uploadImage: async function () {
       const formData = new FormData();
